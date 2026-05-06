@@ -1,3 +1,5 @@
 import { createApp } from "@/presentation/http/create-app";
 
-export default await createApp();
+const app = await createApp();
+
+export default app;
