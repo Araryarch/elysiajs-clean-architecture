@@ -33,7 +33,7 @@ src/
    - Copy connection string (mode: Session atau Transaction)
    - Format: `postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
 
-### Setup Project
+### Setup Projects
 
 ```bash
 # 1. Clone & masuk ke folder
