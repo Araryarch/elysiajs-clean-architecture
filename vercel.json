@@ -1,14 +1,1 @@
-{
-  "version": 2,
-  "functions": {
-    "api/index.ts": {
-      "runtime": "edge"
-    }
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.ts"
-    }
-  ]
-}
+{}
