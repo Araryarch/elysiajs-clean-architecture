@@ -1,0 +1,55 @@
+import { EventStatus } from "@/domain/entities/event-status";
+import { EventRepository } from "@/domain/repositories/event-repository";
+import { EventDTO } from "@/application/dtos/dtos";
+import { Query, QueryHandler } from "@/application/queries/query";
+
+export class ListEventsQuery implements Query {
+  constructor(
+    public readonly status?: string,
+    public readonly location?: string
+  ) {}
+}
+
+export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO[]> {
+  constructor(private eventRepository: EventRepository) {}
+
+  async execute(query: ListEventsQuery): Promise<EventDTO[]> {
+    let events = await this.eventRepository.findAll();
+
+    // Filter by status (default: only published)
+    const statusFilter = query.status || EventStatus.PUBLISHED;
+    events = events.filter((e) => e.status === statusFilter);
+
+    // Filter by location if provided
+    if (query.location) {
+      events = events.filter((e) =>
+        e.toJSON().venue.toLowerCase().includes(query.location!.toLowerCase())
+      );
+    }
+
+    return events.map((event) => {
+      const json = event.toJSON();
+      return {
+        id: json.id,
+        name: json.name,
+        description: json.description,
+        venue: json.venue,
+        startAt: json.startAt,
+        endAt: json.endAt,
+        maxCapacity: json.maxCapacity,
+        status: json.status,
+        ticketCategories: json.ticketCategories.map((cat) => ({
+          id: cat.id,
+          name: cat.name,
+          price: cat.price,
+          currency: cat.currency,
+          quota: cat.quota,
+          availableQuantity: cat.availableQuantity,
+          salesStart: cat.salesStart,
+          salesEnd: cat.salesEnd,
+          isActive: cat.isActive,
+        })),
+      };
+    });
+  }
+}
