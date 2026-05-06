@@ -9,6 +9,16 @@ import { IRefundRepository } from "@/domain/repositories/refund-repository";
 import { IRefundPaymentService } from "@/application/services/interfaces";
 import { success } from "@/presentation/http/response";
 
+const SuccessResponse = <T extends t.TSchema>(data: T) =>
+  t.Object({
+    success: t.Boolean(),
+    message: t.String(),
+    data: data,
+  });
+
+const IdResponse = t.Object({ id: t.String() });
+const NullResponse = t.Null();
+
 export const createRefundController = (deps: {
   bookingRepository: BookingRepository;
   ticketRepository: ITicketRepository;
@@ -39,27 +49,14 @@ export const createRefundController = (deps: {
         body: t.Object({
           bookingId: t.String({ minLength: 1 }),
         }),
+        response: {
+          200: SuccessResponse(IdResponse),
+        },
         detail: {
           summary: "Request Refund",
           description: "Request a refund for a booking",
           tags: ["Refunds"],
-          responses: {
-            200: {
-              description: "Refund requested successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Refund requested successfully",
-                    data: {
-                      id: "ref_abc123xyz"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       }
     )
     .post(
@@ -69,25 +66,14 @@ export const createRefundController = (deps: {
         return success(null, "Refund approved successfully");
       },
       {
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
         detail: {
           summary: "Approve Refund",
           description: "Approve a refund request (Event Organizer only)",
           tags: ["Refunds"],
-          responses: {
-            200: {
-              description: "Refund approved successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Refund approved successfully",
-                    data: null
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       }
     )
     .post(
@@ -100,25 +86,14 @@ export const createRefundController = (deps: {
         body: t.Object({
           reason: t.String({ minLength: 1 }),
         }),
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
         detail: {
           summary: "Reject Refund",
           description: "Reject a refund request (Event Organizer only)",
           tags: ["Refunds"],
-          responses: {
-            200: {
-              description: "Refund rejected successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Refund rejected successfully",
-                    data: null
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       }
     )
     .post(
@@ -128,25 +103,14 @@ export const createRefundController = (deps: {
         return success(null, "Refund paid out successfully");
       },
       {
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
         detail: {
           summary: "Payout Refund",
           description: "Mark refund as paid out (System Admin only)",
           tags: ["Refunds"],
-          responses: {
-            200: {
-              description: "Refund paid out successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Refund paid out successfully",
-                    data: null
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       }
     );
 };

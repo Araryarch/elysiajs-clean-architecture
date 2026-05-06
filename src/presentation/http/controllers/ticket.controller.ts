@@ -4,6 +4,15 @@ import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { EventRepository } from "@/domain/repositories/event-repository";
 import { success } from "@/presentation/http/response";
 
+const SuccessResponse = <T extends t.TSchema>(data: T) =>
+  t.Object({
+    success: t.Boolean(),
+    message: t.String(),
+    data: data,
+  });
+
+const NullResponse = t.Null();
+
 export const createTicketController = (deps: {
   ticketRepository: ITicketRepository;
   eventRepository: EventRepository;
@@ -21,24 +30,13 @@ export const createTicketController = (deps: {
         ticketCode: t.String({ minLength: 1 }),
         eventId: t.String({ minLength: 1 }),
       }),
+      response: {
+        200: SuccessResponse(NullResponse),
+      },
       detail: {
         summary: "Check In Ticket",
         description: "Check in a ticket at the event (Gate Officer only)",
         tags: ["Tickets"],
-        responses: {
-          200: {
-            description: "Ticket checked in successfully",
-            content: {
-              "application/json": {
-                example: {
-                  success: true,
-                  message: "Ticket checked in successfully",
-                  data: null
-                }
-              }
-            }
-          }
-        }
       },
     }
   );

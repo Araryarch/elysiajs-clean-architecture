@@ -13,6 +13,47 @@ import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { IPaymentGateway } from "@/application/services/interfaces";
 import { success } from "@/presentation/http/response";
 
+const SuccessResponse = <T extends t.TSchema>(data: T) =>
+  t.Object({
+    success: t.Boolean(),
+    message: t.String(),
+    data: data,
+  });
+
+const IdResponse = t.Object({ id: t.String() });
+const NullResponse = t.Null();
+
+const BookingItemSchema = t.Object({
+  ticketCategoryId: t.String(),
+  ticketCategoryName: t.String(),
+  quantity: t.Number(),
+  unitPrice: t.Number(),
+});
+
+const BookingSchema = t.Object({
+  id: t.String(),
+  eventId: t.String(),
+  customerName: t.String(),
+  customerEmail: t.String(),
+  items: t.Array(BookingItemSchema),
+  totalAmount: t.Number(),
+  currency: t.String(),
+  status: t.String(),
+  paymentDeadline: t.String(),
+  createdAt: t.String(),
+  paidAt: t.Optional(t.String()),
+});
+
+const TicketSchema = t.Object({
+  id: t.String(),
+  ticketCode: t.String(),
+  eventName: t.String(),
+  categoryName: t.String(),
+  customerName: t.String(),
+  status: t.String(),
+  issuedAt: t.String(),
+});
+
 export const createBookingController = (deps: {
   eventRepository: EventRepository;
   bookingRepository: BookingRepository;
@@ -37,7 +78,6 @@ export const createBookingController = (deps: {
     .post(
       "/",
       async ({ body }) => {
-        // US8: Create Ticket Booking
         const command = new CreateBookingCommand(
           body.eventId,
           body.customerName,
@@ -60,27 +100,14 @@ export const createBookingController = (deps: {
             { minItems: 1 },
           ),
         }),
+        response: {
+          201: SuccessResponse(IdResponse),
+        },
         detail: {
           summary: "Create Booking",
           description: "Create a new ticket booking",
           tags: ["Bookings"],
-          responses: {
-            200: {
-              description: "Booking created successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Booking created successfully",
-                    data: {
-                      id: "bkg_abc123xyz"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       },
     )
     .get(
@@ -90,43 +117,14 @@ export const createBookingController = (deps: {
         return success(result, "Booking retrieved successfully");
       },
       {
+        response: {
+          200: SuccessResponse(BookingSchema),
+        },
         detail: {
           summary: "Get Booking Details",
           description: "Get detailed information about a booking",
           tags: ["Bookings"],
-          responses: {
-            200: {
-              description: "Booking retrieved successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Booking retrieved successfully",
-                    data: {
-                      id: "bkg_abc123xyz",
-                      eventId: "evt_xyz789",
-                      customerName: "John Doe",
-                      customerEmail: "john@example.com",
-                      items: [
-                        {
-                          ticketCategoryId: "cat_early123",
-                          ticketCategoryName: "Early Bird",
-                          quantity: 2,
-                          unitPrice: 500000
-                        }
-                      ],
-                      totalAmount: 1000000,
-                      currency: "IDR",
-                      status: "PendingPayment",
-                      paymentDeadline: "2026-05-07T10:30:00Z",
-                      createdAt: "2026-05-07T10:15:00Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       },
     )
     .post(
@@ -139,25 +137,14 @@ export const createBookingController = (deps: {
         body: t.Object({
           amount: t.Number({ minimum: 0 }),
         }),
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
         detail: {
           summary: "Pay Booking",
           description: "Process payment for a booking",
           tags: ["Bookings"],
-          responses: {
-            200: {
-              description: "Payment successful",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Payment successful",
-                    data: null
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       },
     )
     .post(
@@ -167,25 +154,14 @@ export const createBookingController = (deps: {
         return success(null, "Booking expired successfully");
       },
       {
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
         detail: {
           summary: "Expire Booking",
           description: "Expire a booking (admin only)",
           tags: ["Bookings"],
-          responses: {
-            200: {
-              description: "Booking expired successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Booking expired successfully",
-                    data: null
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       },
     )
     .get(
@@ -195,35 +171,14 @@ export const createBookingController = (deps: {
         return success(result, "Tickets retrieved successfully");
       },
       {
+        response: {
+          200: SuccessResponse(t.Array(TicketSchema)),
+        },
         detail: {
           summary: "Get Booking Tickets",
           description: "Get all tickets for a booking",
           tags: ["Bookings"],
-          responses: {
-            200: {
-              description: "Tickets retrieved successfully",
-              content: {
-                "application/json": {
-                  example: {
-                    success: true,
-                    message: "Tickets retrieved successfully",
-                    data: [
-                      {
-                        id: "tkt_ticket001",
-                        ticketCode: "TKT-ABC-123456",
-                        eventName: "Tech Conference 2026",
-                        categoryName: "Early Bird",
-                        customerName: "John Doe",
-                        status: "Active",
-                        issuedAt: "2026-05-07T10:15:00Z"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
+        },
       },
     );
 };
