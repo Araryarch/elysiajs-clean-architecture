@@ -1,4 +1,5 @@
-import { createApp, Elysia } from "@/presentation/http/create-app";
+import { createApp } from "@/presentation/http/create-app";
 
-// Export the app instance for Vercel
-export default await createApp();
+const app = await createApp();
+
+export default app;

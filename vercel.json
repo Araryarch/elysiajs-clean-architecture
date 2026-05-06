@@ -1,9 +1,3 @@
 {
-  "bunVersion": "1.x",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/src/index"
-    }
-  ]
+  "bunVersion": "1.x"
 }
