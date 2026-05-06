@@ -20,6 +20,8 @@ import { GetEventQuery, GetEventHandler } from "@/application/queries/get-event.
 import { ListEventsQuery, ListEventsHandler } from "@/application/queries/list-events.query";
 import { GetSalesReportQuery, GetSalesReportHandler } from "@/application/queries/get-sales-report.query";
 import { GetParticipantsQuery, GetParticipantsHandler } from "@/application/queries/get-participants.query";
+import { GetEventAnalyticsQuery, GetEventAnalyticsHandler } from "@/application/queries/get-event-analytics.query";
+import { GetEventRevenueQuery, GetEventRevenueHandler } from "@/application/queries/get-event-revenue.query";
 import { EventRepository } from "@/domain/repositories/event-repository";
 import { BookingRepository } from "@/domain/repositories/booking-repository";
 import { ITicketRepository } from "@/domain/repositories/ticket-repository";
@@ -59,6 +61,15 @@ export const createEventController = (deps: {
     deps.eventRepository,
     deps.bookingRepository,
     deps.ticketRepository,
+  );
+  const getEventAnalyticsHandler = new GetEventAnalyticsHandler(
+    deps.eventRepository,
+    deps.bookingRepository,
+    deps.ticketRepository,
+  );
+  const getEventRevenueHandler = new GetEventRevenueHandler(
+    deps.eventRepository,
+    deps.bookingRepository,
   );
 
   const TicketCategorySchema = t.Object({
@@ -113,6 +124,65 @@ export const createEventController = (deps: {
       checkedIn: t.Boolean(),
     })
   );
+
+  const EventAnalyticsSchema = t.Object({
+    eventId: t.String(),
+    eventName: t.String(),
+    totalCapacity: t.Number(),
+    ticketsSold: t.Number(),
+    ticketsCheckedIn: t.Number(),
+    occupancyRate: t.Number(),
+    conversionRate: t.Number(),
+    totalRevenue: t.Number(),
+    averageTicketPrice: t.Number(),
+    categoryPerformance: t.Array(
+      t.Object({
+        categoryName: t.String(),
+        quota: t.Number(),
+        sold: t.Number(),
+        revenue: t.Number(),
+        sellThroughRate: t.Number(),
+      })
+    ),
+    bookingsByStatus: t.Object({
+      pending: t.Number(),
+      paid: t.Number(),
+      expired: t.Number(),
+      refunded: t.Number(),
+    }),
+    salesTimeline: t.Object({
+      firstSale: t.Optional(t.String()),
+      lastSale: t.Optional(t.String()),
+      peakSalesDay: t.Optional(t.String()),
+    }),
+  });
+
+  const EventRevenueSchema = t.Object({
+    eventId: t.String(),
+    eventName: t.String(),
+    totalRevenue: t.Number(),
+    currency: t.String(),
+    revenueByCategory: t.Array(
+      t.Object({
+        categoryName: t.String(),
+        revenue: t.Number(),
+        ticketsSold: t.Number(),
+        averagePrice: t.Number(),
+      })
+    ),
+    revenueByMonth: t.Array(
+      t.Object({
+        month: t.String(),
+        revenue: t.Number(),
+        bookingsCount: t.Number(),
+      })
+    ),
+    revenueByStatus: t.Object({
+      paid: t.Number(),
+      refunded: t.Number(),
+      net: t.Number(),
+    }),
+  });
 
   return new Elysia({ prefix: "/api/v1/events" })
     .post(
@@ -389,6 +459,40 @@ export const createEventController = (deps: {
         detail: {
           summary: "Update Ticket Category",
           description: "Update ticket category details (only draft events)",
+          tags: ["Events"],
+        },
+      },
+    )
+    .get(
+      "/:id/analytics",
+      async ({ params }) => {
+        const result = await getEventAnalyticsHandler.execute(new GetEventAnalyticsQuery(params.id));
+        return success(result, "Event analytics retrieved successfully");
+      },
+      {
+        response: {
+          200: SuccessResponse(EventAnalyticsSchema),
+        },
+        detail: {
+          summary: "Get Event Analytics",
+          description: "Get detailed analytics for an event including occupancy, conversion rates, and category performance (Event Organizer only)",
+          tags: ["Events"],
+        },
+      },
+    )
+    .get(
+      "/:id/revenue",
+      async ({ params }) => {
+        const result = await getEventRevenueHandler.execute(new GetEventRevenueQuery(params.id));
+        return success(result, "Event revenue retrieved successfully");
+      },
+      {
+        response: {
+          200: SuccessResponse(EventRevenueSchema),
+        },
+        detail: {
+          summary: "Get Event Revenue",
+          description: "Get revenue breakdown by category and time period (Event Organizer only)",
           tags: ["Events"],
         },
       },

@@ -140,13 +140,30 @@ export class Booking {
     return booking;
   }
 
-  static fromPrimitives(data: any): Booking {
+  static fromPrimitives(data: {
+    id: string;
+    eventId: string;
+    customerName: string;
+    customerEmail: string;
+    items: Array<{
+      ticketCategoryId: string;
+      quantity: number;
+      unitPrice: number;
+      currency?: string;
+    }>;
+    totalAmount: number;
+    currency?: string;
+    status: string;
+    paymentDeadline: Date | string;
+    createdAt: Date | string;
+    paidAt?: Date | string | null;
+  }): Booking {
     return new Booking({
       id: data.id,
       eventId: data.eventId,
       customerName: data.customerName,
       customerEmail: new Email(data.customerEmail),
-      items: data.items.map((item: any) => ({
+      items: data.items.map((item) => ({
         ticketCategoryId: item.ticketCategoryId,
         quantity: item.quantity,
         unitPrice: new Money(item.unitPrice, item.currency || "IDR"),

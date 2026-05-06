@@ -2,47 +2,28 @@ import { BookingRepository } from "@/domain/repositories/booking-repository";
 import { EventRepository } from "@/domain/repositories/event-repository";
 import { BookingDTO } from "@/application/dtos/dtos";
 import { Query, QueryHandler } from "@/application/queries/query";
-import { PaginatedResult, paginate } from "@/application/dtos/pagination.dto";
 
-export class ListBookingsQuery implements Query {
-  constructor(
-    public readonly eventId?: string,
-    public readonly status?: string,
-    public readonly customerEmail?: string,
-    public readonly page?: number,
-    public readonly limit?: number,
-  ) {}
+export class GetCustomerBookingsQuery implements Query {
+  constructor(public readonly customerEmail: string) {}
 }
 
-export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, PaginatedResult<BookingDTO>> {
+export class GetCustomerBookingsHandler implements QueryHandler<GetCustomerBookingsQuery, BookingDTO[]> {
   constructor(
     private bookingRepository: BookingRepository,
     private eventRepository: EventRepository,
   ) {}
 
-  async execute(query: ListBookingsQuery): Promise<PaginatedResult<BookingDTO>> {
-    let bookings = await this.bookingRepository.findAll();
-
-    // Filter by event ID
-    if (query.eventId) {
-      bookings = bookings.filter((b) => b.eventId === query.eventId);
-    }
-
-    // Filter by status
-    if (query.status) {
-      bookings = bookings.filter((b) => b.status === query.status);
-    }
-
+  async execute(query: GetCustomerBookingsQuery): Promise<BookingDTO[]> {
+    const allBookings = await this.bookingRepository.findAll();
+    
     // Filter by customer email
-    if (query.customerEmail) {
-      bookings = bookings.filter(
-        (b) => b.toJSON().customerEmail.toLowerCase() === query.customerEmail!.toLowerCase(),
-      );
-    }
+    const customerBookings = allBookings.filter(
+      (b) => b.toJSON().customerEmail.toLowerCase() === query.customerEmail.toLowerCase(),
+    );
 
     // Map to DTOs
     const bookingDTOs: BookingDTO[] = [];
-    for (const booking of bookings) {
+    for (const booking of customerBookings) {
       const event = await this.eventRepository.findById(booking.eventId);
       const json = booking.toJSON();
 
@@ -69,6 +50,9 @@ export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, Pagi
       });
     }
 
-    return paginate(bookingDTOs, query.page, query.limit);
+    // Sort by created date (newest first)
+    return bookingDTOs.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 }

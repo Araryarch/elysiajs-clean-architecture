@@ -2,22 +2,25 @@ import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { EventRepository } from "@/domain/repositories/event-repository";
 import { TicketDTO } from "@/application/dtos/dtos";
 import { Query, QueryHandler } from "@/application/queries/query";
+import { PaginatedResult, paginate } from "@/application/dtos/pagination.dto";
 
 export class SearchTicketsQuery implements Query {
   constructor(
     public readonly ticketCode?: string,
     public readonly eventId?: string,
     public readonly status?: string,
+    public readonly page?: number,
+    public readonly limit?: number,
   ) {}
 }
 
-export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, TicketDTO[]> {
+export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, PaginatedResult<TicketDTO>> {
   constructor(
     private ticketRepository: ITicketRepository,
     private eventRepository: EventRepository,
   ) {}
 
-  async execute(query: SearchTicketsQuery): Promise<TicketDTO[]> {
+  async execute(query: SearchTicketsQuery): Promise<PaginatedResult<TicketDTO>> {
     let tickets = await this.ticketRepository.findAll();
 
     // Filter by ticket code
@@ -56,6 +59,6 @@ export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, Ti
       });
     }
 
-    return ticketDTOs;
+    return paginate(ticketDTOs, query.page, query.limit);
   }
 }

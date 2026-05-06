@@ -189,7 +189,16 @@ export class Event {
   }
 
   static fromPrimitives(props: Omit<EventProps, "ticketCategories" | "status"> & { 
-    ticketCategories: any[]; // Accept any format, will be converted by TicketCategory.fromPrimitives
+    ticketCategories: Array<{
+      id: string;
+      name: string;
+      price: number | Money;
+      quota: number;
+      bookedQuantity: number;
+      salesStart: Date | string;
+      salesEnd: Date | string;
+      isActive: boolean;
+    }>;
     status: string;
   }): Event {
     return new Event({

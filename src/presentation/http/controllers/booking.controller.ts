@@ -46,6 +46,20 @@ const BookingSchema = t.Object({
   paidAt: t.Optional(t.String()),
 });
 
+const PaginationSchema = t.Object({
+  page: t.Number(),
+  limit: t.Number(),
+  total: t.Number(),
+  totalPages: t.Number(),
+  hasNext: t.Boolean(),
+  hasPrev: t.Boolean(),
+});
+
+const PaginatedBookingsSchema = t.Object({
+  data: t.Array(BookingSchema),
+  pagination: PaginationSchema,
+});
+
 const TicketSchema = t.Object({
   id: t.String(),
   ticketCode: t.String(),
@@ -188,8 +202,10 @@ export const createBookingController = (deps: {
     .get(
       "/",
       async ({ query }) => {
+        const page = query.page ? parseInt(query.page) : 1;
+        const limit = query.limit ? parseInt(query.limit) : 10;
         const result = await listBookingsHandler.execute(
-          new ListBookingsQuery(query.eventId, query.status, query.customerEmail),
+          new ListBookingsQuery(query.eventId, query.status, query.customerEmail, page, limit),
         );
         return success(result, "Bookings retrieved successfully");
       },
@@ -198,13 +214,15 @@ export const createBookingController = (deps: {
           eventId: t.Optional(t.String()),
           status: t.Optional(t.String()),
           customerEmail: t.Optional(t.String()),
+          page: t.Optional(t.String()),
+          limit: t.Optional(t.String()),
         }),
         response: {
-          200: SuccessResponse(t.Array(BookingSchema)),
+          200: SuccessResponse(PaginatedBookingsSchema),
         },
         detail: {
           summary: "List Bookings",
-          description: "Get list of bookings with optional filters (Admin/Organizer)",
+          description: "Get paginated list of bookings with optional filters (Admin/Organizer)",
           tags: ["Bookings"],
         },
       },

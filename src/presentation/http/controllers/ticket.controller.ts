@@ -26,6 +26,20 @@ const TicketSchema = t.Object({
   checkedInAt: t.Optional(t.String()),
 });
 
+const PaginationSchema = t.Object({
+  page: t.Number(),
+  limit: t.Number(),
+  total: t.Number(),
+  totalPages: t.Number(),
+  hasNext: t.Boolean(),
+  hasPrev: t.Boolean(),
+});
+
+const PaginatedTicketsSchema = t.Object({
+  data: t.Array(TicketSchema),
+  pagination: PaginationSchema,
+});
+
 export const createTicketController = (deps: {
   ticketRepository: ITicketRepository;
   eventRepository: EventRepository;
@@ -59,8 +73,10 @@ export const createTicketController = (deps: {
     .get(
       "/",
       async ({ query }) => {
+        const page = query.page ? parseInt(query.page) : 1;
+        const limit = query.limit ? parseInt(query.limit) : 10;
         const result = await searchTicketsHandler.execute(
-          new SearchTicketsQuery(query.ticketCode, query.eventId, query.status),
+          new SearchTicketsQuery(query.ticketCode, query.eventId, query.status, page, limit),
         );
         return success(result, "Tickets retrieved successfully");
       },
@@ -69,13 +85,15 @@ export const createTicketController = (deps: {
           ticketCode: t.Optional(t.String()),
           eventId: t.Optional(t.String()),
           status: t.Optional(t.String()),
+          page: t.Optional(t.String()),
+          limit: t.Optional(t.String()),
         }),
         response: {
-          200: SuccessResponse(t.Array(TicketSchema)),
+          200: SuccessResponse(PaginatedTicketsSchema),
         },
         detail: {
           summary: "Search Tickets",
-          description: "Search tickets with optional filters",
+          description: "Search tickets with optional filters and pagination",
           tags: ["Tickets"],
         },
       }

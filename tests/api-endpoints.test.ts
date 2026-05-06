@@ -9,7 +9,7 @@ describe("API Endpoints Integration Tests", () => {
   });
 
   // Helper function to make requests
-  const request = (method: string, path: string, body?: any) => {
+  const request = (method: string, path: string, body?: Record<string, unknown>) => {
     return app.handle(
       new Request(`http://localhost${path}`, {
         method,

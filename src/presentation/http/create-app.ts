@@ -13,6 +13,7 @@ import { createBookingController } from "./controllers/booking.controller";
 import { createTicketController } from "./controllers/ticket.controller";
 import { createRefundController } from "./controllers/refund.controller";
 import { createDashboardController } from "./controllers/dashboard.controller";
+import { createCustomerController } from "./controllers/customer.controller";
 import { error, success } from "./response";
 
 export async function createApp() {
@@ -42,6 +43,7 @@ export async function createApp() {
             { name: "Tickets", description: "Ticket check-in and validation" },
             { name: "Refunds", description: "Refund request and approval" },
             { name: "Dashboard", description: "Dashboard statistics and analytics" },
+            { name: "Customers", description: "Customer portal endpoints" },
           ],
         },
       })
@@ -109,7 +111,9 @@ export async function createApp() {
             { method: "PUT", path: "/api/v1/events/:id/ticket-categories/:categoryId", description: "Update ticket category" },
             { method: "POST", path: "/api/v1/events/:id/ticket-categories/:categoryId/disable", description: "Disable ticket category" },
             { method: "GET", path: "/api/v1/events/:id/sales-report", description: "Get sales report" },
-            { method: "GET", path: "/api/v1/events/:id/participants", description: "Get participants list" }
+            { method: "GET", path: "/api/v1/events/:id/participants", description: "Get participants list" },
+            { method: "GET", path: "/api/v1/events/:id/analytics", description: "Get event analytics" },
+            { method: "GET", path: "/api/v1/events/:id/revenue", description: "Get event revenue breakdown" }
           ],
           bookings: [
             { method: "GET", path: "/api/v1/bookings", description: "List all bookings (admin)" },
@@ -135,6 +139,11 @@ export async function createApp() {
           ],
           dashboard: [
             { method: "GET", path: "/api/v1/dashboard/stats", description: "Get dashboard statistics (admin)" }
+          ],
+          customers: [
+            { method: "GET", path: "/api/v1/customers/me/bookings?email={email}", description: "Get customer bookings" },
+            { method: "GET", path: "/api/v1/customers/me/tickets?email={email}", description: "Get customer tickets" },
+            { method: "GET", path: "/api/v1/customers/me/refunds?email={email}", description: "Get customer refunds" }
           ]
         },
       };
@@ -180,6 +189,14 @@ export async function createApp() {
     )
     .use(
       createDashboardController({
+        eventRepository,
+        bookingRepository,
+        ticketRepository,
+        refundRepository,
+      })
+    )
+    .use(
+      createCustomerController({
         eventRepository,
         bookingRepository,
         ticketRepository,

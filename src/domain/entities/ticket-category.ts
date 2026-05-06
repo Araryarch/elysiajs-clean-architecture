@@ -144,7 +144,19 @@ export class TicketCategory {
     return category;
   }
 
-  static fromPrimitives(data: any): TicketCategory {
+  static fromPrimitives(data: {
+    id: string;
+    eventId?: string;
+    name: string;
+    price: number | Money;
+    currency?: string;
+    quota: number;
+    bookedQuantity: number;
+    salesStart?: Date | string;
+    salesEnd?: Date | string;
+    salesPeriod?: { start: Date | string; end: Date | string } | DateRange;
+    isActive: boolean;
+  }): TicketCategory {
     // Handle both Money object and primitive number for price
     const price = data.price instanceof Money 
       ? data.price 
@@ -154,13 +166,13 @@ export class TicketCategory {
     const salesPeriod = data.salesPeriod instanceof DateRange
       ? data.salesPeriod
       : new DateRange(
-          new Date(data.salesStart || data.salesPeriod?.start),
-          new Date(data.salesEnd || data.salesPeriod?.end)
+          new Date(data.salesStart || (data.salesPeriod as { start: Date | string; end: Date | string })?.start || new Date()),
+          new Date(data.salesEnd || (data.salesPeriod as { start: Date | string; end: Date | string })?.end || new Date())
         );
 
     return new TicketCategory({
       id: data.id,
-      eventId: data.eventId,
+      eventId: data.eventId || "",
       name: data.name,
       price,
       quota: data.quota,

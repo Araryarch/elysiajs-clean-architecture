@@ -108,7 +108,17 @@ export class Ticket {
     });
   }
 
-  static fromPrimitives(data: any): Ticket {
+  static fromPrimitives(data: {
+    id: string;
+    ticketCode: string;
+    bookingId: string;
+    eventId: string;
+    ticketCategoryId: string;
+    customerName: string;
+    status: string;
+    issuedAt: Date | string;
+    checkedInAt?: Date | string | null;
+  }): Ticket {
     return new Ticket({
       id: data.id,
       bookingId: data.bookingId,

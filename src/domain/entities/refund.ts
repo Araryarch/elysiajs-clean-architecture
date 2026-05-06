@@ -106,7 +106,19 @@ export class Refund {
     return refund;
   }
 
-  static fromPrimitives(data: any): Refund {
+  static fromPrimitives(data: {
+    id: string;
+    bookingId: string;
+    amount: number;
+    currency: string;
+    status: string;
+    requestedAt: Date | string;
+    approvedAt?: Date | string | null;
+    rejectedAt?: Date | string | null;
+    paidOutAt?: Date | string | null;
+    rejectionReason?: string | null;
+    paymentReference?: string | null;
+  }): Refund {
     return new Refund({
       id: data.id,
       bookingId: data.bookingId,
@@ -116,8 +128,8 @@ export class Refund {
       approvedAt: data.approvedAt ? new Date(data.approvedAt) : undefined,
       rejectedAt: data.rejectedAt ? new Date(data.rejectedAt) : undefined,
       paidOutAt: data.paidOutAt ? new Date(data.paidOutAt) : undefined,
-      rejectionReason: data.rejectionReason,
-      paymentReference: data.paymentReference,
+      rejectionReason: data.rejectionReason || undefined,
+      paymentReference: data.paymentReference || undefined,
     });
   }
 }

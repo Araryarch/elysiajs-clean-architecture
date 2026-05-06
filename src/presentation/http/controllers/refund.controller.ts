@@ -35,6 +35,20 @@ const RefundSchema = t.Object({
   paymentReference: t.Optional(t.String()),
 });
 
+const PaginationSchema = t.Object({
+  page: t.Number(),
+  limit: t.Number(),
+  total: t.Number(),
+  totalPages: t.Number(),
+  hasNext: t.Boolean(),
+  hasPrev: t.Boolean(),
+});
+
+const PaginatedRefundsSchema = t.Object({
+  data: t.Array(RefundSchema),
+  pagination: PaginationSchema,
+});
+
 export const createRefundController = (deps: {
   bookingRepository: BookingRepository;
   ticketRepository: ITicketRepository;
@@ -134,8 +148,10 @@ export const createRefundController = (deps: {
     .get(
       "/",
       async ({ query }) => {
+        const page = query.page ? parseInt(query.page) : 1;
+        const limit = query.limit ? parseInt(query.limit) : 10;
         const result = await listRefundsHandler.execute(
-          new ListRefundsQuery(query.status, query.bookingId),
+          new ListRefundsQuery(query.status, query.bookingId, page, limit),
         );
         return success(result, "Refunds retrieved successfully");
       },
@@ -143,13 +159,15 @@ export const createRefundController = (deps: {
         query: t.Object({
           status: t.Optional(t.String()),
           bookingId: t.Optional(t.String()),
+          page: t.Optional(t.String()),
+          limit: t.Optional(t.String()),
         }),
         response: {
-          200: SuccessResponse(t.Array(RefundSchema)),
+          200: SuccessResponse(PaginatedRefundsSchema),
         },
         detail: {
           summary: "List Refunds",
-          description: "Get list of refunds with optional filters (Admin/Organizer)",
+          description: "Get paginated list of refunds with optional filters (Admin/Organizer)",
           tags: ["Refunds"],
         },
       }
