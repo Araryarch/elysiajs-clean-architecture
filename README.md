@@ -81,12 +81,44 @@ bun run db:seed
 |---|---|
 | `bun run dev` | Jalankan server (watch mode) |
 | `bun run start` | Jalankan server (production) |
-| `bun run test` | Jalankan unit test |
+| `bun run test` | Jalankan semua tests (domain + integration) |
 | `bun run db:generate` | Generate migration files |
 | `bun run db:migrate` | Jalankan migration |
 | `bun run db:push` | Push schema langsung ke DB |
 | `bun run db:seed` | Seed database dengan data lengkap |
 | `bun run db:studio` | Buka Drizzle Studio |
+
+## Testing
+
+Project ini memiliki 2 jenis test:
+
+### 1. Domain Tests (`tests/domain.test.ts`)
+Test untuk business logic dan domain rules:
+- Event entity validation
+- Booking entity validation  
+- Ticket entity validation
+- Refund entity validation
+- Value objects validation
+
+### 2. Integration Tests (`tests/api-endpoints.test.ts`)
+Test untuk semua API endpoints:
+- ✅ Events endpoints (7 tests)
+- ✅ Bookings endpoints (6 tests)
+- ✅ Tickets endpoints (2 tests)
+- ✅ Refunds endpoints (6 tests)
+- ✅ Error handling (2 tests)
+
+**Total: 23 integration tests + domain tests**
+
+Jalankan test:
+```bash
+# Semua tests
+bun run test
+
+# Specific test file
+bun test tests/api-endpoints.test.ts
+bun test tests/domain.test.ts
+```
 
 ## API Endpoints
 
