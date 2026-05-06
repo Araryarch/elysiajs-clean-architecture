@@ -47,8 +47,8 @@ export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO
         name: json.name,
         description: json.description,
         venue: json.venue,
-        startAt: json.startAt,
-        endAt: json.endAt,
+        startAt: json.startAt.toISOString(),
+        endAt: json.endAt.toISOString(),
         maxCapacity: json.maxCapacity,
         status: json.status,
         ticketCategories: json.ticketCategories.map((cat) => ({
@@ -58,8 +58,8 @@ export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO
           currency: cat.currency,
           quota: cat.quota,
           availableQuantity: cat.availableQuantity,
-          salesStart: cat.salesStart,
-          salesEnd: cat.salesEnd,
+          salesStart: cat.salesStart.toISOString(),
+          salesEnd: cat.salesEnd.toISOString(),
           isActive: cat.isActive,
         })),
       };

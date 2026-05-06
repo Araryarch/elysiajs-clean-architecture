@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia, t, type TSchema } from "elysia";
 import { CreateEventCommand, CreateEventHandler } from "@/application/commands/create-event.command";
 import { PublishEventCommand, PublishEventHandler } from "@/application/commands/publish-event.command";
 import { CancelEventCommand, CancelEventHandler } from "@/application/commands/cancel-event.command";
@@ -19,7 +19,7 @@ import { BookingRepository } from "@/domain/repositories/booking-repository";
 import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { success } from "@/presentation/http/response";
 
-const SuccessResponse = <T extends t.TSchema>(data: T) =>
+const SuccessResponse = <T extends TSchema>(data: T) =>
   t.Object({
     success: t.Boolean(),
     message: t.String(),
@@ -56,10 +56,12 @@ export const createEventController = (deps: {
     id: t.String(),
     name: t.String(),
     price: t.Number(),
+    currency: t.String(),
     quota: t.Number(),
-    sold: t.Number(),
-    salesStart: t.Optional(t.String()),
-    salesEnd: t.Optional(t.String()),
+    availableQuantity: t.Number(),
+    salesStart: t.String(),
+    salesEnd: t.String(),
+    isActive: t.Boolean(),
   });
 
   const EventSchema = t.Object({
@@ -78,26 +80,28 @@ export const createEventController = (deps: {
     eventId: t.String(),
     eventName: t.String(),
     totalRevenue: t.Number(),
-    totalTicketsSold: t.Number(),
-    categories: t.Array(
+    categorySales: t.Array(
       t.Object({
-        name: t.String(),
-        sold: t.Number(),
+        categoryName: t.String(),
+        soldQuantity: t.Number(),
         revenue: t.Number(),
-        quota: t.Number(),
       })
     ),
+    bookingStats: t.Object({
+      pendingPayment: t.Number(),
+      paid: t.Number(),
+      expired: t.Number(),
+      refunded: t.Number(),
+    }),
   });
 
   const ParticipantSchema = t.Array(
     t.Object({
-      ticketId: t.String(),
+      customerName: t.String(),
+      customerEmail: t.String(),
+      ticketCategory: t.String(),
       ticketCode: t.String(),
-      attendeeName: t.String(),
-      attendeeEmail: t.String(),
-      categoryName: t.String(),
       checkedIn: t.Boolean(),
-      checkedInAt: t.Optional(t.String()),
     })
   );
 

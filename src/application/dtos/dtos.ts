@@ -3,8 +3,8 @@ export type EventDTO = {
   name: string;
   description?: string;
   venue: string;
-  startAt: Date;
-  endAt: Date;
+  startAt: string;
+  endAt: string;
   maxCapacity: number;
   status: string;
   ticketCategories: TicketCategoryDTO[];
@@ -17,8 +17,8 @@ export type TicketCategoryDTO = {
   currency: string;
   quota: number;
   availableQuantity: number;
-  salesStart: Date;
-  salesEnd: Date;
+  salesStart: string;
+  salesEnd: string;
   isActive: boolean;
 };
 
@@ -31,9 +31,9 @@ export type BookingDTO = {
   totalAmount: number;
   currency: string;
   status: string;
-  paymentDeadline: Date;
-  createdAt: Date;
-  paidAt?: Date;
+  paymentDeadline: string;
+  createdAt: string;
+  paidAt?: string;
 };
 
 export type BookingItemDTO = {
@@ -50,8 +50,8 @@ export type TicketDTO = {
   categoryName: string;
   customerName: string;
   status: string;
-  issuedAt: Date;
-  checkedInAt?: Date;
+  issuedAt: string;
+  checkedInAt?: string;
 };
 
 export type SalesReportDTO = {

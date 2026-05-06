@@ -40,9 +40,9 @@ export class GetBookingHandler implements QueryHandler<GetBookingQuery, BookingD
       totalAmount: json.totalAmount,
       currency: json.currency,
       status: json.status,
-      paymentDeadline: json.paymentDeadline,
-      createdAt: json.createdAt,
-      paidAt: json.paidAt,
+      paymentDeadline: json.paymentDeadline.toISOString(),
+      createdAt: json.createdAt.toISOString(),
+      paidAt: json.paidAt?.toISOString(),
     };
   }
 }

@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia, t, type TSchema } from "elysia";
 import { CreateBookingCommand, CreateBookingHandler } from "@/application/commands/create-booking.command";
 import { PayBookingCommand, PayBookingHandler } from "@/application/commands/pay-booking.command";
 import { ExpireBookingCommand, ExpireBookingHandler } from "@/application/commands/expire-booking.command";
@@ -13,7 +13,7 @@ import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { IPaymentGateway } from "@/application/services/interfaces";
 import { success } from "@/presentation/http/response";
 
-const SuccessResponse = <T extends t.TSchema>(data: T) =>
+const SuccessResponse = <T extends TSchema>(data: T) =>
   t.Object({
     success: t.Boolean(),
     message: t.String(),

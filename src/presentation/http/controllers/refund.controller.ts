@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia, t, type TSchema } from "elysia";
 import { RequestRefundCommand, RequestRefundHandler } from "@/application/commands/request-refund.command";
 import { ApproveRefundCommand, ApproveRefundHandler } from "@/application/commands/approve-refund.command";
 import { RejectRefundCommand, RejectRefundHandler } from "@/application/commands/reject-refund.command";
@@ -9,7 +9,7 @@ import { IRefundRepository } from "@/domain/repositories/refund-repository";
 import { IRefundPaymentService } from "@/application/services/interfaces";
 import { success } from "@/presentation/http/response";
 
-const SuccessResponse = <T extends t.TSchema>(data: T) =>
+const SuccessResponse = <T extends TSchema>(data: T) =>
   t.Object({
     success: t.Boolean(),
     message: t.String(),

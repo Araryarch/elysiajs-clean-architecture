@@ -45,8 +45,8 @@ export class GetTicketsByBookingHandler implements QueryHandler<GetTicketsByBook
         categoryName: category?.name || "Unknown",
         customerName: json.customerName,
         status: json.status,
-        issuedAt: json.issuedAt,
-        checkedInAt: json.checkedInAt,
+        issuedAt: json.issuedAt.toISOString(),
+        checkedInAt: json.checkedInAt?.toISOString(),
       };
     });
   }

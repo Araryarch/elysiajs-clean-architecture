@@ -1,7 +1,7 @@
 export type ApiResponse<T = unknown> = {
   success: boolean;
   message: string;
-  data?: T;
+  data: T;
   error?: ErrorDetail;
 };
 
@@ -23,9 +23,10 @@ export const error = (
   code: string = "ERROR",
   field?: string,
   details?: Record<string, unknown>,
-): ApiResponse => ({
+): ApiResponse<null> => ({
   success: false,
   message,
+  data: null,
   error: {
     code,
     message,

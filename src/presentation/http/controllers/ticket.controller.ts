@@ -1,10 +1,10 @@
-import { Elysia, t } from "elysia";
+import { Elysia, t, type TSchema } from "elysia";
 import { CheckInTicketCommand, CheckInTicketHandler } from "@/application/commands/check-in-ticket.command";
 import { ITicketRepository } from "@/domain/repositories/ticket-repository";
 import { EventRepository } from "@/domain/repositories/event-repository";
 import { success } from "@/presentation/http/response";
 
-const SuccessResponse = <T extends t.TSchema>(data: T) =>
+const SuccessResponse = <T extends TSchema>(data: T) =>
   t.Object({
     success: t.Boolean(),
     message: t.String(),
