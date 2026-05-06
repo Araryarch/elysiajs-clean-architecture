@@ -15,128 +15,143 @@ import { createRefundController } from "./src/presentation/http/controllers/refu
 import { error, success } from "./src/presentation/http/response.js";
 
 async function createApp() {
-  // Initialize repositories
-  const eventRepository = new PostgresEventRepository();
-  const bookingRepository = new PostgresBookingRepository();
-  const ticketRepository = new PostgresTicketRepository();
-  const refundRepository = new PostgresRefundRepository();
+  try {
+    // Initialize repositories
+    const eventRepository = new PostgresEventRepository();
+    const bookingRepository = new PostgresBookingRepository();
+    const ticketRepository = new PostgresTicketRepository();
+    const refundRepository = new PostgresRefundRepository();
 
-  // Initialize services
-  const paymentGateway = createMockPaymentGateway();
-  const refundPaymentService = createMockRefundPaymentService();
-  const notificationService = createMockNotificationService();
+    // Initialize services
+    const paymentGateway = createMockPaymentGateway();
+    const refundPaymentService = createMockRefundPaymentService();
+    const notificationService = createMockNotificationService();
 
-  const app = new Elysia()
-    .use(
-      swagger({
-        documentation: {
-          info: {
-            title: "Event Ticketing & Booking API",
-            version: "1.0.0",
-            description: "Clean Architecture implementation with DDD patterns",
+    const app = new Elysia()
+      .use(
+        swagger({
+          documentation: {
+            info: {
+              title: "Event Ticketing & Booking API",
+              version: "1.0.0",
+              description: "Clean Architecture implementation with DDD patterns",
+            },
+            tags: [
+              { name: "Events", description: "Event management and ticket categories" },
+              { name: "Bookings", description: "Ticket booking and payment" },
+              { name: "Tickets", description: "Ticket check-in and validation" },
+              { name: "Refunds", description: "Refund request and approval" },
+            ],
           },
-          tags: [
-            { name: "Events", description: "Event management and ticket categories" },
-            { name: "Bookings", description: "Ticket booking and payment" },
-            { name: "Tickets", description: "Ticket check-in and validation" },
-            { name: "Refunds", description: "Refund request and approval" },
-          ],
-        },
-      })
-    )
-    .onError(({ code, error: err, set }) => {
-      // Handle domain errors
-      if (err instanceof DomainError) {
-        set.status = err.statusCode;
-        return error(err.message, err.code || "DOMAIN_ERROR", undefined, {
-          name: err.name,
-        });
-      }
-
-      // Handle validation errors from Elysia
-      if (code === "VALIDATION") {
-        set.status = 422;
-        return error("Validation failed", "VALIDATION_ERROR", undefined, {
-          details: err.message,
-        });
-      }
-
-      // Handle not found
-      if (code === "NOT_FOUND") {
-        set.status = 404;
-        return error("Resource not found", "NOT_FOUND");
-      }
-
-      // Handle parse errors
-      if (code === "PARSE") {
-        set.status = 400;
-        return error("Invalid request body", "PARSE_ERROR");
-      }
-
-      // Handle internal server errors
-      console.error("Unexpected error:", err);
-      set.status = 500;
-      return error("Internal server error", "INTERNAL_ERROR", undefined, {
-        message:
-          process.env.NODE_ENV === "development" && err instanceof Error
-            ? err.message
-            : undefined,
-      });
-    })
-    .get("/", () => {
-      return {
-        name: "Event Ticketing & Booking API",
-        version: "1.0.0",
-        description: "Clean Architecture + Domain-Driven Design",
-        techStack: ["Bun", "ElysiaJS", "TypeScript", "Drizzle ORM", "Supabase"],
-        baseUrl: "/api/v1",
-        documentation: {
-          swagger: "/swagger",
-          health: "/health"
-        },
-      };
-    })
-    .get("/health", () =>
-      success(
-        {
-          status: "ok",
-          service: "event-ticketing-booking-api",
-          timestamp: new Date().toISOString(),
-        },
-        "Service is healthy"
+        })
       )
-    )
-    .use(
-      createEventController({
-        eventRepository,
-        bookingRepository,
-        ticketRepository,
-      })
-    )
-    .use(
-      createBookingController({
-        eventRepository,
-        bookingRepository,
-        ticketRepository,
-        paymentGateway,
-      })
-    )
-    .use(
-      createTicketController({
-        ticketRepository,
-        eventRepository,
-      })
-    )
-    .use(
-      createRefundController({
-        bookingRepository,
-        ticketRepository,
-        refundRepository,
-        refundPaymentService,
-      })
-    );
+      .onError(({ code, error: err, set }) => {
+        try {
+          // Handle domain errors
+          if (err instanceof DomainError) {
+            set.status = err.statusCode;
+            return error(err.message, err.code || "DOMAIN_ERROR", undefined, {
+              name: err.name,
+            });
+          }
 
-  return app;
+          // Handle validation errors from Elysia
+          if (code === "VALIDATION") {
+            set.status = 422;
+            return error("Validation failed", "VALIDATION_ERROR", undefined, {
+              details: err.message,
+            });
+          }
+
+          // Handle not found
+          if (code === "NOT_FOUND") {
+            set.status = 404;
+            return error("Resource not found", "NOT_FOUND");
+          }
+
+          // Handle parse errors
+          if (code === "PARSE") {
+            set.status = 400;
+            return error("Invalid request body", "PARSE_ERROR");
+          }
+
+          // Handle internal server errors
+          console.error("Unexpected error:", err);
+          set.status = 500;
+          return error("Internal server error", "INTERNAL_ERROR", undefined, {
+            message:
+              process.env.NODE_ENV === "development" && err instanceof Error
+                ? err.message
+                : undefined,
+          });
+        } catch (handlerError) {
+          console.error("Error in error handler:", handlerError);
+          set.status = 500;
+          return { error: "Internal server error" };
+        }
+      })
+      .get("/", () => {
+        return {
+          name: "Event Ticketing & Booking API",
+          version: "1.0.0",
+          description: "Clean Architecture + Domain-Driven Design",
+          techStack: ["Bun", "ElysiaJS", "TypeScript", "Drizzle ORM", "Supabase"],
+          baseUrl: "/api/v1",
+          documentation: {
+            swagger: "/swagger",
+            health: "/health"
+          },
+        };
+      })
+      .get("/health", () =>
+        success(
+          {
+            status: "ok",
+            service: "event-ticketing-booking-api",
+            timestamp: new Date().toISOString(),
+          },
+          "Service is healthy"
+        )
+      )
+      .use(
+        createEventController({
+          eventRepository,
+          bookingRepository,
+          ticketRepository,
+        })
+      )
+      .use(
+        createBookingController({
+          eventRepository,
+          bookingRepository,
+          ticketRepository,
+          paymentGateway,
+        })
+      )
+      .use(
+        createTicketController({
+          ticketRepository,
+          eventRepository,
+        })
+      )
+      .use(
+        createRefundController({
+          bookingRepository,
+          ticketRepository,
+          refundRepository,
+          refundPaymentService,
+        })
+      );
+
+    return app;
+  } catch (error) {
+    console.error("Failed to create app:", error);
+    // Return a minimal Elysia app that shows the error
+    return new Elysia().get("/", () => ({
+      error: "Failed to initialize application",
+      message: error instanceof Error ? error.message : "Unknown error",
+    }));
+  }
 }
 
 export default await createApp();
