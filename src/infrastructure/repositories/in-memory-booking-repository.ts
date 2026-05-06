@@ -8,20 +8,30 @@ export class InMemoryBookingRepository implements BookingRepository {
 
   async findById(id: string): Promise<Booking | null> {
     const booking = this.bookings.get(id);
-    return booking ? this.toEntity(booking) : null;
+    return booking ? Booking.fromPrimitives(booking) : null;
+  }
+
+  async findByEventId(eventId: string): Promise<Booking[]> {
+    const result: Booking[] = [];
+    for (const booking of this.bookings.values()) {
+      if (booking.eventId === eventId) {
+        result.push(Booking.fromPrimitives(booking));
+      }
+    }
+    return result;
+  }
+
+  async findByEventAndCustomer(eventId: string, customerEmail: string): Promise<Booking[]> {
+    const result: Booking[] = [];
+    for (const booking of this.bookings.values()) {
+      if (booking.eventId === eventId && booking.customerEmail === customerEmail) {
+        result.push(Booking.fromPrimitives(booking));
+      }
+    }
+    return result;
   }
 
   async save(booking: Booking): Promise<void> {
     this.bookings.set(booking.id, booking.toJSON());
-  }
-
-  private toEntity(booking: BookingRecord) {
-    return new Booking({
-      ...booking,
-      createdAt: new Date(booking.createdAt),
-      confirmedAt: booking.confirmedAt ? new Date(booking.confirmedAt) : undefined,
-      canceledAt: booking.canceledAt ? new Date(booking.canceledAt) : undefined,
-      items: booking.items.map((item) => ({ ...item })),
-    });
   }
 }

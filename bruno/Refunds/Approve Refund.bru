@@ -1,0 +1,43 @@
+meta {
+  name: Approve Refund
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/refunds/{{refundId}}/approve
+  body: none
+  auth: none
+}
+
+docs {
+  # Approve Refund (US16)
+  
+  **Actor:** Event Organizer
+  
+  Approve a refund request.
+  
+  ## Business Rules
+  - Refund must be in Requested status
+  - Refund status changes to Approved
+  - Related tickets are marked as Cancelled
+  - Related booking is marked as Refunded
+  - Raises domain event: RefundApproved
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Refund approved successfully"
+  }
+  ```
+  
+  ## Error Example
+  ```json
+  {
+    "success": false,
+    "error": "Only requested refund can be approved"
+  }
+  ```
+}

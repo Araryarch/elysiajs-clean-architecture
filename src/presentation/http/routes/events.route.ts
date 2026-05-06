@@ -34,6 +34,7 @@ export function eventRoutes(deps: EventRouteDeps) {
           venue: t.String({ minLength: 1 }),
           startAt: t.String({ format: "date-time" }),
           endAt: t.String({ format: "date-time" }),
+          maxCapacity: t.Integer({ minimum: 1 }), // Added: Required by Event entity (US1)
           ticketCategories: t.Array(
             t.Object({
               name: t.String({ minLength: 1 }),

@@ -1,0 +1,54 @@
+meta {
+  name: Reject Refund
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/refunds/{{refundId}}/reject
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "reason": "Refund deadline has passed"
+  }
+}
+
+docs {
+  # Reject Refund (US17)
+  
+  **Actor:** Event Organizer
+  
+  Reject a refund request with a reason.
+  
+  ## Business Rules
+  - Refund must be in Requested status
+  - Rejection reason is mandatory
+  - Refund status changes to Rejected
+  - Booking remains Paid
+  - Tickets remain Active
+  - Raises domain event: RefundRejected
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Refund rejected successfully"
+  }
+  ```
+  
+  ## Error Example
+  ```json
+  {
+    "success": false,
+    "error": "Rejection reason is required"
+  }
+  ```
+}

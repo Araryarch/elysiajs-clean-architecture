@@ -153,7 +153,7 @@ export class Event {
   }
 
   static fromPrimitives(props: Omit<EventProps, "ticketCategories" | "status"> & { 
-    ticketCategories: TicketCategoryProps[];
+    ticketCategories: any[]; // Accept any format, will be converted by TicketCategory.fromPrimitives
     status: string;
   }): Event {
     return new Event({

@@ -1,0 +1,35 @@
+meta {
+  name: Disable Ticket Category
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/events/{{eventId}}/ticket-categories/{{ticketCategoryId}}/disable
+  body: none
+  auth: none
+}
+
+docs {
+  # Disable Ticket Category (US5)
+  
+  **Actor:** Event Organizer
+  
+  Disable a ticket category to prevent further purchases.
+  
+  ## Business Rules
+  - Event must not be Completed
+  - Category is kept for historical purposes
+  - Customers cannot purchase from inactive category
+  - Existing bookings are not affected
+  - Raises domain event: TicketCategoryDisabled
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Ticket category disabled successfully"
+  }
+  ```
+}

@@ -1,0 +1,43 @@
+meta {
+  name: Publish Event
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/events/{{eventId}}/publish
+  body: none
+  auth: none
+}
+
+docs {
+  # Publish Event (US2)
+  
+  **Actor:** Event Organizer
+  
+  Publish an event to make it available for customers.
+  
+  ## Business Rules
+  - Event must have at least one active ticket category
+  - Total ticket quota must not exceed event max capacity
+  - Event must be in Draft status
+  - Cannot publish Cancelled events
+  - Raises domain event: EventPublished
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Event published successfully"
+  }
+  ```
+  
+  ## Error Example
+  ```json
+  {
+    "success": false,
+    "error": "Event must have at least one active ticket category"
+  }
+  ```
+}

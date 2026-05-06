@@ -1,0 +1,45 @@
+meta {
+  name: Expire Booking
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/bookings/{{bookingId}}/expire
+  body: none
+  auth: none
+}
+
+docs {
+  # Expire Booking (US11)
+  
+  **Actor:** System (Background Job)
+  
+  > **Note:** This endpoint is for manual/admin testing only. In production, this should be handled by a background scheduler.
+  
+  Mark unpaid bookings as expired after payment deadline.
+  
+  ## Business Rules
+  - Booking must be in PendingPayment status
+  - Payment deadline must have passed
+  - Reserved ticket quota is released
+  - Paid bookings cannot expire
+  - Raises domain event: BookingExpired
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Booking expired successfully"
+  }
+  ```
+  
+  ## Error Example
+  ```json
+  {
+    "success": false,
+    "error": "Only pending payment booking can expire"
+  }
+  ```
+}

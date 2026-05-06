@@ -18,7 +18,7 @@ export class PostgresEventRepository implements EventRepository {
         .values({
           id: json.id,
           name: json.name,
-          description: json.description,
+          description: json.description || null,
           venue: json.venue,
           startAt: json.startAt,
           endAt: json.endAt,
@@ -30,7 +30,7 @@ export class PostgresEventRepository implements EventRepository {
           target: events.id,
           set: {
             name: json.name,
-            description: json.description,
+            description: json.description || null,
             venue: json.venue,
             startAt: json.startAt,
             endAt: json.endAt,
@@ -72,15 +72,18 @@ export class PostgresEventRepository implements EventRepository {
 
     return Event.fromPrimitives({
       ...eventData,
+      description: eventData.description || undefined,
       status: eventData.status,
       ticketCategories: categories.map((cat) => ({
         id: cat.id,
         eventId: cat.eventId,
         name: cat.name,
-        price: new Money(parseFloat(cat.price), cat.currency),
+        price: parseFloat(cat.price),
+        currency: cat.currency,
         quota: cat.quota,
         bookedQuantity: cat.bookedQuantity,
-        salesPeriod: new DateRange(cat.salesStart, cat.salesEnd),
+        salesStart: cat.salesStart,
+        salesEnd: cat.salesEnd,
         isActive: cat.isActive,
       })),
     });
@@ -98,15 +101,18 @@ export class PostgresEventRepository implements EventRepository {
       result.push(
         Event.fromPrimitives({
           ...eventData,
+          description: eventData.description || undefined,
           status: eventData.status,
           ticketCategories: categories.map((cat) => ({
             id: cat.id,
             eventId: cat.eventId,
             name: cat.name,
-            price: new Money(parseFloat(cat.price), cat.currency),
+            price: parseFloat(cat.price),
+            currency: cat.currency,
             quota: cat.quota,
             bookedQuantity: cat.bookedQuantity,
-            salesPeriod: new DateRange(cat.salesStart, cat.salesEnd),
+            salesStart: cat.salesStart,
+            salesEnd: cat.salesEnd,
             isActive: cat.isActive,
           })),
         })

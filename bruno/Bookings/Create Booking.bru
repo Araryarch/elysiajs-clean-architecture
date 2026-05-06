@@ -1,0 +1,73 @@
+meta {
+  name: Create Booking
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/bookings
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "eventId": "evt_123",
+    "customerName": "John Doe",
+    "customerEmail": "john@example.com",
+    "items": [
+      {
+        "ticketCategoryId": "cat_1",
+        "quantity": 2
+      }
+    ]
+  }
+}
+
+docs {
+  # Create Booking (US8)
+  
+  **Actor:** Customer
+  
+  Create a ticket booking for an event.
+  
+  ## Business Rules
+  - Event must be Published
+  - Ticket category must be Active
+  - Must be within sales period
+  - Quantity must not exceed remaining quota
+  - Customer cannot have multiple active bookings for same event
+  - Booking status is PendingPayment
+  - Payment deadline is 15 minutes after creation
+  - Raises domain event: TicketReserved
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "bkg_456"
+    },
+    "message": "Booking created successfully"
+  }
+  ```
+  
+  ## Error Examples
+  ```json
+  {
+    "success": false,
+    "error": "Only 5 Regular tickets available"
+  }
+  ```
+  
+  ```json
+  {
+    "success": false,
+    "error": "Customer already has an active booking for this event"
+  }
+  ```
+}

@@ -1,5 +1,6 @@
 import { Booking } from "@/domain/entities/booking";
 import { NotFoundError } from "@/domain/errors/domain-error";
+import { Email } from "@/domain/value-objects/email";
 import type { BookingRepository } from "@/domain/repositories/booking-repository";
 import type { EventRepository } from "@/domain/repositories/event-repository";
 import { createId } from "@/shared/id";
@@ -43,15 +44,13 @@ export class CreateBookingUseCase {
       };
     });
 
-    const booking = new Booking({
+    const booking = Booking.create({
       id: createId("bkg"),
       eventId: input.eventId,
       customerName: input.customerName,
-      customerEmail: input.customerEmail,
+      customerEmail: new Email(input.customerEmail),
       items: bookingItems,
       totalAmount: event.calculateTotal(input.items),
-      status: "PENDING",
-      createdAt: new Date(),
     });
 
     await this.eventRepository.save(event);

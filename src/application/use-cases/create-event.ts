@@ -8,6 +8,7 @@ export type CreateEventInput = {
   venue: string;
   startAt: string;
   endAt: string;
+  maxCapacity: number; // Added: Required by Event entity
   ticketCategories: Array<{
     name: string;
     price: number;
@@ -26,7 +27,9 @@ export class CreateEventUseCase {
       venue: input.venue,
       startAt: new Date(input.startAt),
       endAt: new Date(input.endAt),
+      maxCapacity: input.maxCapacity, // Added: Pass maxCapacity
       createdAt: new Date(),
+      status: "Draft", // Added: New events start as Draft
       ticketCategories: input.ticketCategories.map((category) => ({
         id: createId("tcat"),
         name: category.name,

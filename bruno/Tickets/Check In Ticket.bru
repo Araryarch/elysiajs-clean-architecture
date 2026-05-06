@@ -1,0 +1,82 @@
+meta {
+  name: Check In Ticket
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/tickets/check-in
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "ticketCode": "TKT-ABC123",
+    "eventId": "evt_123"
+  }
+}
+
+docs {
+  # Check In Ticket (US13, US14)
+  
+  **Actor:** Gate Officer
+  
+  Check in a ticket at the event venue.
+  
+  ## Business Rules
+  - Ticket must exist and be valid
+  - Ticket must be Active (not already checked in)
+  - Ticket must belong to the specified event
+  - Check-in must be within allowed time window
+  - Event must not be Cancelled
+  - After check-in, ticket status changes to CheckedIn
+  - Raises domain event: TicketCheckedIn
+  
+  ## Success Response
+  ```json
+  {
+    "success": true,
+    "data": null,
+    "message": "Ticket checked in successfully"
+  }
+  ```
+  
+  ## Error Examples
+  
+  ### Invalid Ticket
+  ```json
+  {
+    "success": false,
+    "error": "Ticket not found or invalid"
+  }
+  ```
+  
+  ### Already Checked In
+  ```json
+  {
+    "success": false,
+    "error": "Ticket has already been used"
+  }
+  ```
+  
+  ### Wrong Event
+  ```json
+  {
+    "success": false,
+    "error": "Ticket does not match this event"
+  }
+  ```
+  
+  ### Event Cancelled
+  ```json
+  {
+    "success": false,
+    "error": "Event has been cancelled"
+  }
+  ```
+}

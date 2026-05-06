@@ -1,0 +1,53 @@
+meta {
+  name: Create Event
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/events
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Tech Conference 2024",
+    "description": "Annual technology conference featuring latest innovations",
+    "venue": "Jakarta Convention Center",
+    "startAt": "2024-12-01T09:00:00Z",
+    "endAt": "2024-12-01T18:00:00Z",
+    "maxCapacity": 1000
+  }
+}
+
+docs {
+  # Create Event (US1)
+  
+  **Actor:** Event Organizer
+  
+  Creates a new event in Draft status. Ticket categories should be added separately via the Add Ticket Category endpoint.
+  
+  ## Business Rules
+  - Event name is required
+  - Venue is required
+  - End date must be after start date
+  - Max capacity must be greater than zero
+  - Newly created event has status "Draft"
+  - Raises domain event: EventCreated
+  
+  ## Response Example
+  ```json
+  {
+    "success": true,
+    "data": {
+      "id": "evt_abc123"
+    },
+    "message": "Event created successfully"
+  }
+  ```
+}
