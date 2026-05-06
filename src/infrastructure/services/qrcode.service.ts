@@ -8,7 +8,6 @@ export class QRCodeService implements IQRCodeService {
       const qrCodeDataURL = await QRCode.toDataURL(data, {
         errorCorrectionLevel: "H",
         type: "image/png",
-        quality: 0.95,
         margin: 1,
         width: 300,
         color: {
@@ -29,7 +28,6 @@ export class QRCodeService implements IQRCodeService {
       const buffer = await QRCode.toBuffer(data, {
         errorCorrectionLevel: "H",
         type: "png",
-        quality: 0.95,
         margin: 1,
         width: 300,
       });
