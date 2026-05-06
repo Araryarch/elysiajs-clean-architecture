@@ -5,6 +5,8 @@ import { PostgresEventRepository } from "@/infrastructure/repositories/postgres-
 import { PostgresBookingRepository } from "@/infrastructure/repositories/postgres-booking.repository";
 import { PostgresTicketRepository } from "@/infrastructure/repositories/postgres-ticket.repository";
 import { PostgresRefundRepository } from "@/infrastructure/repositories/postgres-refund.repository";
+import { PostgresPromoCodeRepository } from "@/infrastructure/repositories/postgres-promo-code.repository";
+import { PostgresUserRepository } from "@/infrastructure/repositories/postgres-user.repository";
 import { createMockPaymentGateway } from "@/infrastructure/services/mock-payment-gateway";
 import { createMockRefundPaymentService } from "@/infrastructure/services/mock-refund-payment";
 import { createMockNotificationService } from "@/infrastructure/services/mock-notification";
@@ -14,6 +16,8 @@ import { createTicketController } from "./controllers/ticket.controller";
 import { createRefundController } from "./controllers/refund.controller";
 import { createDashboardController } from "./controllers/dashboard.controller";
 import { createCustomerController } from "./controllers/customer.controller";
+import { createPromoCodeController } from "./controllers/promo-code.controller";
+import { createAuthController } from "./controllers/auth.controller";
 import { error, success } from "./response";
 
 export async function createApp() {
@@ -22,6 +26,11 @@ export async function createApp() {
   const bookingRepository = new PostgresBookingRepository();
   const ticketRepository = new PostgresTicketRepository();
   const refundRepository = new PostgresRefundRepository();
+  const promoCodeRepository = new PostgresPromoCodeRepository();
+  const userRepository = new PostgresUserRepository();
+
+  // Get JWT secret from environment
+  const jwtSecret = process.env.JWT_SECRET || "default-secret-change-in-production";
 
   // Initialize services
   const paymentGateway = createMockPaymentGateway();
@@ -38,12 +47,14 @@ export async function createApp() {
             description: "Clean Architecture implementation with DDD patterns",
           },
           tags: [
+            { name: "Authentication", description: "User authentication and authorization" },
             { name: "Events", description: "Event management and ticket categories" },
             { name: "Bookings", description: "Ticket booking and payment" },
             { name: "Tickets", description: "Ticket check-in and validation" },
             { name: "Refunds", description: "Refund request and approval" },
             { name: "Dashboard", description: "Dashboard statistics and analytics" },
             { name: "Customers", description: "Customer portal endpoints" },
+            { name: "Promo Codes", description: "Promo code management and validation" },
           ],
         },
       })
@@ -99,6 +110,11 @@ export async function createApp() {
           health: "/health"
         },
         endpoints: {
+          auth: [
+            { method: "POST", path: "/api/v1/auth/register", description: "Register new user" },
+            { method: "POST", path: "/api/v1/auth/login", description: "Login user" },
+            { method: "GET", path: "/api/v1/auth/me", description: "Get current user" }
+          ],
           events: [
             { method: "GET", path: "/api/v1/events", description: "List all published events" },
             { method: "GET", path: "/api/v1/events/:id", description: "Get event details" },
@@ -144,6 +160,12 @@ export async function createApp() {
             { method: "GET", path: "/api/v1/customers/me/bookings?email={email}", description: "Get customer bookings" },
             { method: "GET", path: "/api/v1/customers/me/tickets?email={email}", description: "Get customer tickets" },
             { method: "GET", path: "/api/v1/customers/me/refunds?email={email}", description: "Get customer refunds" }
+          ],
+          promoCodes: [
+            { method: "POST", path: "/api/v1/events/:eventId/promo-codes", description: "Create promo code" },
+            { method: "GET", path: "/api/v1/events/:eventId/promo-codes", description: "List promo codes" },
+            { method: "POST", path: "/api/v1/promo-codes/validate", description: "Validate promo code" },
+            { method: "POST", path: "/api/v1/promo-codes/:id/deactivate", description: "Deactivate promo code" }
           ]
         },
       };
@@ -157,6 +179,12 @@ export async function createApp() {
         },
         "Service is healthy"
       )
+    )
+    .use(
+      createAuthController({
+        userRepository,
+        jwtSecret,
+      })
     )
     .use(
       createEventController({
@@ -201,6 +229,12 @@ export async function createApp() {
         bookingRepository,
         ticketRepository,
         refundRepository,
+      })
+    )
+    .use(
+      createPromoCodeController({
+        promoCodeRepository,
+        eventRepository,
       })
     );
 

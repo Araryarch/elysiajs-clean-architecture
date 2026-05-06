@@ -1,5 +1,16 @@
 import { pgTable, text, integer, timestamp, boolean, decimal, uuid } from "drizzle-orm/pg-core";
 
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name").notNull(),
+  role: text("role").notNull(), // Customer, Organizer, Admin
+  status: text("status").notNull(), // Active, Inactive, Suspended
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastLoginAt: timestamp("last_login_at"),
+});
+
 export const events = pgTable("events", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -71,4 +82,32 @@ export const refunds = pgTable("refunds", {
   paidOutAt: timestamp("paid_out_at"),
   rejectionReason: text("rejection_reason"),
   paymentReference: text("payment_reference"),
+});
+
+export const promoCodes = pgTable("promo_codes", {
+  id: text("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id),
+  code: text("code").notNull(),
+  type: text("type").notNull(), // Percentage or FixedAmount
+  discountValue: decimal("discount_value", { precision: 10, scale: 2 }).notNull(),
+  maxUsage: integer("max_usage").notNull(),
+  usedCount: integer("used_count").notNull().default(0),
+  validStart: timestamp("valid_start").notNull(),
+  validEnd: timestamp("valid_end").notNull(),
+  minPurchaseAmount: decimal("min_purchase_amount", { precision: 10, scale: 2 }),
+  currency: text("currency").notNull().default("IDR"),
+  status: text("status").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const waitlist = pgTable("waitlist", {
+  id: text("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  ticketCategoryId: text("ticket_category_id").references(() => ticketCategories.id),
+  quantity: integer("quantity").notNull().default(1),
+  status: text("status").notNull(), // Waiting, Notified, Converted, Cancelled
+  joinedAt: timestamp("joined_at").notNull().defaultNow(),
+  notifiedAt: timestamp("notified_at"),
 });
