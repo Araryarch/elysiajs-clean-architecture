@@ -1,6 +1,0 @@
-[install]
-# Bun configuration for Vercel deployment
-
-[install.cache]
-# Cache dependencies for faster builds
-dir = ".bun-cache"

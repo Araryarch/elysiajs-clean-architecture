@@ -1,12 +1,8 @@
 {
-  "bunVersion": "1.x",
-  "buildCommand": "bun install",
-  "installCommand": "bun install",
-  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api"
+      "destination": "/src/index.ts"
     }
   ]
 }
