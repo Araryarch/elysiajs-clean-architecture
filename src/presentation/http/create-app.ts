@@ -14,6 +14,9 @@ import { createTicketController } from "./controllers/ticket.controller";
 import { createRefundController } from "./controllers/refund.controller";
 import { error, success } from "./response";
 
+// Re-export Elysia for Vercel detection
+export { Elysia };
+
 export async function createApp() {
   // Initialize repositories
   const eventRepository = new PostgresEventRepository();
