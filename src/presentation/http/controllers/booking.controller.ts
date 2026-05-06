@@ -60,17 +60,78 @@ export const createBookingController = (deps: {
             { minItems: 1 },
           ),
         }),
+        detail: {
+          summary: "Create Booking",
+          description: "Create a new ticket booking",
+          tags: ["Bookings"],
+          responses: {
+            200: {
+              description: "Booking created successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Booking created successfully",
+                    data: {
+                      id: "bkg_abc123xyz"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     )
-    .get("/:id", async ({ params }) => {
-      // Get booking details including total price (US9)
-      const result = await getBookingHandler.execute(new GetBookingQuery(params.id));
-      return success(result, "Booking retrieved successfully");
-    })
+    .get(
+      "/:id",
+      async ({ params }) => {
+        const result = await getBookingHandler.execute(new GetBookingQuery(params.id));
+        return success(result, "Booking retrieved successfully");
+      },
+      {
+        detail: {
+          summary: "Get Booking Details",
+          description: "Get detailed information about a booking",
+          tags: ["Bookings"],
+          responses: {
+            200: {
+              description: "Booking retrieved successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Booking retrieved successfully",
+                    data: {
+                      id: "bkg_abc123xyz",
+                      eventId: "evt_xyz789",
+                      customerName: "John Doe",
+                      customerEmail: "john@example.com",
+                      items: [
+                        {
+                          ticketCategoryId: "cat_early123",
+                          ticketCategoryName: "Early Bird",
+                          quantity: 2,
+                          unitPrice: 500000
+                        }
+                      ],
+                      totalAmount: 1000000,
+                      currency: "IDR",
+                      status: "PendingPayment",
+                      paymentDeadline: "2026-05-07T10:30:00Z",
+                      createdAt: "2026-05-07T10:15:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    )
     .post(
       "/:id/pay",
       async ({ params, body }) => {
-        // US10: Pay Booking
         await payBookingHandler.execute(new PayBookingCommand(params.id, body.amount));
         return success(null, "Payment successful");
       },
@@ -78,17 +139,91 @@ export const createBookingController = (deps: {
         body: t.Object({
           amount: t.Number({ minimum: 0 }),
         }),
+        detail: {
+          summary: "Pay Booking",
+          description: "Process payment for a booking",
+          tags: ["Bookings"],
+          responses: {
+            200: {
+              description: "Payment successful",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Payment successful",
+                    data: null
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     )
-    // NOTE: US11 (Expire Booking) should be handled by a background job/scheduler
-    // This endpoint is for manual/admin testing purposes only
-    .post("/:id/expire", async ({ params }) => {
-      await expireBookingHandler.execute(new ExpireBookingCommand(params.id));
-      return success(null, "Booking expired successfully");
-    })
-    // US12: View purchased tickets for a booking
-    .get("/:id/tickets", async ({ params }) => {
-      const result = await getTicketsHandler.execute(new GetTicketsByBookingQuery(params.id));
-      return success(result, "Tickets retrieved successfully");
-    });
+    .post(
+      "/:id/expire",
+      async ({ params }) => {
+        await expireBookingHandler.execute(new ExpireBookingCommand(params.id));
+        return success(null, "Booking expired successfully");
+      },
+      {
+        detail: {
+          summary: "Expire Booking",
+          description: "Expire a booking (admin only)",
+          tags: ["Bookings"],
+          responses: {
+            200: {
+              description: "Booking expired successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Booking expired successfully",
+                    data: null
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    )
+    .get(
+      "/:id/tickets",
+      async ({ params }) => {
+        const result = await getTicketsHandler.execute(new GetTicketsByBookingQuery(params.id));
+        return success(result, "Tickets retrieved successfully");
+      },
+      {
+        detail: {
+          summary: "Get Booking Tickets",
+          description: "Get all tickets for a booking",
+          tags: ["Bookings"],
+          responses: {
+            200: {
+              description: "Tickets retrieved successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Tickets retrieved successfully",
+                    data: [
+                      {
+                        id: "tkt_ticket001",
+                        ticketCode: "TKT-ABC-123456",
+                        eventName: "Tech Conference 2026",
+                        categoryName: "Early Bird",
+                        customerName: "John Doe",
+                        status: "Active",
+                        issuedAt: "2026-05-07T10:15:00Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    );
 };

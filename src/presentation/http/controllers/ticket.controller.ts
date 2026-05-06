@@ -13,7 +13,6 @@ export const createTicketController = (deps: {
   return new Elysia({ prefix: "/api/v1/tickets" }).post(
     "/check-in",
     async ({ body }) => {
-      // US13 & US14: Check In Ticket (Gate Officer only)
       await checkInHandler.execute(new CheckInTicketCommand(body.ticketCode, body.eventId));
       return success(null, "Ticket checked in successfully");
     },
@@ -22,6 +21,25 @@ export const createTicketController = (deps: {
         ticketCode: t.String({ minLength: 1 }),
         eventId: t.String({ minLength: 1 }),
       }),
+      detail: {
+        summary: "Check In Ticket",
+        description: "Check in a ticket at the event (Gate Officer only)",
+        tags: ["Tickets"],
+        responses: {
+          200: {
+            description: "Ticket checked in successfully",
+            content: {
+              "application/json": {
+                example: {
+                  success: true,
+                  message: "Ticket checked in successfully",
+                  data: null
+                }
+              }
+            }
+          }
+        }
+      },
     }
   );
 };

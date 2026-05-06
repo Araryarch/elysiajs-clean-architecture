@@ -32,7 +32,6 @@ export const createRefundController = (deps: {
     .post(
       "/",
       async ({ body }) => {
-        // US15: Request Refund
         const refundId = await requestRefundHandler.execute(new RequestRefundCommand(body.bookingId));
         return success({ id: refundId }, "Refund requested successfully");
       },
@@ -40,17 +39,60 @@ export const createRefundController = (deps: {
         body: t.Object({
           bookingId: t.String({ minLength: 1 }),
         }),
+        detail: {
+          summary: "Request Refund",
+          description: "Request a refund for a booking",
+          tags: ["Refunds"],
+          responses: {
+            200: {
+              description: "Refund requested successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Refund requested successfully",
+                    data: {
+                      id: "ref_abc123xyz"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     )
-    .post("/:id/approve", async ({ params }) => {
-      // US16: Approve Refund (Event Organizer only)
-      await approveRefundHandler.execute(new ApproveRefundCommand(params.id));
-      return success(null, "Refund approved successfully");
-    })
+    .post(
+      "/:id/approve",
+      async ({ params }) => {
+        await approveRefundHandler.execute(new ApproveRefundCommand(params.id));
+        return success(null, "Refund approved successfully");
+      },
+      {
+        detail: {
+          summary: "Approve Refund",
+          description: "Approve a refund request (Event Organizer only)",
+          tags: ["Refunds"],
+          responses: {
+            200: {
+              description: "Refund approved successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Refund approved successfully",
+                    data: null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    )
     .post(
       "/:id/reject",
       async ({ params, body }) => {
-        // US17: Reject Refund (Event Organizer only)
         await rejectRefundHandler.execute(new RejectRefundCommand(params.id, body.reason));
         return success(null, "Refund rejected successfully");
       },
@@ -58,11 +100,53 @@ export const createRefundController = (deps: {
         body: t.Object({
           reason: t.String({ minLength: 1 }),
         }),
+        detail: {
+          summary: "Reject Refund",
+          description: "Reject a refund request (Event Organizer only)",
+          tags: ["Refunds"],
+          responses: {
+            200: {
+              description: "Refund rejected successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Refund rejected successfully",
+                    data: null
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     )
-    .post("/:id/payout", async ({ params }) => {
-      // US18: Mark Refund as Paid Out (System Admin only)
-      await payoutRefundHandler.execute(new PayoutRefundCommand(params.id));
-      return success(null, "Refund paid out successfully");
-    });
+    .post(
+      "/:id/payout",
+      async ({ params }) => {
+        await payoutRefundHandler.execute(new PayoutRefundCommand(params.id));
+        return success(null, "Refund paid out successfully");
+      },
+      {
+        detail: {
+          summary: "Payout Refund",
+          description: "Mark refund as paid out (System Admin only)",
+          tags: ["Refunds"],
+          responses: {
+            200: {
+              description: "Refund paid out successfully",
+              content: {
+                "application/json": {
+                  example: {
+                    success: true,
+                    message: "Refund paid out successfully",
+                    data: null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    );
 };
