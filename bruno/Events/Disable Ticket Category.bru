@@ -33,3 +33,28 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/ticket-categories/{{ticketCategoryId}}/disable
+    method: POST
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Ticket category disabled successfully"
+      }
+    }
+  }
+}

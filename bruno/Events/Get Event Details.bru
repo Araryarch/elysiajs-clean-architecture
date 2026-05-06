@@ -61,3 +61,63 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "evt_123",
+          "name": "Tech Conference 2024",
+          "description": "Annual technology conference",
+          "venue": "Jakarta Convention Center",
+          "startAt": "2024-12-01T09:00:00Z",
+          "endAt": "2024-12-01T18:00:00Z",
+          "maxCapacity": 1000,
+          "status": "Published",
+          "ticketCategories": [
+            {
+              "id": "cat_1",
+              "name": "Regular",
+              "price": 100000,
+              "currency": "IDR",
+              "quota": 500,
+              "bookedQuantity": 50,
+              "availableQuantity": 450,
+              "salesStart": "2024-11-01T00:00:00Z",
+              "salesEnd": "2024-11-30T23:59:59Z",
+              "isActive": true
+            },
+            {
+              "id": "cat_2",
+              "name": "VIP",
+              "price": 250000,
+              "currency": "IDR",
+              "quota": 100,
+              "bookedQuantity": 100,
+              "availableQuantity": 0,
+              "salesStart": "2024-11-01T00:00:00Z",
+              "salesEnd": "2024-11-30T23:59:59Z",
+              "isActive": true
+            }
+          ]
+        },
+        "message": "Event retrieved successfully"
+      }
+    }
+  }
+}

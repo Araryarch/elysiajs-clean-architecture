@@ -71,3 +71,48 @@ docs {
   }
   ```
 }
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/bookings
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "eventId": "evt_123",
+        "customerName": "John Doe",
+        "customerEmail": "john@example.com",
+        "items": [
+          {
+            "ticketCategoryId": "cat_1",
+            "quantity": 2
+          }
+        ]
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "bkg_456"
+        },
+        "message": "Booking created successfully"
+      }
+    }
+  }
+}

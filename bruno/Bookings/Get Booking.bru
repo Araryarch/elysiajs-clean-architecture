@@ -48,3 +48,97 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "bkg_456",
+          "eventId": "evt_123",
+          "eventName": "Tech Conference 2024",
+          "customerName": "John Doe",
+          "customerEmail": "john@example.com",
+          "status": "PendingPayment",
+          "items": [
+            {
+              "ticketCategoryId": "cat_1",
+              "ticketCategoryName": "Regular",
+              "quantity": 2,
+              "unitPrice": 100000,
+              "currency": "IDR",
+              "subtotal": 200000
+            }
+          ],
+          "totalAmount": 200000,
+          "currency": "IDR",
+          "paymentDeadline": "2024-11-15T10:15:00Z",
+          "createdAt": "2024-11-15T10:00:00Z",
+          "paidAt": null
+        },
+        "message": "Booking retrieved successfully"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "bkg_456",
+          "eventId": "evt_123",
+          "eventName": "Tech Conference 2024",
+          "customerName": "John Doe",
+          "customerEmail": "john@example.com",
+          "status": "PendingPayment",
+          "items": [
+            {
+              "ticketCategoryId": "cat_1",
+              "ticketCategoryName": "Regular",
+              "quantity": 2,
+              "unitPrice": 100000,
+              "currency": "IDR",
+              "subtotal": 200000
+            }
+          ],
+          "totalAmount": 200000,
+          "currency": "IDR",
+          "paymentDeadline": "2024-11-15T10:15:00Z",
+          "createdAt": "2024-11-15T10:00:00Z",
+          "paidAt": null
+        },
+        "message": "Booking retrieved successfully"
+      }
+    }
+  }
+}

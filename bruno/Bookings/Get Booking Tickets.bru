@@ -53,3 +53,95 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}/tickets
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": [
+          {
+            "id": "tkt_1",
+            "ticketCode": "TKT-ABC123",
+            "ticketCategoryName": "Regular",
+            "status": "Active",
+            "bookingId": "bkg_456",
+            "eventId": "evt_123",
+            "eventName": "Tech Conference 2024",
+            "eventDate": "2024-12-01T09:00:00Z"
+          },
+          {
+            "id": "tkt_2",
+            "ticketCode": "TKT-ABC124",
+            "ticketCategoryName": "Regular",
+            "status": "Active",
+            "bookingId": "bkg_456",
+            "eventId": "evt_123",
+            "eventName": "Tech Conference 2024",
+            "eventDate": "2024-12-01T09:00:00Z"
+          }
+        ],
+        "message": "Tickets retrieved successfully"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}/tickets
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": [
+          {
+            "id": "tkt_1",
+            "ticketCode": "TKT-ABC123",
+            "ticketCategoryName": "Regular",
+            "status": "Active",
+            "bookingId": "bkg_456",
+            "eventId": "evt_123",
+            "eventName": "Tech Conference 2024",
+            "eventDate": "2024-12-01T09:00:00Z"
+          },
+          {
+            "id": "tkt_2",
+            "ticketCode": "TKT-ABC124",
+            "ticketCategoryName": "Regular",
+            "status": "Active",
+            "bookingId": "bkg_456",
+            "eventId": "evt_123",
+            "eventName": "Tech Conference 2024",
+            "eventDate": "2024-12-01T09:00:00Z"
+          }
+        ],
+        "message": "Tickets retrieved successfully"
+      }
+    }
+  }
+}

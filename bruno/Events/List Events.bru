@@ -47,3 +47,38 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events?status=Published&location=Jakarta&date=2024-12-01
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": [
+          {
+            "id": "evt_123",
+            "name": "Tech Conference 2024",
+            "venue": "Jakarta Convention Center",
+            "startAt": "2024-12-01T09:00:00Z",
+            "endAt": "2024-12-01T18:00:00Z",
+            "status": "Published",
+            "lowestPrice": 100000
+          }
+        ],
+        "message": "Events retrieved successfully"
+      }
+    }
+  }
+}

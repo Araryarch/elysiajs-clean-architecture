@@ -61,3 +61,40 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/refunds
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "bookingId": "bkg_456"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "ref_789"
+        },
+        "message": "Refund requested successfully"
+      }
+    }
+  }
+}

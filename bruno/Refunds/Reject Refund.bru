@@ -52,3 +52,38 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/refunds/{{refundId}}/reject
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "reason": "Refund deadline has passed"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Refund rejected successfully"
+      }
+    }
+  }
+}

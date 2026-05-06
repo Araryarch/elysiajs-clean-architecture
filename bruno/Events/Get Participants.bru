@@ -48,3 +48,45 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/participants
+    method: GET
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": [
+          {
+            "customerName": "John Doe",
+            "customerEmail": "john@example.com",
+            "ticketCategory": "Regular",
+            "ticketCode": "TKT-ABC123",
+            "ticketStatus": "CheckedIn",
+            "bookingId": "bkg_456"
+          },
+          {
+            "customerName": "Jane Smith",
+            "customerEmail": "jane@example.com",
+            "ticketCategory": "VIP",
+            "ticketCode": "TKT-XYZ789",
+            "ticketStatus": "Active",
+            "bookingId": "bkg_789"
+          }
+        ],
+        "message": "Participants retrieved successfully"
+      }
+    }
+  }
+}

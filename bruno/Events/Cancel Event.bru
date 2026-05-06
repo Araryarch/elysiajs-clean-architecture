@@ -41,3 +41,53 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/cancel
+    method: POST
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Event cancelled successfully"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/cancel
+    method: POST
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Event cancelled successfully"
+      }
+    }
+  }
+}

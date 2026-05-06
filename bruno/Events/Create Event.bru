@@ -51,3 +51,87 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "name": "Tech Conference 2024",
+        "description": "Annual technology conference featuring latest innovations",
+        "venue": "Jakarta Convention Center",
+        "startAt": "2024-12-01T09:00:00Z",
+        "endAt": "2024-12-01T18:00:00Z",
+        "maxCapacity": 1000
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "evt_abc123"
+        },
+        "message": "Event created successfully"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/events
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "name": "Tech Conference 2024",
+        "description": "Annual technology conference featuring latest innovations",
+        "venue": "Jakarta Convention Center",
+        "startAt": "2024-12-01T09:00:00Z",
+        "endAt": "2024-12-01T18:00:00Z",
+        "maxCapacity": 1000
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "evt_abc123"
+        },
+        "message": "Event created successfully"
+      }
+    }
+  }
+}

@@ -80,3 +80,39 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/tickets/check-in
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "ticketCode": "TKT-ABC123",
+        "eventId": "evt_123"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Ticket checked in successfully"
+      }
+    }
+  }
+}

@@ -59,3 +59,73 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}/pay
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "amount": 200000
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Payment successful"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/bookings/{{bookingId}}/pay
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "amount": 200000
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": null,
+        "message": "Payment successful"
+      }
+    }
+  }
+}

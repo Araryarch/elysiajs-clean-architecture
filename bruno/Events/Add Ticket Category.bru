@@ -57,3 +57,85 @@ docs {
   }
   ```
 }
+
+example {
+  name: Success
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/ticket-categories
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+    
+    body:json: {
+      {
+        "name": "Early Bird",
+        "price": 75000,
+        "quota": 200,
+        "salesStart": "2024-10-01T00:00:00Z",
+        "salesEnd": "2024-10-31T23:59:59Z"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+    
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "cat_3"
+        },
+        "message": "Ticket category added successfully"
+      }
+    }
+  }
+}
+
+example {
+  name: example
+  
+  request: {
+    url: {{baseUrl}}/events/{{eventId}}/ticket-categories
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "name": "Early Bird",
+        "price": 75000,
+        "quota": 200,
+        "salesStart": "2024-10-01T00:00:00Z",
+        "salesEnd": "2024-10-31T23:59:59Z"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: {
+        "success": true,
+        "data": {
+          "id": "cat_3"
+        },
+        "message": "Ticket category added successfully"
+      }
+    }
+  }
+}
