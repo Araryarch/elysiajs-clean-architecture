@@ -1,9 +1,11 @@
 {
   "bunVersion": "1.x",
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/src/index"
+      "destination": "/index"
     }
   ]
 }

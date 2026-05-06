@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun --watch src/main.ts",
     "start": "bun src/main.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --external elysia --external @elysiajs/swagger --external drizzle-orm --external postgres --external nanoid",
     "test": "bun test",
     "lint:error": "tsc --noEmit --pretty false | Select-String \"error\"",
     "typecheck": "tsc --noEmit",
