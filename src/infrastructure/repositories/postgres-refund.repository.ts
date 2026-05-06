@@ -62,4 +62,14 @@ export class PostgresRefundRepository implements IRefundRepository {
       })
     );
   }
+
+  async findAll(): Promise<Refund[]> {
+    const refundsList = await db.query.refunds.findMany();
+    return refundsList.map((r) =>
+      Refund.fromPrimitives({
+        ...r,
+        amount: parseFloat(r.amount),
+      })
+    );
+  }
 }

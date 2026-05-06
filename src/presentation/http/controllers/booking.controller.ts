@@ -1,8 +1,10 @@
 import { Elysia, t, type TSchema } from "elysia";
 import { CreateBookingCommand, CreateBookingHandler } from "@/application/commands/create-booking.command";
+import { CancelBookingCommand, CancelBookingHandler } from "@/application/commands/cancel-booking.command";
 import { PayBookingCommand, PayBookingHandler } from "@/application/commands/pay-booking.command";
 import { ExpireBookingCommand, ExpireBookingHandler } from "@/application/commands/expire-booking.command";
 import { GetBookingQuery, GetBookingHandler } from "@/application/queries/get-booking.query";
+import { ListBookingsQuery, ListBookingsHandler } from "@/application/queries/list-bookings.query";
 import {
   GetTicketsByBookingQuery,
   GetTicketsByBookingHandler,
@@ -61,6 +63,7 @@ export const createBookingController = (deps: {
   paymentGateway: IPaymentGateway;
 }) => {
   const createBookingHandler = new CreateBookingHandler(deps.eventRepository, deps.bookingRepository);
+  const cancelBookingHandler = new CancelBookingHandler(deps.bookingRepository, deps.eventRepository);
   const payBookingHandler = new PayBookingHandler(
     deps.bookingRepository,
     deps.ticketRepository,
@@ -68,6 +71,7 @@ export const createBookingController = (deps: {
   );
   const expireBookingHandler = new ExpireBookingHandler(deps.bookingRepository, deps.eventRepository);
   const getBookingHandler = new GetBookingHandler(deps.bookingRepository, deps.eventRepository);
+  const listBookingsHandler = new ListBookingsHandler(deps.bookingRepository, deps.eventRepository);
   const getTicketsHandler = new GetTicketsByBookingHandler(
     deps.bookingRepository,
     deps.ticketRepository,
@@ -177,6 +181,47 @@ export const createBookingController = (deps: {
         detail: {
           summary: "Get Booking Tickets",
           description: "Get all tickets for a booking",
+          tags: ["Bookings"],
+        },
+      },
+    )
+    .get(
+      "/",
+      async ({ query }) => {
+        const result = await listBookingsHandler.execute(
+          new ListBookingsQuery(query.eventId, query.status, query.customerEmail),
+        );
+        return success(result, "Bookings retrieved successfully");
+      },
+      {
+        query: t.Object({
+          eventId: t.Optional(t.String()),
+          status: t.Optional(t.String()),
+          customerEmail: t.Optional(t.String()),
+        }),
+        response: {
+          200: SuccessResponse(t.Array(BookingSchema)),
+        },
+        detail: {
+          summary: "List Bookings",
+          description: "Get list of bookings with optional filters (Admin/Organizer)",
+          tags: ["Bookings"],
+        },
+      },
+    )
+    .delete(
+      "/:id",
+      async ({ params }) => {
+        await cancelBookingHandler.execute(new CancelBookingCommand(params.id));
+        return success(null, "Booking cancelled successfully");
+      },
+      {
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
+        detail: {
+          summary: "Cancel Booking",
+          description: "Cancel a pending booking (Customer)",
           tags: ["Bookings"],
         },
       },

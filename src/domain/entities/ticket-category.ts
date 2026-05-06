@@ -96,6 +96,28 @@ export class TicketCategory {
     this.props.bookedQuantity = Math.max(0, this.props.bookedQuantity - quantity);
   }
 
+  updateName(name: string) {
+    if (!name.trim()) throw new DomainError("Ticket category name is required");
+    this.props.name = name;
+  }
+
+  updatePrice(price: number) {
+    if (price < 0) throw new DomainError("Ticket price cannot be negative");
+    this.props.price = new Money(price, this.props.price.currency);
+  }
+
+  updateQuota(quota: number) {
+    if (quota <= 0) throw new DomainError("Ticket quota must be greater than zero");
+    if (quota < this.props.bookedQuantity) {
+      throw new DomainError("Cannot reduce quota below booked quantity");
+    }
+    this.props.quota = quota;
+  }
+
+  updateSalesPeriod(start: Date, end: Date) {
+    this.props.salesPeriod = new DateRange(start, end);
+  }
+
   toJSON() {
     return {
       id: this.props.id,

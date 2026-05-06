@@ -131,4 +131,30 @@ export class PostgresBookingRepository implements BookingRepository {
 
     return result;
   }
+
+  async findAll(): Promise<Booking[]> {
+    const bookingsList = await db.query.bookings.findMany();
+    const result: Booking[] = [];
+
+    for (const bookingData of bookingsList) {
+      const items = await db.query.bookingItems.findMany({
+        where: eq(bookingItems.bookingId, bookingData.id),
+      });
+
+      result.push(
+        Booking.fromPrimitives({
+          ...bookingData,
+          items: items.map((item) => ({
+            ticketCategoryId: item.ticketCategoryId,
+            quantity: item.quantity,
+            unitPrice: parseFloat(item.unitPrice),
+            currency: item.currency,
+          })),
+          totalAmount: parseFloat(bookingData.totalAmount),
+        })
+      );
+    }
+
+    return result;
+  }
 }

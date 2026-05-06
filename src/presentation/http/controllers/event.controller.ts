@@ -1,11 +1,17 @@
 import { Elysia, t, type TSchema } from "elysia";
 import { CreateEventCommand, CreateEventHandler } from "@/application/commands/create-event.command";
+import { UpdateEventCommand, UpdateEventHandler } from "@/application/commands/update-event.command";
+import { DeleteEventCommand, DeleteEventHandler } from "@/application/commands/delete-event.command";
 import { PublishEventCommand, PublishEventHandler } from "@/application/commands/publish-event.command";
 import { CancelEventCommand, CancelEventHandler } from "@/application/commands/cancel-event.command";
 import {
   AddTicketCategoryCommand,
   AddTicketCategoryHandler,
 } from "@/application/commands/add-ticket-category.command";
+import {
+  UpdateTicketCategoryCommand,
+  UpdateTicketCategoryHandler,
+} from "@/application/commands/update-ticket-category.command";
 import {
   DisableTicketCategoryCommand,
   DisableTicketCategoryHandler,
@@ -35,6 +41,8 @@ export const createEventController = (deps: {
   ticketRepository: ITicketRepository;
 }) => {
   const createEventHandler = new CreateEventHandler(deps.eventRepository);
+  const updateEventHandler = new UpdateEventHandler(deps.eventRepository);
+  const deleteEventHandler = new DeleteEventHandler(deps.eventRepository);
   const publishEventHandler = new PublishEventHandler(deps.eventRepository);
   const cancelEventHandler = new CancelEventHandler(
     deps.eventRepository,
@@ -42,6 +50,7 @@ export const createEventController = (deps: {
     deps.ticketRepository,
   );
   const addTicketCategoryHandler = new AddTicketCategoryHandler(deps.eventRepository);
+  const updateTicketCategoryHandler = new UpdateTicketCategoryHandler(deps.eventRepository);
   const disableTicketCategoryHandler = new DisableTicketCategoryHandler(deps.eventRepository);
   const getEventHandler = new GetEventHandler(deps.eventRepository);
   const listEventsHandler = new ListEventsHandler(deps.eventRepository);
@@ -296,6 +305,90 @@ export const createEventController = (deps: {
         detail: {
           summary: "Disable Ticket Category",
           description: "Disable a ticket category to prevent new bookings (Event Organizer only)",
+          tags: ["Events"],
+        },
+      },
+    )
+    .put(
+      "/:id",
+      async ({ params, body }) => {
+        const command = new UpdateEventCommand(
+          params.id,
+          body.name,
+          body.description,
+          body.venue,
+          body.startAt ? new Date(body.startAt) : undefined,
+          body.endAt ? new Date(body.endAt) : undefined,
+          body.maxCapacity,
+        );
+        await updateEventHandler.execute(command);
+        return success(null, "Event updated successfully");
+      },
+      {
+        body: t.Object({
+          name: t.Optional(t.String({ minLength: 1 })),
+          description: t.Optional(t.String()),
+          venue: t.Optional(t.String({ minLength: 1 })),
+          startAt: t.Optional(t.String()),
+          endAt: t.Optional(t.String()),
+          maxCapacity: t.Optional(t.Number({ minimum: 1 })),
+        }),
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
+        detail: {
+          summary: "Update Event",
+          description: "Update event details (only draft events can be updated)",
+          tags: ["Events"],
+        },
+      },
+    )
+    .delete(
+      "/:id",
+      async ({ params }) => {
+        await deleteEventHandler.execute(new DeleteEventCommand(params.id));
+        return success(null, "Event deleted successfully");
+      },
+      {
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
+        detail: {
+          summary: "Delete Event",
+          description: "Delete a draft event (Event Organizer only)",
+          tags: ["Events"],
+        },
+      },
+    )
+    .put(
+      "/:id/ticket-categories/:categoryId",
+      async ({ params, body }) => {
+        const command = new UpdateTicketCategoryCommand(
+          params.id,
+          params.categoryId,
+          body.name,
+          body.price,
+          body.quota,
+          body.salesStart ? new Date(body.salesStart) : undefined,
+          body.salesEnd ? new Date(body.salesEnd) : undefined,
+        );
+        await updateTicketCategoryHandler.execute(command);
+        return success(null, "Ticket category updated successfully");
+      },
+      {
+        body: t.Object({
+          name: t.Optional(t.String({ minLength: 1 })),
+          price: t.Optional(t.Number({ minimum: 0 })),
+          quota: t.Optional(t.Number({ minimum: 1 })),
+          salesStart: t.Optional(t.String()),
+          salesEnd: t.Optional(t.String()),
+        }),
+        response: {
+          200: SuccessResponse(NullResponse),
+        },
+        detail: {
+          summary: "Update Ticket Category",
+          description: "Update ticket category details (only draft events)",
           tags: ["Events"],
         },
       },

@@ -12,6 +12,7 @@ import { createEventController } from "./controllers/event.controller";
 import { createBookingController } from "./controllers/booking.controller";
 import { createTicketController } from "./controllers/ticket.controller";
 import { createRefundController } from "./controllers/refund.controller";
+import { createDashboardController } from "./controllers/dashboard.controller";
 import { error, success } from "./response";
 
 export async function createApp() {
@@ -40,6 +41,7 @@ export async function createApp() {
             { name: "Bookings", description: "Ticket booking and payment" },
             { name: "Tickets", description: "Ticket check-in and validation" },
             { name: "Refunds", description: "Refund request and approval" },
+            { name: "Dashboard", description: "Dashboard statistics and analytics" },
           ],
         },
       })
@@ -99,28 +101,40 @@ export async function createApp() {
             { method: "GET", path: "/api/v1/events", description: "List all published events" },
             { method: "GET", path: "/api/v1/events/:id", description: "Get event details" },
             { method: "POST", path: "/api/v1/events", description: "Create new event" },
+            { method: "PUT", path: "/api/v1/events/:id", description: "Update draft event" },
+            { method: "DELETE", path: "/api/v1/events/:id", description: "Delete draft event" },
             { method: "POST", path: "/api/v1/events/:id/publish", description: "Publish event" },
             { method: "POST", path: "/api/v1/events/:id/cancel", description: "Cancel event" },
             { method: "POST", path: "/api/v1/events/:id/ticket-categories", description: "Add ticket category" },
+            { method: "PUT", path: "/api/v1/events/:id/ticket-categories/:categoryId", description: "Update ticket category" },
             { method: "POST", path: "/api/v1/events/:id/ticket-categories/:categoryId/disable", description: "Disable ticket category" },
             { method: "GET", path: "/api/v1/events/:id/sales-report", description: "Get sales report" },
             { method: "GET", path: "/api/v1/events/:id/participants", description: "Get participants list" }
           ],
           bookings: [
+            { method: "GET", path: "/api/v1/bookings", description: "List all bookings (admin)" },
             { method: "POST", path: "/api/v1/bookings", description: "Create new booking" },
             { method: "GET", path: "/api/v1/bookings/:id", description: "Get booking details" },
+            { method: "DELETE", path: "/api/v1/bookings/:id", description: "Cancel pending booking" },
             { method: "POST", path: "/api/v1/bookings/:id/pay", description: "Pay for booking" },
             { method: "POST", path: "/api/v1/bookings/:id/expire", description: "Expire booking (admin)" },
             { method: "GET", path: "/api/v1/bookings/:id/tickets", description: "Get booking tickets" }
           ],
           tickets: [
+            { method: "GET", path: "/api/v1/tickets", description: "Search tickets" },
+            { method: "GET", path: "/api/v1/tickets/:id", description: "Get ticket details" },
             { method: "POST", path: "/api/v1/tickets/check-in", description: "Check in ticket" }
           ],
           refunds: [
+            { method: "GET", path: "/api/v1/refunds", description: "List all refunds (admin)" },
             { method: "POST", path: "/api/v1/refunds", description: "Request refund" },
+            { method: "GET", path: "/api/v1/refunds/:id", description: "Get refund details" },
             { method: "POST", path: "/api/v1/refunds/:id/approve", description: "Approve refund" },
             { method: "POST", path: "/api/v1/refunds/:id/reject", description: "Reject refund" },
             { method: "POST", path: "/api/v1/refunds/:id/payout", description: "Payout refund" }
+          ],
+          dashboard: [
+            { method: "GET", path: "/api/v1/dashboard/stats", description: "Get dashboard statistics (admin)" }
           ]
         },
       };
@@ -162,6 +176,14 @@ export async function createApp() {
         ticketRepository,
         refundRepository,
         refundPaymentService,
+      })
+    )
+    .use(
+      createDashboardController({
+        eventRepository,
+        bookingRepository,
+        ticketRepository,
+        refundRepository,
       })
     );
 

@@ -121,4 +121,13 @@ export class PostgresEventRepository implements EventRepository {
 
     return result;
   }
+
+  async delete(id: string): Promise<void> {
+    await db.transaction(async (tx) => {
+      // Delete ticket categories first (FK constraint)
+      await tx.delete(ticketCategories).where(eq(ticketCategories.eventId, id));
+      // Delete event
+      await tx.delete(events).where(eq(events.id, id));
+    });
+  }
 }

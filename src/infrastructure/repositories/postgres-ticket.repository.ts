@@ -66,4 +66,9 @@ export class PostgresTicketRepository implements ITicketRepository {
 
     return ticketsList.map((t) => Ticket.fromPrimitives(t));
   }
+
+  async findAll(): Promise<Ticket[]> {
+    const ticketsList = await db.query.tickets.findMany();
+    return ticketsList.map((t) => Ticket.fromPrimitives(t));
+  }
 }

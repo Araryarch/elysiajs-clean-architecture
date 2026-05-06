@@ -119,6 +119,42 @@ export class Event {
     }
   }
 
+  releaseQuota(ticketCategoryId: string, quantity: number) {
+    const category = this.findTicketCategory(ticketCategoryId);
+    category.release(quantity);
+  }
+
+  updateName(name: string) {
+    if (!name.trim()) throw new DomainError("Event name is required");
+    this.props.name = name;
+  }
+
+  updateDescription(description: string) {
+    this.props.description = description;
+  }
+
+  updateVenue(venue: string) {
+    if (!venue.trim()) throw new DomainError("Event venue is required");
+    this.props.venue = venue;
+  }
+
+  updateSchedule(startAt: Date, endAt: Date) {
+    if (endAt <= startAt) throw new DomainError("Event end time must be after start time");
+    this.props.startAt = startAt;
+    this.props.endAt = endAt;
+  }
+
+  updateMaxCapacity(maxCapacity: number) {
+    if (maxCapacity <= 0) throw new DomainError("Event capacity must be greater than zero");
+    
+    const totalQuota = this.props.ticketCategories.reduce((sum, c) => sum + c.quota, 0);
+    if (totalQuota > maxCapacity) {
+      throw new DomainError("Cannot reduce capacity below total ticket quota");
+    }
+    
+    this.props.maxCapacity = maxCapacity;
+  }
+
   calculateTotal(items: Array<{ ticketCategoryId: string; quantity: number }>): Money {
     let total = new Money(0);
     for (const item of items) {

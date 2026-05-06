@@ -49,4 +49,8 @@ export class InMemoryEventRepository implements EventRepository {
   async save(event: Event): Promise<void> {
     this.events.set(event.id, event.toJSON());
   }
+
+  async delete(id: string): Promise<void> {
+    this.events.delete(id);
+  }
 }

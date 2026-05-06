@@ -34,4 +34,12 @@ export class InMemoryBookingRepository implements BookingRepository {
   async save(booking: Booking): Promise<void> {
     this.bookings.set(booking.id, booking.toJSON());
   }
+
+  async findAll(): Promise<Booking[]> {
+    const result: Booking[] = [];
+    for (const booking of this.bookings.values()) {
+      result.push(Booking.fromPrimitives(booking));
+    }
+    return result;
+  }
 }
