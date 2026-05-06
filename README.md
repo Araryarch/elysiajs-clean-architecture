@@ -1,6 +1,6 @@
 # ElysiaJS Clean Architecture: Event Ticketing & Booking
 
-Backend API untuk **Event Ticketing & Booking System** menggunakan **Bun + ElysiaJS + TypeScript + Drizzle ORM + PostgreSQL** dengan pola **Clean Architecture** dan **Domain-Driven Design**.
+Backend API untuk **Event Ticketing & Booking System** menggunakan **Bun + ElysiaJS + TypeScript + Drizzle ORM + Supabase** dengan pola **Clean Architecture** dan **Domain-Driven Design**.
 
 ## Struktur Project
 
@@ -13,56 +13,67 @@ src/
 └── shared/           # Utility (ID generator)
 ```
 
-## Quick Start (Docker)
+## Quick Start
 
-Cara **paling mudah** untuk menjalankan project ini -- cukup butuh Docker.
+### Prasyarat
+- [Bun](https://bun.sh/) v1.3+
+- [Supabase Account](https://supabase.com/) (gratis)
+
+### Setup Supabase
+
+1. **Buat project baru di Supabase**
+   - Buka [Supabase Dashboard](https://supabase.com/dashboard)
+   - Klik "New Project"
+   - Isi nama project dan password database
+   - Pilih region terdekat (Singapore untuk Indonesia)
+
+2. **Dapatkan Connection String**
+   - Buka project > Settings > Database
+   - Scroll ke "Connection String" > pilih tab "URI"
+   - Copy connection string (mode: Session atau Transaction)
+   - Format: `postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
+
+### Setup Project
 
 ```bash
 # 1. Clone & masuk ke folder
 git clone <repo-url>
 cd elysiajs-clean-architecture
 
-# 2. Jalankan semuanya (PostgreSQL + App + Schema + Seed)
-docker compose up --build
-
-# API ready di http://localhost:3000
-# Swagger UI di http://localhost:3000/swagger
-```
-
-**Untuk reset database:**
-```bash
-docker compose down -v          # Hapus volume data
-docker compose up --build       # Build ulang & seed fresh
-```
-
-## Manual Setup (Tanpa Docker)
-
-### Prasyarat
-- [Bun](https://bun.sh/) v1.3+
-- PostgreSQL 16+
-
-### Langkah-langkah
-
-```bash
-# 1. Install dependencies
+# 2. Install dependencies
 bun install
 
-# 2. Setup environment
+# 3. Setup environment
 cp .env.example .env
-# Edit .env sesuai konfigurasi PostgreSQL kamu
+# Edit .env dan paste connection string dari Supabase
 
-# 3. Push schema ke database
+# 4. Push schema ke Supabase
 bun run db:push
 
-# 4. Seed database
+# 5. Seed database dengan data sample
 bun run db:seed
 
-# 5. Jalankan server
+# 6. Jalankan server
 bun run dev
 ```
 
 Server berjalan di `http://localhost:3000`.
 Swagger UI di `http://localhost:3000/swagger`.
+
+### Reset Database
+
+Jika ingin reset database dari awal:
+
+```bash
+# 1. Drop semua table di Supabase (via SQL Editor atau Drizzle Studio)
+bun run db:studio
+
+# 2. Push schema ulang
+bun run db:push
+
+# 3. Seed ulang
+bun run db:seed
+```
 
 ## Scripts
 
@@ -221,5 +232,30 @@ Test cases mencakup domain logic validasi pada Event, Booking, Ticket, dan Refun
 - **Framework**: [ElysiaJS](https://elysiajs.com/)
 - **Language**: TypeScript
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
-- **Database**: PostgreSQL 16
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
 - **Architecture**: Clean Architecture + DDD Tactical Patterns
+
+## Deployment
+
+### Deploy ke Production
+
+1. **Setup Supabase Production Database**
+   - Buat project baru untuk production
+   - Dapatkan connection string production
+
+2. **Deploy Application** (contoh: Railway, Vercel, Fly.io)
+   ```bash
+   # Set environment variables
+   DATABASE_URL=<supabase-production-url>
+   PORT=3000
+   
+   # Build & start
+   bun install
+   bun run db:push
+   bun run start
+   ```
+
+3. **Jangan lupa seed data production** (opsional)
+   ```bash
+   bun run db:seed
+   ```

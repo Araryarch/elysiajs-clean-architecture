@@ -125,3 +125,5 @@ export async function createApp() {
 
   return app;
 }
+
+export type App = Awaited<ReturnType<typeof createApp>>;
