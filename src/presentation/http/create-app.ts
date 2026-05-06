@@ -83,6 +83,48 @@ export async function createApp() {
             : undefined,
       });
     })
+    .get("/", () => {
+      return {
+        name: "Event Ticketing & Booking API",
+        version: "1.0.0",
+        description: "Clean Architecture + Domain-Driven Design",
+        techStack: ["Bun", "ElysiaJS", "TypeScript", "Drizzle ORM", "Supabase"],
+        baseUrl: "/api/v1",
+        documentation: {
+          swagger: "/swagger",
+          health: "/health"
+        },
+        endpoints: {
+          events: [
+            { method: "GET", path: "/api/v1/events", description: "List all published events" },
+            { method: "GET", path: "/api/v1/events/:id", description: "Get event details" },
+            { method: "POST", path: "/api/v1/events", description: "Create new event" },
+            { method: "POST", path: "/api/v1/events/:id/publish", description: "Publish event" },
+            { method: "POST", path: "/api/v1/events/:id/cancel", description: "Cancel event" },
+            { method: "POST", path: "/api/v1/events/:id/ticket-categories", description: "Add ticket category" },
+            { method: "POST", path: "/api/v1/events/:id/ticket-categories/:categoryId/disable", description: "Disable ticket category" },
+            { method: "GET", path: "/api/v1/events/:id/sales-report", description: "Get sales report" },
+            { method: "GET", path: "/api/v1/events/:id/participants", description: "Get participants list" }
+          ],
+          bookings: [
+            { method: "POST", path: "/api/v1/bookings", description: "Create new booking" },
+            { method: "GET", path: "/api/v1/bookings/:id", description: "Get booking details" },
+            { method: "POST", path: "/api/v1/bookings/:id/pay", description: "Pay for booking" },
+            { method: "POST", path: "/api/v1/bookings/:id/expire", description: "Expire booking (admin)" },
+            { method: "GET", path: "/api/v1/bookings/:id/tickets", description: "Get booking tickets" }
+          ],
+          tickets: [
+            { method: "POST", path: "/api/v1/tickets/check-in", description: "Check in ticket" }
+          ],
+          refunds: [
+            { method: "POST", path: "/api/v1/refunds", description: "Request refund" },
+            { method: "POST", path: "/api/v1/refunds/:id/approve", description: "Approve refund" },
+            { method: "POST", path: "/api/v1/refunds/:id/reject", description: "Reject refund" },
+            { method: "POST", path: "/api/v1/refunds/:id/payout", description: "Payout refund" }
+          ]
+        },
+      };
+    })
     .get("/health", () =>
       success(
         {
