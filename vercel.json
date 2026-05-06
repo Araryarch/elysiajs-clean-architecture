@@ -1,8 +1,14 @@
 {
-  "rewrites": [
+  "version": 2,
+  "functions": {
+    "api/index.ts": {
+      "runtime": "edge"
+    }
+  },
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/src/index.ts"
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
     }
   ]
 }
