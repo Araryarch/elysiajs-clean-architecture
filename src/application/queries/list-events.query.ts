@@ -6,7 +6,8 @@ import { Query, QueryHandler } from "@/application/queries/query";
 export class ListEventsQuery implements Query {
   constructor(
     public readonly status?: string,
-    public readonly location?: string
+    public readonly location?: string,
+    public readonly date?: string,
   ) {}
 }
 
@@ -20,11 +21,23 @@ export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO
     const statusFilter = query.status || EventStatus.PUBLISHED;
     events = events.filter((e) => e.status === statusFilter);
 
-    // Filter by location if provided
+    // US6: Filter by location if provided
     if (query.location) {
       events = events.filter((e) =>
-        e.toJSON().venue.toLowerCase().includes(query.location!.toLowerCase())
+        e.toJSON().venue.toLowerCase().includes(query.location!.toLowerCase()),
       );
+    }
+
+    // US6: Filter by date if provided (events on or after the given date)
+    if (query.date) {
+      const filterDate = new Date(query.date);
+      if (!isNaN(filterDate.getTime())) {
+        events = events.filter((e) => {
+          const json = e.toJSON();
+          // Include events whose end date is on or after the filter date
+          return json.endAt >= filterDate;
+        });
+      }
     }
 
     return events.map((event) => {

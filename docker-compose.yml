@@ -1,0 +1,60 @@
+services:
+  # ── PostgreSQL Database ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: event_ticketing_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: event_ticketing
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d event_ticketing"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── ElysiaJS Application ─────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: event_ticketing_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/event_ticketing
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ── Database Schema Push + Seed (run once) ───────────────────────────
+  db-setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: event_ticketing_db_setup
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/event_ticketing
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo '[schema] Pushing database schema...' &&
+        bunx drizzle-kit push --force &&
+        echo '[seed] Running seed...' &&
+        bun run src/infrastructure/seed.ts &&
+        echo '[done] Database setup complete!'
+      "
+    restart: "no"
+
+volumes:
+  pgdata:
+    driver: local

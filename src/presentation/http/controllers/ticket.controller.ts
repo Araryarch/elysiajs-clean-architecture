@@ -13,13 +13,14 @@ export const createTicketController = (deps: {
   return new Elysia({ prefix: "/api/v1/tickets" }).post(
     "/check-in",
     async ({ body }) => {
+      // US13 & US14: Check In Ticket (Gate Officer only)
       await checkInHandler.execute(new CheckInTicketCommand(body.ticketCode, body.eventId));
       return success(null, "Ticket checked in successfully");
     },
     {
       body: t.Object({
-        ticketCode: t.String(),
-        eventId: t.String(),
+        ticketCode: t.String({ minLength: 1 }),
+        eventId: t.String({ minLength: 1 }),
       }),
     }
   );

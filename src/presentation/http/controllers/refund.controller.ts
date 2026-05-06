@@ -32,32 +32,36 @@ export const createRefundController = (deps: {
     .post(
       "/",
       async ({ body }) => {
+        // US15: Request Refund
         const refundId = await requestRefundHandler.execute(new RequestRefundCommand(body.bookingId));
         return success({ id: refundId }, "Refund requested successfully");
       },
       {
         body: t.Object({
-          bookingId: t.String(),
+          bookingId: t.String({ minLength: 1 }),
         }),
       }
     )
     .post("/:id/approve", async ({ params }) => {
+      // US16: Approve Refund (Event Organizer only)
       await approveRefundHandler.execute(new ApproveRefundCommand(params.id));
       return success(null, "Refund approved successfully");
     })
     .post(
       "/:id/reject",
       async ({ params, body }) => {
+        // US17: Reject Refund (Event Organizer only)
         await rejectRefundHandler.execute(new RejectRefundCommand(params.id, body.reason));
         return success(null, "Refund rejected successfully");
       },
       {
         body: t.Object({
-          reason: t.String(),
+          reason: t.String({ minLength: 1 }),
         }),
       }
     )
     .post("/:id/payout", async ({ params }) => {
+      // US18: Mark Refund as Paid Out (System Admin only)
       await payoutRefundHandler.execute(new PayoutRefundCommand(params.id));
       return success(null, "Refund paid out successfully");
     });

@@ -1,6 +1,6 @@
 import { createId } from "@/shared/id";
 import { Booking } from "@/domain/entities/booking";
-import { NotFoundError, ConflictError } from "@/domain/errors/domain-error";
+import { NotFoundError, ConflictError, DomainError } from "@/domain/errors/domain-error";
 import { Email } from "@/domain/value-objects/email";
 import { Money } from "@/domain/value-objects/money";
 import { BookingStatus } from "@/domain/entities/booking-status";
@@ -39,6 +39,29 @@ export class CreateBookingHandler implements CommandHandler<CreateBookingCommand
     );
     if (hasActiveBooking) {
       throw new ConflictError("Customer already has an active booking for this event");
+    }
+
+    // US8: Validate each ticket category is purchasable (active, within sales period, has quota)
+    const now = new Date();
+    for (const item of command.items) {
+      const category = event.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+      if (!category) {
+        throw new NotFoundError("Ticket Category", item.ticketCategoryId);
+      }
+      if (!category.isActive) {
+        throw new DomainError(
+          `Ticket category '${category.name}' is not active`,
+          400,
+          "CATEGORY_INACTIVE",
+        );
+      }
+      if (!category.salesPeriod.isActive(now)) {
+        throw new DomainError(
+          `Ticket category '${category.name}' is not within sales period`,
+          400,
+          "SALES_PERIOD_INVALID",
+        );
+      }
     }
 
     // Reserve tickets

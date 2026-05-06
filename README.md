@@ -1,48 +1,225 @@
 # ElysiaJS Clean Architecture: Event Ticketing & Booking
 
-Backend API untuk event management system dengan fitur ticketing dan booking. Project ini memakai Bun, ElysiaJS, TypeScript, dan clean architecture.
+Backend API untuk **Event Ticketing & Booking System** menggunakan **Bun + ElysiaJS + TypeScript + Drizzle ORM + PostgreSQL** dengan pola **Clean Architecture** dan **Domain-Driven Design**.
 
-## Struktur
+## Struktur Project
 
-- `src/domain`: entity, contract repository, dan error bisnis.
-- `src/application`: use case aplikasi.
-- `src/infrastructure`: implementasi detail teknis, saat ini repository in-memory.
-- `src/presentation/http`: HTTP app, route, dan error mapper.
-- `src/shared`: helper umum.
+```
+src/
+├── domain/           # Entity, Value Object, Repository Interface, Domain Event, Error
+├── application/      # Command, Query, Handler, DTO, Service Interface
+├── infrastructure/   # PostgreSQL Repository, DB Connection, Seed, Mock Service
+├── presentation/     # HTTP Controller, Route, Response Helper
+└── shared/           # Utility (ID generator)
+```
 
-## Menjalankan
+## Quick Start (Docker)
+
+Cara **paling mudah** untuk menjalankan project ini -- cukup butuh Docker.
 
 ```bash
+# 1. Clone & masuk ke folder
+git clone <repo-url>
+cd elysiajs-clean-architecture
+
+# 2. Jalankan semuanya (PostgreSQL + App + Schema + Seed)
+docker compose up --build
+
+# API ready di http://localhost:3000
+# Swagger UI di http://localhost:3000/swagger
+```
+
+**Untuk reset database:**
+```bash
+docker compose down -v          # Hapus volume data
+docker compose up --build       # Build ulang & seed fresh
+```
+
+## Manual Setup (Tanpa Docker)
+
+### Prasyarat
+- [Bun](https://bun.sh/) v1.3+
+- PostgreSQL 16+
+
+### Langkah-langkah
+
+```bash
+# 1. Install dependencies
 bun install
+
+# 2. Setup environment
+cp .env.example .env
+# Edit .env sesuai konfigurasi PostgreSQL kamu
+
+# 3. Push schema ke database
+bun run db:push
+
+# 4. Seed database
+bun run db:seed
+
+# 5. Jalankan server
 bun run dev
 ```
 
-Server default berjalan di `http://localhost:3000`.
+Server berjalan di `http://localhost:3000`.
+Swagger UI di `http://localhost:3000/swagger`.
 
-Swagger UI tersedia di `http://localhost:3000/swagger`.
+## Scripts
 
-## Endpoint Utama
+| Script | Deskripsi |
+|---|---|
+| `bun run dev` | Jalankan server (watch mode) |
+| `bun run start` | Jalankan server (production) |
+| `bun run test` | Jalankan unit test |
+| `bun run db:generate` | Generate migration files |
+| `bun run db:migrate` | Jalankan migration |
+| `bun run db:push` | Push schema langsung ke DB |
+| `bun run db:seed` | Seed database dengan data lengkap |
+| `bun run db:studio` | Buka Drizzle Studio |
 
-- `GET /health`
-- `GET /events`
-- `GET /events/:id`
-- `POST /events`
-- `POST /bookings`
-- `GET /bookings/:id`
-- `POST /bookings/:id/confirm`
-- `POST /bookings/:id/cancel`
+## API Endpoints
 
-## Contoh Create Booking
+### Events (Event Organizer)
 
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `POST` | `/api/v1/events` | Create event baru |
+| `GET` | `/api/v1/events` | List events (filter: `?status=`, `?location=`) |
+| `GET` | `/api/v1/events/:id` | Detail event + ticket categories |
+| `POST` | `/api/v1/events/:id/publish` | Publish event (Draft -> Published) |
+| `POST` | `/api/v1/events/:id/cancel` | Cancel event (Published -> Cancelled) |
+| `GET` | `/api/v1/events/:id/sales-report` | Laporan penjualan |
+| `GET` | `/api/v1/events/:id/participants` | Daftar peserta |
+
+### Bookings (Customer)
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `POST` | `/api/v1/bookings` | Buat booking |
+| `GET` | `/api/v1/bookings/:id` | Detail booking |
+| `POST` | `/api/v1/bookings/:id/pay` | Bayar booking |
+
+### Tickets (Gate Officer)
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `POST` | `/api/v1/tickets/check-in` | Check-in tiket |
+
+### Refunds
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `POST` | `/api/v1/refunds` | Request refund |
+| `POST` | `/api/v1/refunds/:id/approve` | Approve refund (Organizer) |
+| `POST` | `/api/v1/refunds/:id/reject` | Reject refund (Organizer) |
+| `POST` | `/api/v1/refunds/:id/payout` | Payout refund (Admin) |
+
+## Seed Data & Testing Guide
+
+Setelah `db:seed`, database akan terisi data lengkap untuk testing semua flow:
+
+### Event IDs
+| ID | Status | Bisa ditest |
+|---|---|---|
+| `event_draft-001` | Draft | Publish |
+| `event_published-001` | Published | Booking, Cancel, Sales Report, Participants |
+| `event_published-002` | Published | Booking |
+| `event_cancelled-001` | Cancelled | View (tidak muncul di list) |
+| `event_completed-001` | Completed | View |
+
+### Booking IDs
+| ID | Status | Bisa ditest |
+|---|---|---|
+| `booking_pending-001` | PendingPayment | Pay (amount: 500000) |
+| `booking_paid-001` | Paid | Request Refund, View |
+| `booking_paid-checkedin-001` | Paid | View (ada ticket checked-in) |
+| `booking_expired-001` | Expired | View |
+| `booking_refunded-001` | Refunded | View |
+| `booking_paid-002` | Paid | Request Refund |
+
+### Ticket Codes
+| Code | Status | Bisa ditest |
+|---|---|---|
+| `TCKT-ACTV-0001` | Active | Check-in |
+| `TCKT-ACTV-0002` | Active | Check-in |
+| `TCKT-CHKD-0001` | CheckedIn | Reject (sudah dipakai) |
+
+### Refund IDs
+| ID | Status | Bisa ditest |
+|---|---|---|
+| `refund_requested-001` | Requested | Approve / Reject |
+| `refund_approved-001` | Approved | Payout |
+| `refund_rejected-001` | Rejected | View |
+| `refund_paidout-001` | PaidOut | View |
+
+## Contoh Request
+
+### Create Event
 ```bash
-curl -X POST http://localhost:3000/bookings \
+curl -X POST http://localhost:3000/api/v1/events \
   -H "Content-Type: application/json" \
   -d '{
-    "eventId": "seed-event-1",
-    "customerName": "Ari",
-    "customerEmail": "ari@example.com",
-    "items": [
-      { "ticketCategoryId": "seed-vip", "quantity": 2 }
+    "name": "Workshop Flutter",
+    "description": "Workshop mobile development",
+    "venue": "ITS Surabaya",
+    "startAt": "2026-09-01T09:00:00Z",
+    "endAt": "2026-09-01T17:00:00Z",
+    "maxCapacity": 100,
+    "ticketCategories": [
+      { "name": "Regular", "price": 150000, "quota": 80, "salesStart": "2026-07-01T00:00:00Z", "salesEnd": "2026-08-31T23:59:59Z" },
+      { "name": "VIP", "price": 350000, "quota": 20, "salesStart": "2026-07-01T00:00:00Z", "salesEnd": "2026-08-31T23:59:59Z" }
     ]
   }'
 ```
+
+### Create Booking
+```bash
+curl -X POST http://localhost:3000/api/v1/bookings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eventId": "event_published-001",
+    "customerName": "Ari Pratama",
+    "customerEmail": "ari@example.com",
+    "items": [
+      { "ticketCategoryId": "cat_regular-001", "quantity": 2 }
+    ]
+  }'
+```
+
+### Pay Booking
+```bash
+curl -X POST http://localhost:3000/api/v1/bookings/booking_pending-001/pay \
+  -H "Content-Type: application/json" \
+  -d '{ "amount": 500000 }'
+```
+
+### Check-in Ticket
+```bash
+curl -X POST http://localhost:3000/api/v1/tickets/check-in \
+  -H "Content-Type: application/json" \
+  -d '{ "ticketCode": "TCKT-ACTV-0001", "eventId": "event_published-001" }'
+```
+
+### Request Refund
+```bash
+curl -X POST http://localhost:3000/api/v1/refunds \
+  -H "Content-Type: application/json" \
+  -d '{ "bookingId": "booking_paid-001" }'
+```
+
+## Unit Tests
+
+```bash
+bun run test
+```
+
+Test cases mencakup domain logic validasi pada Event, Booking, Ticket, dan Refund.
+
+## Tech Stack
+
+- **Runtime**: [Bun](https://bun.sh/)
+- **Framework**: [ElysiaJS](https://elysiajs.com/)
+- **Language**: TypeScript
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Database**: PostgreSQL 16
+- **Architecture**: Clean Architecture + DDD Tactical Patterns

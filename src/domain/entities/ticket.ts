@@ -78,6 +78,13 @@ export class Ticket {
     this.props.status = TicketStatus.CANCELLED;
   }
 
+  markAsRefundRequired() {
+    if (this.props.status !== TicketStatus.ACTIVE) {
+      return; // Only active tickets need to be marked
+    }
+    this.props.status = TicketStatus.REFUND_REQUIRED;
+  }
+
   toJSON() {
     return {
       id: this.props.id,
