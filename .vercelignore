@@ -1,0 +1,11 @@
+node_modules
+.git
+.env
+.env.local
+tests
+*.test.ts
+*.test.js
+.vscode
+.idea
+bruno
+drizzle

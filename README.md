@@ -269,13 +269,45 @@ Test cases mencakup domain logic validasi pada Event, Booking, Ticket, dan Refun
 
 ## Deployment
 
-### Deploy ke Production
+### Deploy ke Vercel
+
+Project ini sudah dikonfigurasi untuk deploy ke Vercel dengan Bun runtime.
+
+1. **Setup Supabase Production Database**
+   - Buat project baru untuk production di [Supabase Dashboard](https://supabase.com/dashboard)
+   - Dapatkan connection string production
+
+2. **Deploy ke Vercel**
+   ```bash
+   # Install Vercel CLI (jika belum)
+   npm i -g vercel
+   
+   # Login ke Vercel
+   vercel login
+   
+   # Deploy
+   vercel
+   ```
+
+3. **Set Environment Variables di Vercel**
+   - Buka project di Vercel Dashboard
+   - Settings > Environment Variables
+   - Tambahkan `DATABASE_URL` dengan connection string Supabase production
+
+4. **Push Schema & Seed Data** (opsional)
+   ```bash
+   # Setelah deploy, jalankan di local dengan DATABASE_URL production
+   DATABASE_URL=<supabase-production-url> bun run db:push
+   DATABASE_URL=<supabase-production-url> bun run db:seed
+   ```
+
+### Deploy ke Platform Lain (Railway, Fly.io, dll)
 
 1. **Setup Supabase Production Database**
    - Buat project baru untuk production
    - Dapatkan connection string production
 
-2. **Deploy Application** (contoh: Railway, Vercel, Fly.io)
+2. **Deploy Application**
    ```bash
    # Set environment variables
    DATABASE_URL=<supabase-production-url>
@@ -287,7 +319,19 @@ Test cases mencakup domain logic validasi pada Event, Booking, Ticket, dan Refun
    bun run start
    ```
 
-3. **Jangan lupa seed data production** (opsional)
+3. **Seed data production** (opsional)
    ```bash
    bun run db:seed
    ```
+
+### Troubleshooting Deployment
+
+**404 Not Found pada semua endpoint:**
+- Pastikan file `src/index.ts` ada dan export default Elysia instance
+- Pastikan `vercel.json` ada dengan `bunVersion: "1.x"`
+- Pastikan environment variable `DATABASE_URL` sudah di-set di Vercel
+
+**Database connection error:**
+- Pastikan connection string Supabase benar
+- Pastikan schema sudah di-push ke database production
+- Cek apakah IP Vercel sudah di-whitelist di Supabase (biasanya otomatis)
