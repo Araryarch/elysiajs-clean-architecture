@@ -1,0 +1,23 @@
+import { Command, CommandHandler } from "@/app/main/shared/interfaces/command";
+import { IPromoCodeRepository } from "@/app/main/repositories/promo-code/promo-code-repository";
+import { NotFoundError } from "@/app/main/shared/errors/domain-error";
+
+export class DeactivatePromoCodeCommand implements Command {
+  constructor(public readonly promoCodeId: string) {}
+}
+
+export class DeactivatePromoCodeHandler implements CommandHandler<DeactivatePromoCodeCommand, void> {
+  constructor(private promoCodeRepository: IPromoCodeRepository) {}
+
+  async execute(command: DeactivatePromoCodeCommand): Promise<void> {
+    const promoCode = await this.promoCodeRepository.findById(command.promoCodeId);
+
+    if (!promoCode) {
+      throw new NotFoundError("Promo code", command.promoCodeId);
+    }
+
+    promoCode.deactivate();
+
+    await this.promoCodeRepository.save(promoCode);
+  }
+}

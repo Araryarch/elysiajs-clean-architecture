@@ -1,17 +1,17 @@
 import { describe, it, expect } from "bun:test";
-import { Event } from "@/domain/entities/event";
-import { TicketCategory } from "@/domain/entities/ticket-category";
-import { Booking } from "@/domain/entities/booking";
-import { Ticket } from "@/domain/entities/ticket";
-import { Refund } from "@/domain/entities/refund";
-import { Money } from "@/domain/value-objects/money";
-import { Email } from "@/domain/value-objects/email";
-import { DateRange } from "@/domain/value-objects/date-range";
-import { TicketCode } from "@/domain/value-objects/ticket-code";
-import { EventStatus } from "@/domain/entities/event-status";
-import { BookingStatus } from "@/domain/entities/booking-status";
-import { TicketStatus } from "@/domain/entities/ticket-status";
-import { RefundStatus } from "@/domain/entities/refund-status";
+import { Event } from "@/app/main/entities/event/event";
+import { TicketCategory } from "@/app/main/entities/event/ticket-category";
+import { Booking } from "@/app/main/entities/booking/booking";
+import { Ticket } from "@/app/main/entities/ticket/ticket";
+import { Refund } from "@/app/main/entities/refund/refund";
+import { Money } from "@/app/main/shared/utils/helpers/money";
+import { Email } from "@/app/main/shared/utils/validation/email";
+import { DateRange } from "@/app/main/shared/utils/helpers/date-range";
+import { TicketCode } from "@/app/main/shared/utils/helpers/ticket-code";
+import { EventStatus } from "@/app/main/entities/event/event-status";
+import { BookingStatus } from "@/app/main/entities/booking/booking-status";
+import { TicketStatus } from "@/app/main/entities/ticket/ticket-status";
+import { RefundStatus } from "@/app/main/entities/refund/refund-status";
 
 describe("Domain Layer Tests", () => {
   describe("Event Entity", () => {

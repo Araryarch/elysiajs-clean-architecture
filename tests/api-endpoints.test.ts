@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeAll } from "bun:test";
-import { createApp } from "@/presentation/http/create-app";
+import { createApp } from "@/app/main/create-app";
 
 describe("API Endpoints Integration Tests", () => {
   let app: Awaited<ReturnType<typeof createApp>>;

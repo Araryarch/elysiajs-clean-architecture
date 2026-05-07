@@ -14,7 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "bun run src/infrastructure/seed.ts"
+    "db:seed": "bun run src/app/main/database/drizzle/seeds/seed.ts"
   },
   "dependencies": {
     "@elysiajs/bearer": "^1.4.4",

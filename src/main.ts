@@ -1,4 +1,4 @@
-import { createApp } from "@/presentation/http/create-app";
+import { createApp } from "@/app/main/create-app";
 
 const port = Number(Bun.env.PORT ?? 3000);
 const app = await createApp();

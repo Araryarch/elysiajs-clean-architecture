@@ -17,7 +17,7 @@ async function initApp() {
     
     // Step 3: Try loading response helpers (using relative path)
     console.log("📦 Step 3: Loading response helpers...");
-    const responseModule = await import("./presentation/http/response.js").catch(err => {
+    const responseModule = await import("./app/main/shared/utils/response/response.js").catch(err => {
       console.error("❌ Failed to load response helpers:", err.message);
       return null;
     });
@@ -25,7 +25,7 @@ async function initApp() {
     
     // Step 4: Try loading database (using relative path)
     console.log("📦 Step 4: Loading database...");
-    const dbModule = await import("./infrastructure/database/connection.js").catch(err => {
+    const dbModule = await import("./app/main/database/drizzle/index/connection.js").catch(err => {
       console.error("❌ Failed to load database:", err.message);
       return null;
     });
@@ -35,7 +35,7 @@ async function initApp() {
     if (swaggerModule && responseModule && dbModule) {
       console.log("📦 Step 6: Loading full app...");
       try {
-        const { createApp } = await import("./presentation/http/create-app.js");
+        const { createApp } = await import("./app/main/create-app.js");
         const fullApp = await createApp();
         console.log("✅ Step 6: Full app loaded successfully!");
         return fullApp;
