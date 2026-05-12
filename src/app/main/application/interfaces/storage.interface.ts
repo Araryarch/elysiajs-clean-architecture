@@ -1,5 +1,4 @@
 export interface IStorage {
-  
   upload(params: {
     key: string;
     data: Buffer | Uint8Array;
@@ -14,4 +13,3 @@ export interface IStorage {
 
   getSignedUrl(key: string, expiresInSeconds: number): Promise<string>;
 }
-

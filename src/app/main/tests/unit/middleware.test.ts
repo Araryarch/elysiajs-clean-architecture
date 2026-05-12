@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import {
   DomainError, NotFoundError, ValidationError,
   ConflictError, UnauthorizedError, ForbiddenError,
-} from "../../shared/errors/domain-error";
-import { success, error } from "../../shared/utils/response/response";
+} from "../../domain/errors/domain-error";
+import { success, error } from "../../middlewares/response/response";
 
 describe("DomainError classes", () => {
   it("creates base DomainError with correct properties", () => {
@@ -112,3 +112,4 @@ describe("Express-style error handling logic", () => {
     expect(result.status).toBe(500);
   });
 });
+

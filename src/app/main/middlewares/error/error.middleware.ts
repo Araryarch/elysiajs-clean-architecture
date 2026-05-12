@@ -1,5 +1,5 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { error } from "../../shared/utils/response/response";
+import { DomainError } from "../../domain/errors/domain-error";
+import { error } from "../../middlewares/response/response";
 import { appConfig } from "../../config/app.config";
 
 export function onErrorHandler({ code, error: err, set }: any) {
@@ -37,3 +37,4 @@ export function onErrorHandler({ code, error: err, set }: any) {
         : undefined,
   });
 }
+

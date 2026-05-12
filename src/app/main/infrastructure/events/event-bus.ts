@@ -1,4 +1,4 @@
-import type { DomainEvent } from "../types/domain-event";
+import type { DomainEvent } from "../../domain/events/domain-event";
 
 export interface DomainEventHandler<T extends DomainEvent = DomainEvent> {
   eventType: string;

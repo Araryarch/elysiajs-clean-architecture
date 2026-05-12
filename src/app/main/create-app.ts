@@ -8,10 +8,10 @@ import { PostgresPromoCodeRepository } from "./api/promo-code/repository/postgre
 import { PostgresUserRepository } from "./api/auth/repository/postgres-user.repository";
 import { createMockPaymentGateway } from "./api/booking/service/mock-payment-gateway";
 import { createMockRefundPaymentService } from "./api/refund/service/mock-refund-payment";
-import { EventBus } from "./shared/events/event-bus";
+import { EventBus } from "./infrastructure/events/event-bus";
 import { EventCancelledBookingHandler } from "./api/booking/controller/event-cancelled.controller";
 import { RefundApprovedTicketHandler } from "./api/ticket/controller/refund-approved.controller";
-import { success } from "./shared/utils/response/response";
+import { success } from "./middlewares/response/response";
 
 import { createEventController } from "./api/event/controller/event.controller";
 import { createBookingController } from "./api/booking/controller/booking.controller";
@@ -290,3 +290,4 @@ export async function createApp() {
 }
 
 export type App = Awaited<ReturnType<typeof createApp>>;
+

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Money } from "../../shared/utils/helpers/money";
+import { Money } from "../../domain/value-objects/money";
 
 describe("Money", () => {
   it("creates a Money value object with default IDR currency", () => {
@@ -35,3 +35,4 @@ describe("Money", () => {
     expect(new Money(100_000, "IDR").equals(new Money(100_000, "USD"))).toBe(false);
   });
 });
+

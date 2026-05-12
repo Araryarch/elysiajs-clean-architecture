@@ -1,6 +1,9 @@
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 import { IUserRepository } from "../repository/user-repository";
-import { DomainError } from "../../../shared/errors/domain-error";
+import { DomainError } from "../../../domain/errors/domain-error";
 
 export class LoginUserCommand implements Command {
   constructor(
@@ -16,11 +19,13 @@ export type LoginResult = {
   role: string;
 };
 
-export class LoginUserHandler implements CommandHandler<LoginUserCommand, LoginResult> {
+export class LoginUserHandler implements CommandHandler<
+  LoginUserCommand,
+  LoginResult
+> {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(command: LoginUserCommand): Promise<LoginResult> {
-
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
       throw new DomainError("Invalid email or password", 401);
@@ -46,4 +51,3 @@ export class LoginUserHandler implements CommandHandler<LoginUserCommand, LoginR
     };
   }
 }
-

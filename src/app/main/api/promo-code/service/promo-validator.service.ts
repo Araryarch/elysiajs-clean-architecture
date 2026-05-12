@@ -1,4 +1,7 @@
-import { PromoCode, PromoCodeType } from "../../../entities/promo-code/promo-code";
+import {
+  PromoCode,
+  PromoCodeType,
+} from "../../../entities/promo-code/promo-code";
 
 export interface PromoValidationResult {
   valid: boolean;
@@ -13,12 +16,23 @@ export interface IPromoValidatorService {
 }
 
 export class PromoValidatorService implements IPromoValidatorService {
-  validate(promoCode: PromoCode, purchaseAmount: number): PromoValidationResult {
+  validate(
+    promoCode: PromoCode,
+    purchaseAmount: number,
+  ): PromoValidationResult {
     if (!promoCode.canBeUsed()) {
-      return { valid: false, discountAmount: 0, finalAmount: purchaseAmount, message: "Promo code is not valid or has expired" };
+      return {
+        valid: false,
+        discountAmount: 0,
+        finalAmount: purchaseAmount,
+        message: "Promo code is not valid or has expired",
+      };
     }
 
-    if (promoCode.minPurchaseAmount && purchaseAmount < promoCode.minPurchaseAmount.amount) {
+    if (
+      promoCode.minPurchaseAmount &&
+      purchaseAmount < promoCode.minPurchaseAmount.amount
+    ) {
       return {
         valid: false,
         discountAmount: 0,

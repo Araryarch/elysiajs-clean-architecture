@@ -1,8 +1,11 @@
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 import { IUserRepository } from "../repository/user-repository";
 import { User, UserRole } from "../../../entities/auth/user";
-import { DomainError } from "../../../shared/errors/domain-error";
-import { createId } from "../../../shared/utils/helpers/id";
+import { DomainError } from "../../../domain/errors/domain-error";
+import { createId } from "../../../application/id";
 
 export class RegisterUserCommand implements Command {
   constructor(
@@ -13,11 +16,13 @@ export class RegisterUserCommand implements Command {
   ) {}
 }
 
-export class RegisterUserHandler implements CommandHandler<RegisterUserCommand, string> {
+export class RegisterUserHandler implements CommandHandler<
+  RegisterUserCommand,
+  string
+> {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(command: RegisterUserCommand): Promise<string> {
-
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
       throw new DomainError("User with this email already exists", 409);
@@ -41,4 +46,3 @@ export class RegisterUserHandler implements CommandHandler<RegisterUserCommand, 
     return user.id;
   }
 }
-

@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { IUserRepository } from "../../api/auth/repository/user-repository";
 import { UserRole } from "../../entities/auth/user";
-import { UnauthorizedError, ForbiddenError } from "../../shared/errors/domain-error";
+import { UnauthorizedError, ForbiddenError } from "../../domain/errors/domain-error";
 
 export interface AuthUser {
   userId: string;
@@ -82,4 +82,5 @@ export const requireRole = (allowedRoles: UserRole[]) => {
 export const requireAdmin = () => requireRole([UserRole.ADMIN]);
 export const requireOrganizer = () => requireRole([UserRole.ORGANIZER, UserRole.ADMIN]);
 export const requireCustomer = () => requireRole([UserRole.CUSTOMER, UserRole.ORGANIZER, UserRole.ADMIN]);
+
 

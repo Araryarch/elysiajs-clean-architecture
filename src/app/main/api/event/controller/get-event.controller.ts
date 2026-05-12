@@ -1,7 +1,7 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
-import { EventDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { EventDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class GetEventQuery implements Query {
   constructor(public readonly eventId: string) {}

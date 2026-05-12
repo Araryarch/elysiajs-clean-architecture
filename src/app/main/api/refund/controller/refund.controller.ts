@@ -10,7 +10,7 @@ import type { RejectRefundHandler } from "./reject-refund.controller";
 import type { PayoutRefundHandler } from "./payout-refund.controller";
 import type { GetRefundHandler } from "./get-refund.controller";
 import type { ListRefundsHandler } from "./list-refunds.controller";
-import { success } from "../../../shared/utils/response/response";
+import { success } from "../../../middlewares/response/response";
 
 export type RefundControllerHandlers = {
   requestRefundHandler: RequestRefundHandler;
@@ -23,34 +23,49 @@ export type RefundControllerHandlers = {
 
 export const createRefundController = (handlers: RefundControllerHandlers) => ({
   request(body: { bookingId: string }) {
-    return handlers.requestRefundHandler.execute(new RequestRefundCommand(body.bookingId))
-      .then((refundId) => success({ id: refundId }, "Refund requested successfully"));
+    return handlers.requestRefundHandler
+      .execute(new RequestRefundCommand(body.bookingId))
+      .then((refundId) =>
+        success({ id: refundId }, "Refund requested successfully"),
+      );
   },
 
   approve(params: { id: string }) {
-    return handlers.approveRefundHandler.execute(new ApproveRefundCommand(params.id))
+    return handlers.approveRefundHandler
+      .execute(new ApproveRefundCommand(params.id))
       .then(() => success(null, "Refund approved successfully"));
   },
 
   reject(params: { id: string }, body?: { reason?: string }) {
-    return handlers.rejectRefundHandler.execute(new RejectRefundCommand(params.id, body?.reason || "Rejected by admin"))
+    return handlers.rejectRefundHandler
+      .execute(
+        new RejectRefundCommand(params.id, body?.reason || "Rejected by admin"),
+      )
       .then(() => success(null, "Refund rejected successfully"));
   },
 
   payout(params: { id: string }) {
-    return handlers.payoutRefundHandler.execute(new PayoutRefundCommand(params.id))
+    return handlers.payoutRefundHandler
+      .execute(new PayoutRefundCommand(params.id))
       .then(() => success(null, "Refund paid out successfully"));
   },
 
-  list(query: { status?: string; bookingId?: string; page?: string; limit?: string }) {
+  list(query: {
+    status?: string;
+    bookingId?: string;
+    page?: string;
+    limit?: string;
+  }) {
     const page = query.page ? parseInt(query.page) : 1;
     const limit = query.limit ? parseInt(query.limit) : 10;
-    return handlers.listRefundsHandler.execute(new ListRefundsQuery(query.status, query.bookingId, page, limit))
+    return handlers.listRefundsHandler
+      .execute(new ListRefundsQuery(query.status, query.bookingId, page, limit))
       .then((result) => success(result, "Refunds retrieved successfully"));
   },
 
   getById(params: { id: string }) {
-    return handlers.getRefundHandler.execute(new GetRefundQuery(params.id))
+    return handlers.getRefundHandler
+      .execute(new GetRefundQuery(params.id))
       .then((result) => success(result, "Refund retrieved successfully"));
   },
 });

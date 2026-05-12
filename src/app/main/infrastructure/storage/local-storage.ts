@@ -1,5 +1,5 @@
 import { join } from "path";
-import type { IStorage } from "../../shared/interfaces/storage.interface";
+import type { IStorage } from "../../application/interfaces/storage.interface";
 
 export class LocalStorage implements IStorage {
   constructor(private readonly baseDir: string = "./uploads") {}
@@ -40,4 +40,5 @@ export class LocalStorage implements IStorage {
     return `/uploads/${key}`;
   }
 }
+
 

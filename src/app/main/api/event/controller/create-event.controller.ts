@@ -1,10 +1,13 @@
-import { createId } from "../../../shared/utils/helpers/id";
+import { createId } from "../../../application/id";
 import { Event } from "../../../entities/event/event";
 import { TicketCategory } from "../../../entities/event/ticket-category";
-import { DateRange } from "../../../shared/utils/helpers/date-range";
-import { Money } from "../../../shared/utils/helpers/money";
+import { DateRange } from "../../../domain/value-objects/date-range";
+import { Money } from "../../../domain/value-objects/money";
 import { EventRepository } from "../repository/event-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class CreateEventCommand implements Command {
   constructor(
@@ -24,7 +27,10 @@ export class CreateEventCommand implements Command {
   ) {}
 }
 
-export class CreateEventHandler implements CommandHandler<CreateEventCommand, string> {
+export class CreateEventHandler implements CommandHandler<
+  CreateEventCommand,
+  string
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(command: CreateEventCommand): Promise<string> {

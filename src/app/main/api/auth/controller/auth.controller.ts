@@ -3,8 +3,8 @@ import { LoginUserCommand } from "./login-user.controller";
 import type { RegisterUserHandler } from "./register-user.controller";
 import type { LoginUserHandler } from "./login-user.controller";
 import type { IUserRepository } from "../repository/user-repository";
-import { success } from "../../../shared/utils/response/response";
-import { UnauthorizedError } from "../../../shared/errors/domain-error";
+import { success } from "../../../middlewares/response/response";
+import { UnauthorizedError } from "../../../domain/errors/domain-error";
 
 export type AuthControllerHandlers = {
   registerHandler: RegisterUserHandler;
@@ -23,14 +23,30 @@ export interface ElysiaJWT {
   verify(token?: string): Promise<false | Record<string, unknown>>;
 }
 
-export const createAuthController = (handlers: AuthControllerHandlers, deps: { userRepository: IUserRepository; jwtSecret: string }) => ({
+export const createAuthController = (
+  handlers: AuthControllerHandlers,
+  deps: { userRepository: IUserRepository; jwtSecret: string },
+) => ({
   jwtSecret: deps.jwtSecret,
   userRepository: deps.userRepository,
 
-  register(body: { email: string; password: string; name: string; role?: string }) {
-    const command = new RegisterUserCommand(body.email, body.password, body.name, body.role);
-    return handlers.registerHandler.execute(command)
-      .then((userId) => success({ id: userId }, "User registered successfully"));
+  register(body: {
+    email: string;
+    password: string;
+    name: string;
+    role?: string;
+  }) {
+    const command = new RegisterUserCommand(
+      body.email,
+      body.password,
+      body.name,
+      body.role,
+    );
+    return handlers.registerHandler
+      .execute(command)
+      .then((userId) =>
+        success({ id: userId }, "User registered successfully"),
+      );
   },
 
   async login(body: { email: string; password: string }, jwt: ElysiaJWT) {
@@ -44,7 +60,15 @@ export const createAuthController = (handlers: AuthControllerHandlers, deps: { u
     });
 
     return success(
-      { accessToken, user: { id: result.userId, email: result.email, name: result.name, role: result.role } },
+      {
+        accessToken,
+        user: {
+          id: result.userId,
+          email: result.email,
+          name: result.name,
+          role: result.role,
+        },
+      },
       "Login successful",
     );
   },

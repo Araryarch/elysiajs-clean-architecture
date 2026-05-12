@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Ticket } from "../../entities/ticket/ticket";
 import { TicketStatus } from "../../entities/ticket/ticket-status";
-import { TicketCode } from "../../shared/utils/helpers/ticket-code";
+import { TicketCode } from "../../domain/value-objects/ticket-code";
 import { makeTicket, future } from "../helpers/test-factory";
 
 describe("Ticket entity", () => {
@@ -110,3 +110,4 @@ describe("Ticket entity", () => {
     expect(ticket.ticketCode.value).toBe("RESTORED123");
   });
 });
+

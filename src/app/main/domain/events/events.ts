@@ -21,25 +21,38 @@ export class EventCancelled implements DomainEvent {
 export class TicketCategoryCreated implements DomainEvent {
   eventType = "TicketCategoryCreated";
   occurredAt = new Date();
-  constructor(public eventId: string, public categoryId: string) {}
+  constructor(
+    public eventId: string,
+    public categoryId: string,
+  ) {}
 }
 
 export class TicketCategoryDisabled implements DomainEvent {
   eventType = "TicketCategoryDisabled";
   occurredAt = new Date();
-  constructor(public eventId: string, public categoryId: string) {}
+  constructor(
+    public eventId: string,
+    public categoryId: string,
+  ) {}
 }
 
 export class TicketReserved implements DomainEvent {
   eventType = "TicketReserved";
   occurredAt = new Date();
-  constructor(public bookingId: string, public eventId: string, public quantity: number) {}
+  constructor(
+    public bookingId: string,
+    public eventId: string,
+    public quantity: number,
+  ) {}
 }
 
 export class BookingPaid implements DomainEvent {
   eventType = "BookingPaid";
   occurredAt = new Date();
-  constructor(public bookingId: string, public amount: number) {}
+  constructor(
+    public bookingId: string,
+    public amount: number,
+  ) {}
 }
 
 export class BookingExpired implements DomainEvent {
@@ -51,13 +64,19 @@ export class BookingExpired implements DomainEvent {
 export class TicketCheckedIn implements DomainEvent {
   eventType = "TicketCheckedIn";
   occurredAt = new Date();
-  constructor(public ticketId: string, public ticketCode: string) {}
+  constructor(
+    public ticketId: string,
+    public ticketCode: string,
+  ) {}
 }
 
 export class RefundRequested implements DomainEvent {
   eventType = "RefundRequested";
   occurredAt = new Date();
-  constructor(public refundId: string, public bookingId: string) {}
+  constructor(
+    public refundId: string,
+    public bookingId: string,
+  ) {}
 }
 
 export class RefundApproved implements DomainEvent {
@@ -69,11 +88,17 @@ export class RefundApproved implements DomainEvent {
 export class RefundRejected implements DomainEvent {
   eventType = "RefundRejected";
   occurredAt = new Date();
-  constructor(public refundId: string, public reason: string) {}
+  constructor(
+    public refundId: string,
+    public reason: string,
+  ) {}
 }
 
 export class RefundPaidOut implements DomainEvent {
   eventType = "RefundPaidOut";
   occurredAt = new Date();
-  constructor(public refundId: string, public paymentReference: string) {}
+  constructor(
+    public refundId: string,
+    public paymentReference: string,
+  ) {}
 }

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { Booking } from "../../entities/booking/booking";
 import { BookingStatus } from "../../entities/booking/booking-status";
-import { Email } from "../../shared/utils/validation/email";
-import { Money } from "../../shared/utils/helpers/money";
+import { Email } from "../../domain/value-objects/email";
+import { Money } from "../../domain/value-objects/money";
 
 function makeBooking() {
   return Booking.create({
@@ -72,4 +72,5 @@ describe("Booking entity", () => {
     expect(booking.status).toBe(BookingStatus.REFUNDED);
   });
 });
+
 

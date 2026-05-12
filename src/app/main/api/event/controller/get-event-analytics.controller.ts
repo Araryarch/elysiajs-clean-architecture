@@ -1,9 +1,9 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
 import { BookingRepository } from "../../booking/repository/booking-repository";
 import { ITicketRepository } from "../../ticket/repository/ticket-repository";
 import { BookingStatus } from "../../../entities/booking/booking-status";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type EventAnalyticsDTO = {
   eventId: string;
@@ -39,7 +39,10 @@ export class GetEventAnalyticsQuery implements Query {
   constructor(public readonly eventId: string) {}
 }
 
-export class GetEventAnalyticsHandler implements QueryHandler<GetEventAnalyticsQuery, EventAnalyticsDTO> {
+export class GetEventAnalyticsHandler implements QueryHandler<
+  GetEventAnalyticsQuery,
+  EventAnalyticsDTO
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -56,15 +59,23 @@ export class GetEventAnalyticsHandler implements QueryHandler<GetEventAnalyticsQ
     const bookings = await this.bookingRepository.findByEventId(query.eventId);
     const tickets = await this.ticketRepository.findByEventId(query.eventId);
 
-    const paidBookings = bookings.filter((b) => b.status === BookingStatus.PAID);
+    const paidBookings = bookings.filter(
+      (b) => b.status === BookingStatus.PAID,
+    );
     const totalBookings = bookings.length;
     const ticketsSold = tickets.length;
-    const ticketsCheckedIn = tickets.filter((t) => t.toJSON().status === "CheckedIn").length;
-    
-    const totalRevenue = paidBookings.reduce((sum, b) => sum + b.toJSON().totalAmount, 0);
+    const ticketsCheckedIn = tickets.filter(
+      (t) => t.toJSON().status === "CheckedIn",
+    ).length;
+
+    const totalRevenue = paidBookings.reduce(
+      (sum, b) => sum + b.toJSON().totalAmount,
+      0,
+    );
     const averageTicketPrice = ticketsSold > 0 ? totalRevenue / ticketsSold : 0;
     const occupancyRate = (ticketsSold / eventJson.maxCapacity) * 100;
-    const conversionRate = totalBookings > 0 ? (paidBookings.length / totalBookings) * 100 : 0;
+    const conversionRate =
+      totalBookings > 0 ? (paidBookings.length / totalBookings) * 100 : 0;
 
     const categoryPerformance = eventJson.ticketCategories.map((cat) => {
       const sold = cat.bookedQuantity;
@@ -81,10 +92,14 @@ export class GetEventAnalyticsHandler implements QueryHandler<GetEventAnalyticsQ
     });
 
     const bookingsByStatus = {
-      pending: bookings.filter((b) => b.status === BookingStatus.PENDING_PAYMENT).length,
+      pending: bookings.filter(
+        (b) => b.status === BookingStatus.PENDING_PAYMENT,
+      ).length,
       paid: bookings.filter((b) => b.status === BookingStatus.PAID).length,
-      expired: bookings.filter((b) => b.status === BookingStatus.EXPIRED).length,
-      refunded: bookings.filter((b) => b.status === BookingStatus.REFUNDED).length,
+      expired: bookings.filter((b) => b.status === BookingStatus.EXPIRED)
+        .length,
+      refunded: bookings.filter((b) => b.status === BookingStatus.REFUNDED)
+        .length,
     };
 
     const paidDates = paidBookings
@@ -137,4 +152,3 @@ export class GetEventAnalyticsHandler implements QueryHandler<GetEventAnalyticsQ
     return peakDay || undefined;
   }
 }
-

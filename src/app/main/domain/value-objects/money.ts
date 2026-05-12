@@ -1,7 +1,7 @@
 export class Money {
   constructor(
     public readonly amount: number,
-    public readonly currency: string = "IDR"
+    public readonly currency: string = "IDR",
   ) {
     if (amount < 0) throw new Error("Amount cannot be negative");
   }

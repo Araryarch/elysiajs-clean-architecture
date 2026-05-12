@@ -1,5 +1,5 @@
-import type { DomainEventHandler } from "../../../shared/events/event-bus";
-import type { RefundApproved } from "../../../shared/types/events";
+import type { DomainEventHandler } from "../../../infrastructure/events/event-bus";
+import type { RefundApproved } from "../../../domain/events/events";
 import { TicketStatus } from "../../../entities/ticket/ticket-status";
 import type { IRefundRepository } from "../../refund/repository/refund-repository";
 import type { BookingRepository } from "../../booking/repository/booking-repository";
@@ -24,7 +24,9 @@ export class RefundApprovedTicketHandler implements DomainEventHandler<RefundApp
     booking.markAsRefunded();
     await this.bookingRepository.save(booking);
 
-    const tickets = await this.ticketRepository.findByBookingId(refund.bookingId);
+    const tickets = await this.ticketRepository.findByBookingId(
+      refund.bookingId,
+    );
     for (const ticket of tickets) {
       if (ticket.status !== TicketStatus.CHECKED_IN) {
         ticket.cancel();
@@ -33,4 +35,3 @@ export class RefundApprovedTicketHandler implements DomainEventHandler<RefundApp
     }
   }
 }
-

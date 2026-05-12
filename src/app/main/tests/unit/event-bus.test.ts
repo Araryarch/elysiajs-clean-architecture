@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { EventBus, type DomainEventHandler } from "../../shared/events/event-bus";
-import { DomainEvent } from "../../shared/types/domain-event";
+import { EventBus, type DomainEventHandler } from "../../infrastructure/events/event-bus";
+import { DomainEvent } from "../../domain/events/domain-event";
 
 class TestEvent implements DomainEvent {
   occurredAt = new Date();
@@ -75,3 +75,4 @@ describe("EventBus", () => {
     expect(handled).toEqual(["first", "second"]);
   });
 });
+

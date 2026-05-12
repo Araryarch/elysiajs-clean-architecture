@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { DateRange } from "../../shared/utils/helpers/date-range";
-import { TicketCode } from "../../shared/utils/helpers/ticket-code";
-import { Email } from "../../shared/utils/validation/email";
-import { Money } from "../../shared/utils/helpers/money";
-import { success, error } from "../../shared/utils/response/response";
+import { DateRange } from "../../domain/value-objects/date-range";
+import { TicketCode } from "../../domain/value-objects/ticket-code";
+import { Email } from "../../domain/value-objects/email";
+import { Money } from "../../domain/value-objects/money";
+import { success, error } from "../../middlewares/response/response";
 import { future, past } from "../helpers/test-factory";
 
 describe("DateRange", () => {
@@ -164,7 +164,7 @@ describe("Response helpers", () => {
 
 describe("DomainError classes", () => {
   it("creates NotFoundError with correct properties", () => {
-    const { NotFoundError } = require("../../shared/errors/domain-error");
+    const { NotFoundError } = require("../../domain/errors/domain-error");
     const err = new NotFoundError("Event", "evt-1");
     expect(err.message).toBe("Event with id 'evt-1' not found");
     expect(err.statusCode).toBe(404);
@@ -172,36 +172,37 @@ describe("DomainError classes", () => {
   });
 
   it("creates NotFoundError without id", () => {
-    const { NotFoundError } = require("../../shared/errors/domain-error");
+    const { NotFoundError } = require("../../domain/errors/domain-error");
     const err = new NotFoundError("Event");
     expect(err.message).toBe("Event not found");
   });
 
   it("creates ValidationError", () => {
-    const { ValidationError } = require("../../shared/errors/domain-error");
+    const { ValidationError } = require("../../domain/errors/domain-error");
     const err = new ValidationError("Invalid input", "name");
     expect(err.statusCode).toBe(400);
     expect(err.name).toBe("ValidationError");
   });
 
   it("creates ConflictError", () => {
-    const { ConflictError } = require("../../shared/errors/domain-error");
+    const { ConflictError } = require("../../domain/errors/domain-error");
     const err = new ConflictError("Duplicate");
     expect(err.statusCode).toBe(409);
     expect(err.code).toBe("CONFLICT");
   });
 
   it("creates UnauthorizedError", () => {
-    const { UnauthorizedError } = require("../../shared/errors/domain-error");
+    const { UnauthorizedError } = require("../../domain/errors/domain-error");
     const err = new UnauthorizedError();
     expect(err.statusCode).toBe(401);
     expect(err.code).toBe("UNAUTHORIZED");
   });
 
   it("creates ForbiddenError", () => {
-    const { ForbiddenError } = require("../../shared/errors/domain-error");
+    const { ForbiddenError } = require("../../domain/errors/domain-error");
     const err = new ForbiddenError();
     expect(err.statusCode).toBe(403);
     expect(err.code).toBe("FORBIDDEN");
   });
 });
+

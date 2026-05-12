@@ -26,7 +26,7 @@ import type { GetSalesReportHandler } from "./get-sales-report.controller";
 import type { GetParticipantsHandler } from "./get-participants.controller";
 import type { GetEventAnalyticsHandler } from "./get-event-analytics.controller";
 import type { GetEventRevenueHandler } from "./get-event-revenue.controller";
-import { success } from "../../../shared/utils/response/response";
+import { success } from "../../../middlewares/response/response";
 
 export type EventControllerHandlers = {
   createEventHandler: CreateEventHandler;
@@ -46,7 +46,14 @@ export type EventControllerHandlers = {
 };
 
 export const createEventController = (handlers: EventControllerHandlers) => ({
-  create(body: { name: string; description?: string; venue: string; startAt: string; endAt: string; maxCapacity: number }) {
+  create(body: {
+    name: string;
+    description?: string;
+    venue: string;
+    startAt: string;
+    endAt: string;
+    maxCapacity: number;
+  }) {
     const command = new CreateEventCommand(
       body.name,
       body.description || "",
@@ -56,42 +63,56 @@ export const createEventController = (handlers: EventControllerHandlers) => ({
       body.maxCapacity,
       [],
     );
-    return handlers.createEventHandler.execute(command).then((id) => success({ id }, "Event created successfully"));
+    return handlers.createEventHandler
+      .execute(command)
+      .then((id) => success({ id }, "Event created successfully"));
   },
 
   list(query: { status?: string; location?: string; date?: string }) {
-    return handlers.listEventsHandler.execute(new ListEventsQuery(query.status, query.location, query.date))
+    return handlers.listEventsHandler
+      .execute(new ListEventsQuery(query.status, query.location, query.date))
       .then((result) => success(result, "Events retrieved successfully"));
   },
 
   getById(params: { id: string }) {
-    return handlers.getEventHandler.execute(new GetEventQuery(params.id))
+    return handlers.getEventHandler
+      .execute(new GetEventQuery(params.id))
       .then((result) => success(result, "Event retrieved successfully"));
   },
 
   publish(params: { id: string }) {
-    return handlers.publishEventHandler.execute(new PublishEventCommand(params.id))
+    return handlers.publishEventHandler
+      .execute(new PublishEventCommand(params.id))
       .then(() => success(null, "Event published successfully"));
   },
 
   cancel(params: { id: string }) {
-    return handlers.cancelEventHandler.execute(new CancelEventCommand(params.id))
+    return handlers.cancelEventHandler
+      .execute(new CancelEventCommand(params.id))
       .then(() => success(null, "Event cancelled successfully"));
   },
 
   getSalesReport(params: { id: string }) {
-    return handlers.getSalesReportHandler.execute(new GetSalesReportQuery(params.id))
+    return handlers.getSalesReportHandler
+      .execute(new GetSalesReportQuery(params.id))
       .then((result) => success(result, "Sales report retrieved successfully"));
   },
 
   getParticipants(params: { id: string }) {
-    return handlers.getParticipantsHandler.execute(new GetParticipantsQuery(params.id))
+    return handlers.getParticipantsHandler
+      .execute(new GetParticipantsQuery(params.id))
       .then((result) => success(result, "Participants retrieved successfully"));
   },
 
   addTicketCategory(
     params: { id: string },
-    body: { name: string; price: number; quota: number; salesStart: string; salesEnd: string },
+    body: {
+      name: string;
+      price: number;
+      quota: number;
+      salesStart: string;
+      salesEnd: string;
+    },
   ) {
     const command = new AddTicketCategoryCommand(
       params.id,
@@ -101,18 +122,29 @@ export const createEventController = (handlers: EventControllerHandlers) => ({
       new Date(body.salesStart),
       new Date(body.salesEnd),
     );
-    return handlers.addTicketCategoryHandler.execute(command)
-      .then((categoryId) => success({ id: categoryId }, "Ticket category added successfully"));
+    return handlers.addTicketCategoryHandler
+      .execute(command)
+      .then((categoryId) =>
+        success({ id: categoryId }, "Ticket category added successfully"),
+      );
   },
 
   disableTicketCategory(params: { id: string; categoryId: string }) {
-    return handlers.disableTicketCategoryHandler.execute(new DisableTicketCategoryCommand(params.id, params.categoryId))
+    return handlers.disableTicketCategoryHandler
+      .execute(new DisableTicketCategoryCommand(params.id, params.categoryId))
       .then(() => success(null, "Ticket category disabled successfully"));
   },
 
   update(
     params: { id: string },
-    body: { name?: string; description?: string; venue?: string; startAt?: string; endAt?: string; maxCapacity?: number },
+    body: {
+      name?: string;
+      description?: string;
+      venue?: string;
+      startAt?: string;
+      endAt?: string;
+      maxCapacity?: number;
+    },
   ) {
     const command = new UpdateEventCommand(
       params.id,
@@ -123,18 +155,26 @@ export const createEventController = (handlers: EventControllerHandlers) => ({
       body.endAt ? new Date(body.endAt) : undefined,
       body.maxCapacity,
     );
-    return handlers.updateEventHandler.execute(command)
+    return handlers.updateEventHandler
+      .execute(command)
       .then(() => success(null, "Event updated successfully"));
   },
 
   delete(params: { id: string }) {
-    return handlers.deleteEventHandler.execute(new DeleteEventCommand(params.id))
+    return handlers.deleteEventHandler
+      .execute(new DeleteEventCommand(params.id))
       .then(() => success(null, "Event deleted successfully"));
   },
 
   updateTicketCategory(
     params: { id: string; categoryId: string },
-    body: { name?: string; price?: number; quota?: number; salesStart?: string; salesEnd?: string },
+    body: {
+      name?: string;
+      price?: number;
+      quota?: number;
+      salesStart?: string;
+      salesEnd?: string;
+    },
   ) {
     const command = new UpdateTicketCategoryCommand(
       params.id,
@@ -145,18 +185,25 @@ export const createEventController = (handlers: EventControllerHandlers) => ({
       body.salesStart ? new Date(body.salesStart) : undefined,
       body.salesEnd ? new Date(body.salesEnd) : undefined,
     );
-    return handlers.updateTicketCategoryHandler.execute(command)
+    return handlers.updateTicketCategoryHandler
+      .execute(command)
       .then(() => success(null, "Ticket category updated successfully"));
   },
 
   getAnalytics(params: { id: string }) {
-    return handlers.getEventAnalyticsHandler.execute(new GetEventAnalyticsQuery(params.id))
-      .then((result) => success(result, "Event analytics retrieved successfully"));
+    return handlers.getEventAnalyticsHandler
+      .execute(new GetEventAnalyticsQuery(params.id))
+      .then((result) =>
+        success(result, "Event analytics retrieved successfully"),
+      );
   },
 
   getRevenue(params: { id: string }) {
-    return handlers.getEventRevenueHandler.execute(new GetEventRevenueQuery(params.id))
-      .then((result) => success(result, "Event revenue retrieved successfully"));
+    return handlers.getEventRevenueHandler
+      .execute(new GetEventRevenueQuery(params.id))
+      .then((result) =>
+        success(result, "Event revenue retrieved successfully"),
+      );
   },
 });
 

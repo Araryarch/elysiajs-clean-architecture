@@ -1,6 +1,9 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class PublishEventCommand implements Command {
   constructor(public readonly eventId: string) {}

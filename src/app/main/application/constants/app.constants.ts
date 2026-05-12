@@ -14,4 +14,3 @@ export const JWT_EXPIRES_IN = "7d";
 export const MIN_PASSWORD_LENGTH = 8;
 
 export const TICKET_CODE_LENGTH = 12;
-

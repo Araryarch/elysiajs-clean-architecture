@@ -18,7 +18,13 @@ export interface ICustomerLookupService {
 }
 
 export class CustomerLookupService implements ICustomerLookupService {
-  buildSummary({ email, name, bookings, tickets, refunds }: {
+  buildSummary({
+    email,
+    name,
+    bookings,
+    tickets,
+    refunds,
+  }: {
     email: string;
     name: string;
     bookings: Array<{ status: string; totalAmount: number }>;
@@ -35,7 +41,9 @@ export class CustomerLookupService implements ICustomerLookupService {
       totalBookings: bookings.length,
       totalSpent,
       activeTickets: tickets.filter((t) => t.status === "Active").length,
-      pendingRefunds: refunds.filter((r) => r.status === "Requested" || r.status === "Approved").length,
+      pendingRefunds: refunds.filter(
+        (r) => r.status === "Requested" || r.status === "Approved",
+      ).length,
     };
   }
 }

@@ -1,11 +1,14 @@
-import { createId } from "../../../shared/utils/helpers/id";
-import { NotFoundError } from "../../../shared/errors/domain-error";
-import { Money } from "../../../shared/utils/helpers/money";
+import { createId } from "../../../application/id";
+import { NotFoundError } from "../../../domain/errors/domain-error";
+import { Money } from "../../../domain/value-objects/money";
 import { Ticket } from "../../../entities/ticket/ticket";
 import { BookingRepository } from "../repository/booking-repository";
 import { ITicketRepository } from "../../ticket/repository/ticket-repository";
-import { IPaymentGateway } from "../../../shared/interfaces/services";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import { IPaymentGateway } from "../../../application/interfaces/services";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class PayBookingCommand implements Command {
   constructor(
@@ -54,4 +57,3 @@ export class PayBookingHandler implements CommandHandler<PayBookingCommand> {
     }
   }
 }
-

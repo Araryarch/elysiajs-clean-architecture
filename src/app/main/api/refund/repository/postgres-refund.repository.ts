@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { Refund } from "../../../entities/refund/refund";
 import { IRefundRepository } from "./refund-repository";
-import { Money } from "../../../shared/utils/helpers/money";
+import { Money } from "../../../domain/value-objects/money";
 import { db } from "../../../database/drizzle/index/connection";
 import { refunds } from "../../../database/drizzle/schema/schema";
 
@@ -59,7 +59,7 @@ export class PostgresRefundRepository implements IRefundRepository {
       Refund.fromPrimitives({
         ...r,
         amount: parseFloat(r.amount),
-      })
+      }),
     );
   }
 
@@ -69,7 +69,7 @@ export class PostgresRefundRepository implements IRefundRepository {
       Refund.fromPrimitives({
         ...r,
         amount: parseFloat(r.amount),
-      })
+      }),
     );
   }
 }

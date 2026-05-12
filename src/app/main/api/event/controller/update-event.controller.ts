@@ -1,7 +1,13 @@
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
 import { EventStatus } from "../../../entities/event/event-status";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class UpdateEventCommand implements Command {
   constructor(
@@ -15,7 +21,10 @@ export class UpdateEventCommand implements Command {
   ) {}
 }
 
-export class UpdateEventHandler implements CommandHandler<UpdateEventCommand, void> {
+export class UpdateEventHandler implements CommandHandler<
+  UpdateEventCommand,
+  void
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(command: UpdateEventCommand): Promise<void> {
@@ -55,4 +64,3 @@ export class UpdateEventHandler implements CommandHandler<UpdateEventCommand, vo
     await this.eventRepository.save(event);
   }
 }
-

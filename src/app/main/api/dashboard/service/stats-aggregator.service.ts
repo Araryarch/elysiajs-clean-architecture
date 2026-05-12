@@ -8,7 +8,12 @@ export interface PeriodStats {
 
 export interface IStatsAggregatorService {
   aggregateByPeriod(
-    bookings: Array<{ totalAmount: number; status: string; paidAt?: Date | null; items: Array<{ quantity: number }> }>,
+    bookings: Array<{
+      totalAmount: number;
+      status: string;
+      paidAt?: Date | null;
+      items: Array<{ quantity: number }>;
+    }>,
     startDate: Date,
     endDate: Date,
   ): PeriodStats;
@@ -18,7 +23,12 @@ export interface IStatsAggregatorService {
 
 export class StatsAggregatorService implements IStatsAggregatorService {
   aggregateByPeriod(
-    bookings: Array<{ totalAmount: number; status: string; paidAt?: Date | null; items: Array<{ quantity: number }> }>,
+    bookings: Array<{
+      totalAmount: number;
+      status: string;
+      paidAt?: Date | null;
+      items: Array<{ quantity: number }>;
+    }>,
     startDate: Date,
     endDate: Date,
   ): PeriodStats {
@@ -32,7 +42,10 @@ export class StatsAggregatorService implements IStatsAggregatorService {
       );
     });
 
-    const totalRevenue = periodBookings.reduce((sum, b) => sum + b.totalAmount, 0);
+    const totalRevenue = periodBookings.reduce(
+      (sum, b) => sum + b.totalAmount,
+      0,
+    );
     const totalTickets = periodBookings.reduce(
       (sum, b) => sum + b.items.reduce((s, i) => s + i.quantity, 0),
       0,

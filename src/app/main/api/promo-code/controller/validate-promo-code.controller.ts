@@ -1,7 +1,13 @@
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 import { IPromoCodeRepository } from "../repository/promo-code-repository";
-import { Money } from "../../../shared/utils/helpers/money";
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import { Money } from "../../../domain/value-objects/money";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 
 export class ValidatePromoCodeCommand implements Command {
   constructor(
@@ -19,12 +25,15 @@ export type ValidatePromoCodeResult = {
   message?: string;
 };
 
-export class ValidatePromoCodeHandler
-  implements CommandHandler<ValidatePromoCodeCommand, ValidatePromoCodeResult>
-{
+export class ValidatePromoCodeHandler implements CommandHandler<
+  ValidatePromoCodeCommand,
+  ValidatePromoCodeResult
+> {
   constructor(private promoCodeRepository: IPromoCodeRepository) {}
 
-  async execute(command: ValidatePromoCodeCommand): Promise<ValidatePromoCodeResult> {
+  async execute(
+    command: ValidatePromoCodeCommand,
+  ): Promise<ValidatePromoCodeResult> {
     const promoCode = await this.promoCodeRepository.findByCode(
       command.eventId,
       command.code.toUpperCase(),

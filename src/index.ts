@@ -17,7 +17,7 @@ async function initApp() {
     
     // Step 3: Try loading response helpers (using relative path)
     console.log("📦 Step 3: Loading response helpers...");
-    const responseModule = await import("./app/main/shared/utils/response/response.js").catch(err => {
+    const responseModule = await import("./app/main/middlewares/response/response.js").catch(err => {
       console.error("❌ Failed to load response helpers:", err.message);
       return null;
     });

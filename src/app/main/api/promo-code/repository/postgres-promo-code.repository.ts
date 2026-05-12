@@ -42,7 +42,11 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
   }
 
   async findById(id: string): Promise<PromoCode | null> {
-    const result = await db.select().from(promoCodes).where(eq(promoCodes.id, id)).limit(1);
+    const result = await db
+      .select()
+      .from(promoCodes)
+      .where(eq(promoCodes.id, id))
+      .limit(1);
 
     if (result.length === 0) {
       return null;
@@ -59,7 +63,9 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
       usedCount: row.usedCount,
       validStart: row.validStart,
       validEnd: row.validEnd,
-      minPurchaseAmount: row.minPurchaseAmount ? parseFloat(row.minPurchaseAmount) : null,
+      minPurchaseAmount: row.minPurchaseAmount
+        ? parseFloat(row.minPurchaseAmount)
+        : null,
       currency: row.currency,
       status: row.status,
       createdAt: row.createdAt,
@@ -88,7 +94,9 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
       usedCount: row.usedCount,
       validStart: row.validStart,
       validEnd: row.validEnd,
-      minPurchaseAmount: row.minPurchaseAmount ? parseFloat(row.minPurchaseAmount) : null,
+      minPurchaseAmount: row.minPurchaseAmount
+        ? parseFloat(row.minPurchaseAmount)
+        : null,
       currency: row.currency,
       status: row.status,
       createdAt: row.createdAt,
@@ -96,7 +104,10 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
   }
 
   async findByEventId(eventId: string): Promise<PromoCode[]> {
-    const results = await db.select().from(promoCodes).where(eq(promoCodes.eventId, eventId));
+    const results = await db
+      .select()
+      .from(promoCodes)
+      .where(eq(promoCodes.eventId, eventId));
 
     return results.map((row) =>
       PromoCode.fromPrimitives({
@@ -109,11 +120,13 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
         usedCount: row.usedCount,
         validStart: row.validStart,
         validEnd: row.validEnd,
-        minPurchaseAmount: row.minPurchaseAmount ? parseFloat(row.minPurchaseAmount) : null,
+        minPurchaseAmount: row.minPurchaseAmount
+          ? parseFloat(row.minPurchaseAmount)
+          : null,
         currency: row.currency,
         status: row.status,
         createdAt: row.createdAt,
-      })
+      }),
     );
   }
 
@@ -131,11 +144,13 @@ export class PostgresPromoCodeRepository implements IPromoCodeRepository {
         usedCount: row.usedCount,
         validStart: row.validStart,
         validEnd: row.validEnd,
-        minPurchaseAmount: row.minPurchaseAmount ? parseFloat(row.minPurchaseAmount) : null,
+        minPurchaseAmount: row.minPurchaseAmount
+          ? parseFloat(row.minPurchaseAmount)
+          : null,
         currency: row.currency,
         status: row.status,
         createdAt: row.createdAt,
-      })
+      }),
     );
   }
 

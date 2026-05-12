@@ -1,7 +1,13 @@
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
 import { EventStatus } from "../../../entities/event/event-status";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class UpdateTicketCategoryCommand implements Command {
   constructor(
@@ -15,7 +21,10 @@ export class UpdateTicketCategoryCommand implements Command {
   ) {}
 }
 
-export class UpdateTicketCategoryHandler implements CommandHandler<UpdateTicketCategoryCommand, void> {
+export class UpdateTicketCategoryHandler implements CommandHandler<
+  UpdateTicketCategoryCommand,
+  void
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(command: UpdateTicketCategoryCommand): Promise<void> {
@@ -32,7 +41,9 @@ export class UpdateTicketCategoryHandler implements CommandHandler<UpdateTicketC
       );
     }
 
-    const category = event.ticketCategories.find((c) => c.id === command.categoryId);
+    const category = event.ticketCategories.find(
+      (c) => c.id === command.categoryId,
+    );
     if (!category) {
       throw new NotFoundError("Ticket Category", command.categoryId);
     }
@@ -56,4 +67,3 @@ export class UpdateTicketCategoryHandler implements CommandHandler<UpdateTicketC
     await this.eventRepository.save(event);
   }
 }
-

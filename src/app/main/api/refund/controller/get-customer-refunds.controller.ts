@@ -1,6 +1,6 @@
 import { IRefundRepository } from "../repository/refund-repository";
 import { BookingRepository } from "../../booking/repository/booking-repository";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type RefundDTO = {
   id: string;
@@ -20,19 +20,24 @@ export class GetCustomerRefundsQuery implements Query {
   constructor(public readonly customerEmail: string) {}
 }
 
-export class GetCustomerRefundsHandler implements QueryHandler<GetCustomerRefundsQuery, RefundDTO[]> {
+export class GetCustomerRefundsHandler implements QueryHandler<
+  GetCustomerRefundsQuery,
+  RefundDTO[]
+> {
   constructor(
     private refundRepository: IRefundRepository,
     private bookingRepository: BookingRepository,
   ) {}
 
   async execute(query: GetCustomerRefundsQuery): Promise<RefundDTO[]> {
-    const customerBookings = await this.bookingRepository.findByCustomerEmail(query.customerEmail);
+    const customerBookings = await this.bookingRepository.findByCustomerEmail(
+      query.customerEmail,
+    );
 
     const refundDTOs: RefundDTO[] = [];
     for (const booking of customerBookings) {
       const refunds = await this.refundRepository.findByBookingId(booking.id);
-      
+
       for (const refund of refunds) {
         const json = refund.toJSON();
         refundDTOs.push({
@@ -51,9 +56,9 @@ export class GetCustomerRefundsHandler implements QueryHandler<GetCustomerRefund
       }
     }
 
-    return refundDTOs.sort((a, b) => 
-      new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime()
+    return refundDTOs.sort(
+      (a, b) =>
+        new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime(),
     );
   }
 }
-

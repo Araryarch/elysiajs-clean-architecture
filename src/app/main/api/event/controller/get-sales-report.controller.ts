@@ -1,15 +1,18 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { BookingStatus } from "../../../entities/booking/booking-status";
 import { EventRepository } from "../repository/event-repository";
 import { BookingRepository } from "../../booking/repository/booking-repository";
-import { SalesReportDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { SalesReportDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class GetSalesReportQuery implements Query {
   constructor(public readonly eventId: string) {}
 }
 
-export class GetSalesReportHandler implements QueryHandler<GetSalesReportQuery, SalesReportDTO> {
+export class GetSalesReportHandler implements QueryHandler<
+  GetSalesReportQuery,
+  SalesReportDTO
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -23,7 +26,10 @@ export class GetSalesReportHandler implements QueryHandler<GetSalesReportQuery, 
 
     const bookings = await this.bookingRepository.findByEventId(query.eventId);
 
-    const categorySales = new Map<string, { name: string; quantity: number; revenue: number }>();
+    const categorySales = new Map<
+      string,
+      { name: string; quantity: number; revenue: number }
+    >();
 
     for (const category of event.ticketCategories) {
       categorySales.set(category.id, {
@@ -42,11 +48,12 @@ export class GetSalesReportHandler implements QueryHandler<GetSalesReportQuery, 
     };
 
     for (const booking of bookings) {
-
-      if (booking.status === BookingStatus.PENDING_PAYMENT) bookingStats.pendingPayment++;
+      if (booking.status === BookingStatus.PENDING_PAYMENT)
+        bookingStats.pendingPayment++;
       else if (booking.status === BookingStatus.PAID) bookingStats.paid++;
       else if (booking.status === BookingStatus.EXPIRED) bookingStats.expired++;
-      else if (booking.status === BookingStatus.REFUNDED) bookingStats.refunded++;
+      else if (booking.status === BookingStatus.REFUNDED)
+        bookingStats.refunded++;
 
       if (booking.status === BookingStatus.PAID) {
         totalRevenue += booking.totalAmount.amount;
@@ -74,4 +81,3 @@ export class GetSalesReportHandler implements QueryHandler<GetSalesReportQuery, 
     };
   }
 }
-

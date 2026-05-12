@@ -1,14 +1,17 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { BookingRepository } from "../repository/booking-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { BookingDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { BookingDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class GetBookingQuery implements Query {
   constructor(public readonly bookingId: string) {}
 }
 
-export class GetBookingHandler implements QueryHandler<GetBookingQuery, BookingDTO> {
+export class GetBookingHandler implements QueryHandler<
+  GetBookingQuery,
+  BookingDTO
+> {
   constructor(
     private bookingRepository: BookingRepository,
     private eventRepository: EventRepository,
@@ -29,7 +32,9 @@ export class GetBookingHandler implements QueryHandler<GetBookingQuery, BookingD
       customerName: json.customerName,
       customerEmail: json.customerEmail,
       items: json.items.map((item) => {
-        const category = event?.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+        const category = event?.ticketCategories.find(
+          (c) => c.id === item.ticketCategoryId,
+        );
         return {
           ticketCategoryId: item.ticketCategoryId,
           ticketCategoryName: category?.name || "Unknown",

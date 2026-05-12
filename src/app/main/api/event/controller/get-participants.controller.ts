@@ -1,17 +1,20 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { BookingStatus } from "../../../entities/booking/booking-status";
 import { TicketStatus } from "../../../entities/ticket/ticket-status";
 import { EventRepository } from "../repository/event-repository";
 import { BookingRepository } from "../../booking/repository/booking-repository";
 import { ITicketRepository } from "../../ticket/repository/ticket-repository";
-import { ParticipantDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { ParticipantDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class GetParticipantsQuery implements Query {
   constructor(public readonly eventId: string) {}
 }
 
-export class GetParticipantsHandler implements QueryHandler<GetParticipantsQuery, ParticipantDTO[]> {
+export class GetParticipantsHandler implements QueryHandler<
+  GetParticipantsQuery,
+  ParticipantDTO[]
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -25,7 +28,9 @@ export class GetParticipantsHandler implements QueryHandler<GetParticipantsQuery
     }
 
     const bookings = await this.bookingRepository.findByEventId(query.eventId);
-    const paidBookings = bookings.filter((b) => b.status === BookingStatus.PAID);
+    const paidBookings = bookings.filter(
+      (b) => b.status === BookingStatus.PAID,
+    );
 
     const participants: ParticipantDTO[] = [];
 

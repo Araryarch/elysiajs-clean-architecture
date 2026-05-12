@@ -8,10 +8,13 @@ export const createBookingRoutes = (controller: BookingController) =>
         eventId: t.String(),
         customerName: t.String({ minLength: 1 }),
         customerEmail: t.String({ format: "email" }),
-        items: t.Array(t.Object({
-          ticketCategoryId: t.String(),
-          quantity: t.Number({ minimum: 1 }),
-        }), { minItems: 1 }),
+        items: t.Array(
+          t.Object({
+            ticketCategoryId: t.String(),
+            quantity: t.Number({ minimum: 1 }),
+          }),
+          { minItems: 1 },
+        ),
       }),
     })
     .get("/", ({ query }) => controller.list(query), {

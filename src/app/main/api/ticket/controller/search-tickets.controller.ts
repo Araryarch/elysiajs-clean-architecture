@@ -1,8 +1,11 @@
 import { ITicketRepository } from "../repository/ticket-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { TicketDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
-import { PaginatedResult, paginate } from "../../../shared/types/pagination.dto";
+import { TicketDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
+import {
+  PaginatedResult,
+  paginate,
+} from "../../../application/types/pagination.dto";
 
 export class SearchTicketsQuery implements Query {
   constructor(
@@ -14,18 +17,25 @@ export class SearchTicketsQuery implements Query {
   ) {}
 }
 
-export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, PaginatedResult<TicketDTO>> {
+export class SearchTicketsHandler implements QueryHandler<
+  SearchTicketsQuery,
+  PaginatedResult<TicketDTO>
+> {
   constructor(
     private ticketRepository: ITicketRepository,
     private eventRepository: EventRepository,
   ) {}
 
-  async execute(query: SearchTicketsQuery): Promise<PaginatedResult<TicketDTO>> {
+  async execute(
+    query: SearchTicketsQuery,
+  ): Promise<PaginatedResult<TicketDTO>> {
     let tickets = await this.ticketRepository.findAll();
 
     if (query.ticketCode) {
       tickets = tickets.filter(
-        (t) => t.toJSON().ticketCode.toLowerCase() === query.ticketCode!.toLowerCase(),
+        (t) =>
+          t.toJSON().ticketCode.toLowerCase() ===
+          query.ticketCode!.toLowerCase(),
       );
     }
 
@@ -41,7 +51,9 @@ export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, Pa
     for (const ticket of tickets) {
       const event = await this.eventRepository.findById(ticket.eventId);
       const json = ticket.toJSON();
-      const category = event?.ticketCategories.find((c) => c.id === json.ticketCategoryId);
+      const category = event?.ticketCategories.find(
+        (c) => c.id === json.ticketCategoryId,
+      );
 
       ticketDTOs.push({
         id: json.id,
@@ -58,4 +70,3 @@ export class SearchTicketsHandler implements QueryHandler<SearchTicketsQuery, Pa
     return paginate(ticketDTOs, query.page, query.limit);
   }
 }
-

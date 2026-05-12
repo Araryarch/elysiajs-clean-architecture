@@ -1,10 +1,16 @@
-import { createId } from "../../../shared/utils/helpers/id";
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import { createId } from "../../../application/id";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { TicketCategory } from "../../../entities/event/ticket-category";
-import { DateRange } from "../../../shared/utils/helpers/date-range";
-import { Money } from "../../../shared/utils/helpers/money";
+import { DateRange } from "../../../domain/value-objects/date-range";
+import { Money } from "../../../domain/value-objects/money";
 import { EventRepository } from "../repository/event-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class AddTicketCategoryCommand implements Command {
   constructor(
@@ -17,7 +23,10 @@ export class AddTicketCategoryCommand implements Command {
   ) {}
 }
 
-export class AddTicketCategoryHandler implements CommandHandler<AddTicketCategoryCommand, string> {
+export class AddTicketCategoryHandler implements CommandHandler<
+  AddTicketCategoryCommand,
+  string
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(command: AddTicketCategoryCommand): Promise<string> {
@@ -27,7 +36,9 @@ export class AddTicketCategoryHandler implements CommandHandler<AddTicketCategor
     }
 
     if (command.salesEnd > event.startAt) {
-      throw new DomainError("Ticket sales period must end before or at the event start date");
+      throw new DomainError(
+        "Ticket sales period must end before or at the event start date",
+      );
     }
 
     const category = TicketCategory.create({
@@ -45,4 +56,3 @@ export class AddTicketCategoryHandler implements CommandHandler<AddTicketCategor
     return category.id;
   }
 }
-

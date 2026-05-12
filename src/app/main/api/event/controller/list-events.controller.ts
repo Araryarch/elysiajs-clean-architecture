@@ -1,7 +1,7 @@
 import { EventStatus } from "../../../entities/event/event-status";
 import { EventRepository } from "../repository/event-repository";
-import { EventDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { EventDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class ListEventsQuery implements Query {
   constructor(
@@ -11,7 +11,10 @@ export class ListEventsQuery implements Query {
   ) {}
 }
 
-export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO[]> {
+export class ListEventsHandler implements QueryHandler<
+  ListEventsQuery,
+  EventDTO[]
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(query: ListEventsQuery): Promise<EventDTO[]> {
@@ -63,4 +66,3 @@ export class ListEventsHandler implements QueryHandler<ListEventsQuery, EventDTO
     });
   }
 }
-

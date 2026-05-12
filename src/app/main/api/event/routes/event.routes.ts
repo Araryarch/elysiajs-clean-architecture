@@ -53,16 +53,24 @@ export const createEventRoutes = (controller: EventController) =>
         id: t.String(),
       }),
     })
-    .get("/:id/sales-report", ({ params }) => controller.getSalesReport(params), {
-      params: t.Object({
-        id: t.String(),
-      }),
-    })
-    .get("/:id/participants", ({ params }) => controller.getParticipants(params), {
-      params: t.Object({
-        id: t.String(),
-      }),
-    })
+    .get(
+      "/:id/sales-report",
+      ({ params }) => controller.getSalesReport(params),
+      {
+        params: t.Object({
+          id: t.String(),
+        }),
+      },
+    )
+    .get(
+      "/:id/participants",
+      ({ params }) => controller.getParticipants(params),
+      {
+        params: t.Object({
+          id: t.String(),
+        }),
+      },
+    )
     .get("/:id/analytics", ({ params }) => controller.getAnalytics(params), {
       params: t.Object({
         id: t.String(),
@@ -73,34 +81,46 @@ export const createEventRoutes = (controller: EventController) =>
         id: t.String(),
       }),
     })
-    .post("/:id/ticket-categories", ({ params, body }) => controller.addTicketCategory(params, body), {
-      params: t.Object({
-        id: t.String(),
-      }),
-      body: t.Object({
-        name: t.String({ minLength: 1 }),
-        price: t.Number({ minimum: 0 }),
-        quota: t.Number({ minimum: 1 }),
-        salesStart: t.String({ format: "date-time" }),
-        salesEnd: t.String({ format: "date-time" }),
-      }),
-    })
-    .put("/:id/ticket-categories/:categoryId", ({ params, body }) => controller.updateTicketCategory(params, body), {
-      params: t.Object({
-        id: t.String(),
-        categoryId: t.String(),
-      }),
-      body: t.Object({
-        name: t.Optional(t.String({ minLength: 1 })),
-        price: t.Optional(t.Number({ minimum: 0 })),
-        quota: t.Optional(t.Number({ minimum: 1 })),
-        salesStart: t.Optional(t.String({ format: "date-time" })),
-        salesEnd: t.Optional(t.String({ format: "date-time" })),
-      }),
-    })
-    .post("/:id/ticket-categories/:categoryId/disable", ({ params }) => controller.disableTicketCategory(params), {
-      params: t.Object({
-        id: t.String(),
-        categoryId: t.String(),
-      }),
-    });
+    .post(
+      "/:id/ticket-categories",
+      ({ params, body }) => controller.addTicketCategory(params, body),
+      {
+        params: t.Object({
+          id: t.String(),
+        }),
+        body: t.Object({
+          name: t.String({ minLength: 1 }),
+          price: t.Number({ minimum: 0 }),
+          quota: t.Number({ minimum: 1 }),
+          salesStart: t.String({ format: "date-time" }),
+          salesEnd: t.String({ format: "date-time" }),
+        }),
+      },
+    )
+    .put(
+      "/:id/ticket-categories/:categoryId",
+      ({ params, body }) => controller.updateTicketCategory(params, body),
+      {
+        params: t.Object({
+          id: t.String(),
+          categoryId: t.String(),
+        }),
+        body: t.Object({
+          name: t.Optional(t.String({ minLength: 1 })),
+          price: t.Optional(t.Number({ minimum: 0 })),
+          quota: t.Optional(t.Number({ minimum: 1 })),
+          salesStart: t.Optional(t.String({ format: "date-time" })),
+          salesEnd: t.Optional(t.String({ format: "date-time" })),
+        }),
+      },
+    )
+    .post(
+      "/:id/ticket-categories/:categoryId/disable",
+      ({ params }) => controller.disableTicketCategory(params),
+      {
+        params: t.Object({
+          id: t.String(),
+          categoryId: t.String(),
+        }),
+      },
+    );

@@ -2,8 +2,8 @@ import { describe, expect, it, beforeEach } from "bun:test";
 import { CreateBookingCommand, CreateBookingHandler } from "../../api/booking/controller/create-booking.controller";
 import { Event } from "../../entities/event/event";
 import { TicketCategory } from "../../entities/event/ticket-category";
-import { Money } from "../../shared/utils/helpers/money";
-import { DateRange } from "../../shared/utils/helpers/date-range";
+import { Money } from "../../domain/value-objects/money";
+import { DateRange } from "../../domain/value-objects/date-range";
 import type { EventRepository } from "../../api/event/repository/event-repository";
 import type { BookingRepository } from "../../api/booking/repository/booking-repository";
 import type { Booking } from "../../entities/booking/booking";
@@ -137,4 +137,5 @@ describe("CreateBookingHandler (integration)", () => {
     ).rejects.toThrow("available");
   });
 });
+
 

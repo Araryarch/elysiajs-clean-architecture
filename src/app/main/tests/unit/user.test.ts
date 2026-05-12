@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { User, UserRole, UserStatus } from "../../entities/auth/user";
-import { Email } from "../../shared/utils/validation/email";
+import { Email } from "../../domain/value-objects/email";
 
 describe("User entity", () => {
   it("creates a user with Active status and hashed password", async () => {
@@ -190,3 +190,4 @@ describe("User entity", () => {
     expect(user.role).toBe(UserRole.ORGANIZER);
   });
 });
+

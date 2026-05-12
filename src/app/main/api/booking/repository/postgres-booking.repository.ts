@@ -1,18 +1,18 @@
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { Booking } from "../../../entities/booking/booking";
 import { BookingRepository } from "./booking-repository";
-import { Email } from "../../../shared/utils/validation/email";
-import { Money } from "../../../shared/utils/helpers/money";
 import { db } from "../../../database/drizzle/index/connection";
-import { bookings, bookingItems } from "../../../database/drizzle/schema/schema";
-import { createId } from "../../../shared/utils/helpers/id";
+import {
+  bookings,
+  bookingItems,
+} from "../../../database/drizzle/schema/schema";
+import { createId } from "../../../application/id";
 
 export class PostgresBookingRepository implements BookingRepository {
   async save(booking: Booking): Promise<void> {
     const json = booking.toJSON();
 
     await db.transaction(async (tx) => {
-
       await tx
         .insert(bookings)
         .values({
@@ -95,16 +95,22 @@ export class PostgresBookingRepository implements BookingRepository {
             currency: item.currency,
           })),
           totalAmount: parseFloat(bookingData.totalAmount),
-        })
+        }),
       );
     }
 
     return result;
   }
 
-  async findByEventAndCustomer(eventId: string, customerEmail: string): Promise<Booking[]> {
+  async findByEventAndCustomer(
+    eventId: string,
+    customerEmail: string,
+  ): Promise<Booking[]> {
     const bookingsList = await db.query.bookings.findMany({
-      where: and(eq(bookings.eventId, eventId), eq(bookings.customerEmail, customerEmail)),
+      where: and(
+        eq(bookings.eventId, eventId),
+        eq(bookings.customerEmail, customerEmail),
+      ),
     });
 
     const result: Booking[] = [];
@@ -124,7 +130,7 @@ export class PostgresBookingRepository implements BookingRepository {
             currency: item.currency,
           })),
           totalAmount: parseFloat(bookingData.totalAmount),
-        })
+        }),
       );
     }
 
@@ -153,7 +159,7 @@ export class PostgresBookingRepository implements BookingRepository {
             currency: item.currency,
           })),
           totalAmount: parseFloat(bookingData.totalAmount),
-        })
+        }),
       );
     }
 
@@ -179,11 +185,10 @@ export class PostgresBookingRepository implements BookingRepository {
             currency: item.currency,
           })),
           totalAmount: parseFloat(bookingData.totalAmount),
-        })
+        }),
       );
     }
 
     return result;
   }
 }
-

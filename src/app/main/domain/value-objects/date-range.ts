@@ -1,9 +1,10 @@
 export class DateRange {
   constructor(
     public readonly start: Date,
-    public readonly end: Date
+    public readonly end: Date,
   ) {
-    if (end < start) throw new Error("End date cannot be earlier than start date");
+    if (end < start)
+      throw new Error("End date cannot be earlier than start date");
   }
 
   contains(date: Date): boolean {

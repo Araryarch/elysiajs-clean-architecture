@@ -1,4 +1,4 @@
-import { DomainError } from "../../../shared/errors/domain-error";
+import { DomainError } from "../../../domain/errors/domain-error";
 
 export interface JwtPayload {
   userId: string;
@@ -16,7 +16,9 @@ export class JwtService implements IJwtService {
 
   async sign(payload: JwtPayload): Promise<string> {
     const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-    const body = btoa(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000) }));
+    const body = btoa(
+      JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000) }),
+    );
     const signature = await this.hmacSign(`${header}.${body}`);
     return `${header}.${body}.${signature}`;
   }

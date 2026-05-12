@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { TicketCategory } from "../../entities/event/ticket-category";
-import { Money } from "../../shared/utils/helpers/money";
-import { DateRange } from "../../shared/utils/helpers/date-range";
+import { Money } from "../../domain/value-objects/money";
+import { DateRange } from "../../domain/value-objects/date-range";
 import { makeCategory, past, future } from "../helpers/test-factory";
 
 describe("TicketCategory entity", () => {
@@ -137,3 +137,4 @@ describe("TicketCategory entity", () => {
     expect(cat.availableQuantity).toBe(80);
   });
 });
+

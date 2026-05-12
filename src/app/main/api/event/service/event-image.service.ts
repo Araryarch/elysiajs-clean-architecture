@@ -1,8 +1,12 @@
-import { IStorage } from "../../../shared/interfaces/storage.interface";
-import { createId } from "../../../shared/utils/helpers/id";
+import { IStorage } from "../../../application/interfaces/storage.interface";
+import { createId } from "../../../application/id";
 
 export interface IEventImageService {
-  uploadBanner(eventId: string, data: Buffer, contentType: string): Promise<string>;
+  uploadBanner(
+    eventId: string,
+    data: Buffer,
+    contentType: string,
+  ): Promise<string>;
   deleteBanner(eventId: string): Promise<void>;
   getBannerUrl(eventId: string): Promise<string | null>;
 }
@@ -10,7 +14,11 @@ export interface IEventImageService {
 export class EventImageService implements IEventImageService {
   constructor(private storage: IStorage) {}
 
-  async uploadBanner(eventId: string, data: Buffer, contentType: string): Promise<string> {
+  async uploadBanner(
+    eventId: string,
+    data: Buffer,
+    contentType: string,
+  ): Promise<string> {
     const key = `events/${eventId}/banner-${createId("img")}`;
     return this.storage.upload({ key, data, contentType });
   }

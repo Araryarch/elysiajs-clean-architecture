@@ -1,7 +1,7 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { DomainEvent } from "../../shared/types/domain-event";
-import { RefundApproved, RefundPaidOut, RefundRejected, RefundRequested } from "../../shared/types/events";
-import { Money } from "../../shared/utils/helpers/money";
+import { DomainError } from "../../domain/errors/domain-error";
+import { DomainEvent } from "../../domain/events/domain-event";
+import { RefundApproved, RefundPaidOut, RefundRejected, RefundRequested } from "../../domain/events/events";
+import { Money } from "../../domain/value-objects/money";
 import { RefundStatus } from "./refund-status";
 
 export type RefundProps = {
@@ -133,4 +133,5 @@ export class Refund {
     });
   }
 }
+
 

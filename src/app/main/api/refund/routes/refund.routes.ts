@@ -26,14 +26,20 @@ export const createRefundRoutes = (controller: RefundController) =>
         id: t.String(),
       }),
     })
-    .post("/:id/reject", ({ params, body }) => controller.reject(params, body ?? undefined), {
-      params: t.Object({
-        id: t.String(),
-      }),
-      body: t.Optional(t.Object({
-        reason: t.Optional(t.String()),
-      })),
-    })
+    .post(
+      "/:id/reject",
+      ({ params, body }) => controller.reject(params, body ?? undefined),
+      {
+        params: t.Object({
+          id: t.String(),
+        }),
+        body: t.Optional(
+          t.Object({
+            reason: t.Optional(t.String()),
+          }),
+        ),
+      },
+    )
     .post("/:id/payout", ({ params }) => controller.payout(params), {
       params: t.Object({
         id: t.String(),

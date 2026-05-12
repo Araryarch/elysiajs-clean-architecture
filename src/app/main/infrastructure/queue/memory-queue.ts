@@ -1,5 +1,5 @@
-import { createId } from "../../shared/utils/helpers/id";
-import type { EnqueueOptions, IQueue } from "../../shared/interfaces/queue.interface";
+import { createId } from "../../application/id";
+import type { EnqueueOptions, IQueue } from "../../application/interfaces/queue.interface";
 
 export class MemoryQueue<TPayload = unknown> implements IQueue<TPayload> {
   private handler: ((payload: TPayload) => Promise<void>) | null = null;
@@ -24,4 +24,5 @@ export class MemoryQueue<TPayload = unknown> implements IQueue<TPayload> {
     this.handler = handler;
   }
 }
+
 

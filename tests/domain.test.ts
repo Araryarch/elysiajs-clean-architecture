@@ -4,10 +4,10 @@ import { TicketCategory } from "../src/app/main/entities/event/ticket-category";
 import { Booking } from "../src/app/main/entities/booking/booking";
 import { Ticket } from "../src/app/main/entities/ticket/ticket";
 import { Refund } from "../src/app/main/entities/refund/refund";
-import { Money } from "../src/app/main/shared/utils/helpers/money";
-import { Email } from "../src/app/main/shared/utils/validation/email";
-import { DateRange } from "../src/app/main/shared/utils/helpers/date-range";
-import { TicketCode } from "../src/app/main/shared/utils/helpers/ticket-code";
+import { Money } from "../src/app/main/domain/value-objects/money";
+import { Email } from "../src/app/main/domain/value-objects/email";
+import { DateRange } from "../src/app/main/domain/value-objects/date-range";
+import { TicketCode } from "../src/app/main/domain/value-objects/ticket-code";
 import { EventStatus } from "../src/app/main/entities/event/event-status";
 import { BookingStatus } from "../src/app/main/entities/booking/booking-status";
 import { TicketStatus } from "../src/app/main/entities/ticket/ticket-status";
@@ -275,3 +275,4 @@ describe("Domain Layer Tests", () => {
     });
   });
 });
+

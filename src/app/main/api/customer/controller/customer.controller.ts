@@ -4,7 +4,7 @@ import { GetCustomerRefundsQuery } from "../../refund/controller/get-customer-re
 import type { GetCustomerBookingsHandler } from "./get-customer-bookings.controller";
 import type { GetCustomerTicketsHandler } from "../../ticket/controller/get-customer-tickets.controller";
 import type { GetCustomerRefundsHandler } from "../../refund/controller/get-customer-refunds.controller";
-import { success } from "../../../shared/utils/response/response";
+import { success } from "../../../middlewares/response/response";
 
 export type CustomerControllerHandlers = {
   getCustomerBookingsHandler: GetCustomerBookingsHandler;
@@ -12,23 +12,34 @@ export type CustomerControllerHandlers = {
   getCustomerRefundsHandler: GetCustomerRefundsHandler;
 };
 
-export const createCustomerController = (handlers: CustomerControllerHandlers) => ({
+export const createCustomerController = (
+  handlers: CustomerControllerHandlers,
+) => ({
   getBookings(query: { email: string }) {
     if (!query.email) throw new Error("Email parameter is required");
-    return handlers.getCustomerBookingsHandler.execute(new GetCustomerBookingsQuery(query.email))
-      .then((result) => success(result, "Customer bookings retrieved successfully"));
+    return handlers.getCustomerBookingsHandler
+      .execute(new GetCustomerBookingsQuery(query.email))
+      .then((result) =>
+        success(result, "Customer bookings retrieved successfully"),
+      );
   },
 
   getTickets(query: { email: string }) {
     if (!query.email) throw new Error("Email parameter is required");
-    return handlers.getCustomerTicketsHandler.execute(new GetCustomerTicketsQuery(query.email))
-      .then((result) => success(result, "Customer tickets retrieved successfully"));
+    return handlers.getCustomerTicketsHandler
+      .execute(new GetCustomerTicketsQuery(query.email))
+      .then((result) =>
+        success(result, "Customer tickets retrieved successfully"),
+      );
   },
 
   getRefunds(query: { email: string }) {
     if (!query.email) throw new Error("Email parameter is required");
-    return handlers.getCustomerRefundsHandler.execute(new GetCustomerRefundsQuery(query.email))
-      .then((result) => success(result, "Customer refunds retrieved successfully"));
+    return handlers.getCustomerRefundsHandler
+      .execute(new GetCustomerRefundsQuery(query.email))
+      .then((result) =>
+        success(result, "Customer refunds retrieved successfully"),
+      );
   },
 });
 

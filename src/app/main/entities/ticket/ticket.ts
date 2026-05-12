@@ -1,7 +1,7 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { DomainEvent } from "../../shared/types/domain-event";
-import { TicketCheckedIn } from "../../shared/types/events";
-import { TicketCode } from "../../shared/utils/helpers/ticket-code";
+import { DomainError } from "../../domain/errors/domain-error";
+import { DomainEvent } from "../../domain/events/domain-event";
+import { TicketCheckedIn } from "../../domain/events/events";
+import { TicketCode } from "../../domain/value-objects/ticket-code";
 import { TicketStatus } from "./ticket-status";
 
 export type TicketProps = {
@@ -131,5 +131,6 @@ export class Ticket {
     });
   }
 }
+
 
 

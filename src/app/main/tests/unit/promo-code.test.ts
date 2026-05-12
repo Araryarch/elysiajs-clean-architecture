@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { PromoCode, PromoCodeType, PromoCodeStatus } from "../../entities/promo-code/promo-code";
-import { Money } from "../../shared/utils/helpers/money";
-import { DateRange } from "../../shared/utils/helpers/date-range";
+import { Money } from "../../domain/value-objects/money";
+import { DateRange } from "../../domain/value-objects/date-range";
 import { makePromoCode, past, future } from "../helpers/test-factory";
 
 describe("PromoCode entity", () => {
@@ -139,3 +139,4 @@ describe("PromoCode entity", () => {
     expect(pc.usedCount).toBe(5);
   });
 });
+

@@ -1,15 +1,20 @@
 import { GetDashboardStatsQuery } from "./get-dashboard-stats.controller";
 import type { GetDashboardStatsHandler } from "./get-dashboard-stats.controller";
-import { success } from "../../../shared/utils/response/response";
+import { success } from "../../../middlewares/response/response";
 
 export type DashboardControllerHandlers = {
   getDashboardStatsHandler: GetDashboardStatsHandler;
 };
 
-export const createDashboardController = (handlers: DashboardControllerHandlers) => ({
+export const createDashboardController = (
+  handlers: DashboardControllerHandlers,
+) => ({
   getStats() {
-    return handlers.getDashboardStatsHandler.execute()
-      .then((result) => success(result, "Dashboard stats retrieved successfully"));
+    return handlers.getDashboardStatsHandler
+      .execute()
+      .then((result) =>
+        success(result, "Dashboard stats retrieved successfully"),
+      );
   },
 });
 

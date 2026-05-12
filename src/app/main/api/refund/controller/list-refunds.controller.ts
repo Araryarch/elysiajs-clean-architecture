@@ -1,6 +1,9 @@
 import { IRefundRepository } from "../repository/refund-repository";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
-import { PaginatedResult, paginate } from "../../../shared/types/pagination.dto";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
+import {
+  PaginatedResult,
+  paginate,
+} from "../../../application/types/pagination.dto";
 
 export type RefundDTO = {
   id: string;
@@ -25,7 +28,10 @@ export class ListRefundsQuery implements Query {
   ) {}
 }
 
-export class ListRefundsHandler implements QueryHandler<ListRefundsQuery, PaginatedResult<RefundDTO>> {
+export class ListRefundsHandler implements QueryHandler<
+  ListRefundsQuery,
+  PaginatedResult<RefundDTO>
+> {
   constructor(private refundRepository: IRefundRepository) {}
 
   async execute(query: ListRefundsQuery): Promise<PaginatedResult<RefundDTO>> {
@@ -59,4 +65,3 @@ export class ListRefundsHandler implements QueryHandler<ListRefundsQuery, Pagina
     return paginate(refundDTOs, query.page, query.limit);
   }
 }
-

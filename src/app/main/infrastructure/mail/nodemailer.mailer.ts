@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import type { IMailer, MailParams } from "../../shared/interfaces/mail.interface";
+import type { IMailer, MailParams } from "../../application/interfaces/mail.interface";
 import { appConfig } from "../../config/app.config";
 
 export class NodemailerMailer implements IMailer {
@@ -22,4 +22,5 @@ export class NodemailerMailer implements IMailer {
     });
   }
 }
+
 

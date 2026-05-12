@@ -34,7 +34,11 @@ export class PostgresUserRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
 
     if (result.length === 0) {
       return null;
@@ -90,7 +94,7 @@ export class PostgresUserRepository implements IUserRepository {
         status: row.status,
         createdAt: row.createdAt,
         lastLoginAt: row.lastLoginAt,
-      })
+      }),
     );
   }
 

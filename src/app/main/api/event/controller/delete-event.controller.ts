@@ -1,13 +1,22 @@
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
 import { EventStatus } from "../../../entities/event/event-status";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class DeleteEventCommand implements Command {
   constructor(public readonly eventId: string) {}
 }
 
-export class DeleteEventHandler implements CommandHandler<DeleteEventCommand, void> {
+export class DeleteEventHandler implements CommandHandler<
+  DeleteEventCommand,
+  void
+> {
   constructor(private eventRepository: EventRepository) {}
 
   async execute(command: DeleteEventCommand): Promise<void> {
@@ -27,4 +36,3 @@ export class DeleteEventHandler implements CommandHandler<DeleteEventCommand, vo
     await this.eventRepository.delete(command.eventId);
   }
 }
-

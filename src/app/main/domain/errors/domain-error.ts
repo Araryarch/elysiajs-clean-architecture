@@ -11,14 +11,19 @@ export class DomainError extends Error {
 
 export class NotFoundError extends DomainError {
   constructor(resource: string, id?: string) {
-    const message = id ? `${resource} with id '${id}' not found` : `${resource} not found`;
+    const message = id
+      ? `${resource} with id '${id}' not found`
+      : `${resource} not found`;
     super(message, 404, "NOT_FOUND");
     this.name = "NotFoundError";
   }
 }
 
 export class ValidationError extends DomainError {
-  constructor(message: string, public readonly field?: string) {
+  constructor(
+    message: string,
+    public readonly field?: string,
+  ) {
     super(message, 400, "VALIDATION_ERROR");
     this.name = "ValidationError";
   }

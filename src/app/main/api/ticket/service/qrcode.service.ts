@@ -1,5 +1,5 @@
 import QRCode from "qrcode";
-import { IQRCodeService } from "../../../shared/interfaces/services";
+import { IQRCodeService } from "../../../application/interfaces/services";
 
 export class QRCodeService implements IQRCodeService {
   async generateQRCode(data: string): Promise<string> {

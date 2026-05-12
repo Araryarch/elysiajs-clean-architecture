@@ -1,7 +1,10 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
-import { EventBus } from "../../../shared/events/event-bus";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import { EventBus } from "../../../infrastructure/events/event-bus";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class CancelEventCommand implements Command {
   constructor(public readonly eventId: string) {}
@@ -26,4 +29,3 @@ export class CancelEventHandler implements CommandHandler<CancelEventCommand> {
     event.clearDomainEvents();
   }
 }
-

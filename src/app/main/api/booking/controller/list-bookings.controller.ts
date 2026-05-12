@@ -1,8 +1,11 @@
 import { BookingRepository } from "../repository/booking-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { BookingDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
-import { PaginatedResult, paginate } from "../../../shared/types/pagination.dto";
+import { BookingDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
+import {
+  PaginatedResult,
+  paginate,
+} from "../../../application/types/pagination.dto";
 
 export class ListBookingsQuery implements Query {
   constructor(
@@ -14,13 +17,18 @@ export class ListBookingsQuery implements Query {
   ) {}
 }
 
-export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, PaginatedResult<BookingDTO>> {
+export class ListBookingsHandler implements QueryHandler<
+  ListBookingsQuery,
+  PaginatedResult<BookingDTO>
+> {
   constructor(
     private bookingRepository: BookingRepository,
     private eventRepository: EventRepository,
   ) {}
 
-  async execute(query: ListBookingsQuery): Promise<PaginatedResult<BookingDTO>> {
+  async execute(
+    query: ListBookingsQuery,
+  ): Promise<PaginatedResult<BookingDTO>> {
     let bookings = await this.bookingRepository.findAll();
 
     if (query.eventId) {
@@ -33,7 +41,9 @@ export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, Pagi
 
     if (query.customerEmail) {
       bookings = bookings.filter(
-        (b) => b.toJSON().customerEmail.toLowerCase() === query.customerEmail!.toLowerCase(),
+        (b) =>
+          b.toJSON().customerEmail.toLowerCase() ===
+          query.customerEmail!.toLowerCase(),
       );
     }
 
@@ -48,7 +58,9 @@ export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, Pagi
         customerName: json.customerName,
         customerEmail: json.customerEmail,
         items: json.items.map((item) => {
-          const category = event?.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+          const category = event?.ticketCategories.find(
+            (c) => c.id === item.ticketCategoryId,
+          );
           return {
             ticketCategoryId: item.ticketCategoryId,
             ticketCategoryName: category?.name || "Unknown",
@@ -68,4 +80,3 @@ export class ListBookingsHandler implements QueryHandler<ListBookingsQuery, Pagi
     return paginate(bookingDTOs, query.page, query.limit);
   }
 }
-

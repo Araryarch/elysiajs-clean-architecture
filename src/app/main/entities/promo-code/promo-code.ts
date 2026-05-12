@@ -1,6 +1,6 @@
-import { Money } from "../../shared/utils/helpers/money";
-import { DateRange } from "../../shared/utils/helpers/date-range";
-import { DomainError } from "../../shared/errors/domain-error";
+import { Money } from "../../domain/value-objects/money";
+import { DateRange } from "../../domain/value-objects/date-range";
+import { DomainError } from "../../domain/errors/domain-error";
 
 export enum PromoCodeType {
   PERCENTAGE = "Percentage",
@@ -212,4 +212,5 @@ export class PromoCode {
     });
   }
 }
+
 

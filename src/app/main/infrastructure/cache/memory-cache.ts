@@ -1,4 +1,4 @@
-import type { ICache } from "../../shared/interfaces/cache.interface";
+import type { ICache } from "../../application/interfaces/cache.interface";
 
 type CacheEntry<T> = {
   value: T;
@@ -35,4 +35,5 @@ export class MemoryCache implements ICache {
     this.store.clear();
   }
 }
+
 

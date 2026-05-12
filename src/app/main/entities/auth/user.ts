@@ -1,5 +1,5 @@
-import { Email } from "../../shared/utils/validation/email";
-import { DomainError } from "../../shared/errors/domain-error";
+import { Email } from "../../domain/value-objects/email";
+import { DomainError } from "../../domain/errors/domain-error";
 import bcrypt from "bcryptjs";
 
 export enum UserRole {

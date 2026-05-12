@@ -1,5 +1,5 @@
 import { IPromoCodeRepository } from "../repository/promo-code-repository";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type PromoCodeDTO = {
   id: string;
@@ -21,11 +21,16 @@ export class ListPromoCodesQuery implements Query {
   constructor(public readonly eventId: string) {}
 }
 
-export class ListPromoCodesHandler implements QueryHandler<ListPromoCodesQuery, PromoCodeDTO[]> {
+export class ListPromoCodesHandler implements QueryHandler<
+  ListPromoCodesQuery,
+  PromoCodeDTO[]
+> {
   constructor(private promoCodeRepository: IPromoCodeRepository) {}
 
   async execute(query: ListPromoCodesQuery): Promise<PromoCodeDTO[]> {
-    const promoCodes = await this.promoCodeRepository.findByEventId(query.eventId);
+    const promoCodes = await this.promoCodeRepository.findByEventId(
+      query.eventId,
+    );
 
     return promoCodes.map((promoCode) => {
       const json = promoCode.toJSON();

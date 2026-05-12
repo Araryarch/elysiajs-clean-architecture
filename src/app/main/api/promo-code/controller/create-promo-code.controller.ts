@@ -1,11 +1,20 @@
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 import { IPromoCodeRepository } from "../repository/promo-code-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { PromoCode, PromoCodeType } from "../../../entities/promo-code/promo-code";
-import { DateRange } from "../../../shared/utils/helpers/date-range";
-import { Money } from "../../../shared/utils/helpers/money";
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
-import { createId } from "../../../shared/utils/helpers/id";
+import {
+  PromoCode,
+  PromoCodeType,
+} from "../../../entities/promo-code/promo-code";
+import { DateRange } from "../../../domain/value-objects/date-range";
+import { Money } from "../../../domain/value-objects/money";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
+import { createId } from "../../../application/id";
 
 export class CreatePromoCodeCommand implements Command {
   constructor(
@@ -20,25 +29,33 @@ export class CreatePromoCodeCommand implements Command {
   ) {}
 }
 
-export class CreatePromoCodeHandler implements CommandHandler<CreatePromoCodeCommand, string> {
+export class CreatePromoCodeHandler implements CommandHandler<
+  CreatePromoCodeCommand,
+  string
+> {
   constructor(
     private promoCodeRepository: IPromoCodeRepository,
     private eventRepository: EventRepository,
   ) {}
 
   async execute(command: CreatePromoCodeCommand): Promise<string> {
-
     const event = await this.eventRepository.findById(command.eventId);
     if (!event) {
       throw new NotFoundError("Event", command.eventId);
     }
 
-    const existing = await this.promoCodeRepository.findByCode(command.eventId, command.code);
+    const existing = await this.promoCodeRepository.findByCode(
+      command.eventId,
+      command.code,
+    );
     if (existing) {
       throw new DomainError("Promo code already exists for this event");
     }
 
-    const type = command.type === "Percentage" ? PromoCodeType.PERCENTAGE : PromoCodeType.FIXED_AMOUNT;
+    const type =
+      command.type === "Percentage"
+        ? PromoCodeType.PERCENTAGE
+        : PromoCodeType.FIXED_AMOUNT;
 
     const promoCode = PromoCode.create({
       id: createId("promo"),
@@ -58,4 +75,3 @@ export class CreatePromoCodeHandler implements CommandHandler<CreatePromoCodeCom
     return promoCode.id;
   }
 }
-

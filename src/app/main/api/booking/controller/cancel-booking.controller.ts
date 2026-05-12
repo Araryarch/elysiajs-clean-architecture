@@ -1,14 +1,23 @@
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { BookingRepository } from "../repository/booking-repository";
 import { EventRepository } from "../../event/repository/event-repository";
 import { BookingStatus } from "../../../entities/booking/booking-status";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class CancelBookingCommand implements Command {
   constructor(public readonly bookingId: string) {}
 }
 
-export class CancelBookingHandler implements CommandHandler<CancelBookingCommand, void> {
+export class CancelBookingHandler implements CommandHandler<
+  CancelBookingCommand,
+  void
+> {
   constructor(
     private bookingRepository: BookingRepository,
     private eventRepository: EventRepository,
@@ -40,4 +49,3 @@ export class CancelBookingHandler implements CommandHandler<CancelBookingCommand
     await this.bookingRepository.save(booking);
   }
 }
-

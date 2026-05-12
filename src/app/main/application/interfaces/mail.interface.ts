@@ -9,4 +9,3 @@ export type MailParams = {
   text?: string;
   from?: string;
 };
-

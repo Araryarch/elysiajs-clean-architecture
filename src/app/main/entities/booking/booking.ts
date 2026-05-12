@@ -1,12 +1,12 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { DomainEvent } from "../../shared/types/domain-event";
+import { DomainError } from "../../domain/errors/domain-error";
+import { DomainEvent } from "../../domain/events/domain-event";
 import {
   BookingExpired,
   BookingPaid,
   TicketReserved,
-} from "../../shared/types/events";
-import { Email } from "../../shared/utils/validation/email";
-import { Money } from "../../shared/utils/helpers/money";
+} from "../../domain/events/events";
+import { Email } from "../../domain/value-objects/email";
+import { Money } from "../../domain/value-objects/money";
 import { BookingStatus } from "./booking-status";
 
 export type BookingItem = {
@@ -195,3 +195,4 @@ export class Booking {
     });
   }
 }
+

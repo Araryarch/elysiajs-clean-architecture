@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Refund } from "../../entities/refund/refund";
 import { RefundStatus } from "../../entities/refund/refund-status";
-import { Money } from "../../shared/utils/helpers/money";
+import { Money } from "../../domain/value-objects/money";
 import { makeRefund } from "../helpers/test-factory";
 
 describe("Refund entity", () => {
@@ -117,3 +117,4 @@ describe("Refund entity", () => {
     expect(refund.status).toBe(RefundStatus.APPROVED);
   });
 });
+

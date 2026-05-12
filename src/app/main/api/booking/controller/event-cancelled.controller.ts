@@ -1,5 +1,5 @@
-import type { DomainEventHandler } from "../../../shared/events/event-bus";
-import type { EventCancelled } from "../../../shared/types/events";
+import type { DomainEventHandler } from "../../../infrastructure/events/event-bus";
+import type { EventCancelled } from "../../../domain/events/events";
 import { BookingStatus } from "../../../entities/booking/booking-status";
 import { TicketStatus } from "../../../entities/ticket/ticket-status";
 import type { BookingRepository } from "../repository/booking-repository";
@@ -29,4 +29,3 @@ export class EventCancelledBookingHandler implements DomainEventHandler<EventCan
     }
   }
 }
-

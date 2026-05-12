@@ -5,10 +5,10 @@ import { Ticket } from "../../entities/ticket/ticket";
 import { Refund } from "../../entities/refund/refund";
 import { PromoCode, PromoCodeType, PromoCodeStatus } from "../../entities/promo-code/promo-code";
 import { User, UserRole } from "../../entities/auth/user";
-import { Money } from "../../shared/utils/helpers/money";
-import { Email } from "../../shared/utils/validation/email";
-import { DateRange } from "../../shared/utils/helpers/date-range";
-import { TicketCode } from "../../shared/utils/helpers/ticket-code";
+import { Money } from "../../domain/value-objects/money";
+import { Email } from "../../domain/value-objects/email";
+import { DateRange } from "../../domain/value-objects/date-range";
+import { TicketCode } from "../../domain/value-objects/ticket-code";
 import { TicketStatus } from "../../entities/ticket/ticket-status";
 import { BookingStatus } from "../../entities/booking/booking-status";
 import { RefundStatus } from "../../entities/refund/refund-status";
@@ -161,3 +161,4 @@ export async function makeUser(overrides: Partial<{
     ...overrides,
   });
 }
+

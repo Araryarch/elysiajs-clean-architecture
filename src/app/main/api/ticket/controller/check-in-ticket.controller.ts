@@ -1,7 +1,10 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { ITicketRepository } from "../repository/ticket-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class CheckInTicketCommand implements Command {
   constructor(

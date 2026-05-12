@@ -1,8 +1,8 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../repository/event-repository";
 import { BookingRepository } from "../../booking/repository/booking-repository";
 import { BookingStatus } from "../../../entities/booking/booking-status";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type EventRevenueDTO = {
   eventId: string;
@@ -31,7 +31,10 @@ export class GetEventRevenueQuery implements Query {
   constructor(public readonly eventId: string) {}
 }
 
-export class GetEventRevenueHandler implements QueryHandler<GetEventRevenueQuery, EventRevenueDTO> {
+export class GetEventRevenueHandler implements QueryHandler<
+  GetEventRevenueQuery,
+  EventRevenueDTO
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -45,21 +48,39 @@ export class GetEventRevenueHandler implements QueryHandler<GetEventRevenueQuery
 
     const eventJson = event.toJSON();
     const bookings = await this.bookingRepository.findByEventId(query.eventId);
-    const paidBookings = bookings.filter((b) => b.status === BookingStatus.PAID);
-    const refundedBookings = bookings.filter((b) => b.status === BookingStatus.REFUNDED);
+    const paidBookings = bookings.filter(
+      (b) => b.status === BookingStatus.PAID,
+    );
+    const refundedBookings = bookings.filter(
+      (b) => b.status === BookingStatus.REFUNDED,
+    );
 
-    const totalRevenue = paidBookings.reduce((sum, b) => sum + b.toJSON().totalAmount, 0);
-    const refundedAmount = refundedBookings.reduce((sum, b) => sum + b.toJSON().totalAmount, 0);
+    const totalRevenue = paidBookings.reduce(
+      (sum, b) => sum + b.toJSON().totalAmount,
+      0,
+    );
+    const refundedAmount = refundedBookings.reduce(
+      (sum, b) => sum + b.toJSON().totalAmount,
+      0,
+    );
 
-    const categoryRevenue = new Map<string, { revenue: number; count: number }>();
+    const categoryRevenue = new Map<
+      string,
+      { revenue: number; count: number }
+    >();
     for (const booking of paidBookings) {
       const json = booking.toJSON();
       for (const item of json.items) {
-        const category = eventJson.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+        const category = eventJson.ticketCategories.find(
+          (c) => c.id === item.ticketCategoryId,
+        );
         const categoryName = category?.name || "Unknown";
         const itemRevenue = item.unitPrice * item.quantity;
 
-        const current = categoryRevenue.get(categoryName) || { revenue: 0, count: 0 };
+        const current = categoryRevenue.get(categoryName) || {
+          revenue: 0,
+          count: 0,
+        };
         categoryRevenue.set(categoryName, {
           revenue: current.revenue + itemRevenue,
           count: current.count + item.quantity,
@@ -67,14 +88,19 @@ export class GetEventRevenueHandler implements QueryHandler<GetEventRevenueQuery
       }
     }
 
-    const revenueByCategory = Array.from(categoryRevenue.entries()).map(([name, data]) => ({
-      categoryName: name,
-      revenue: data.revenue,
-      ticketsSold: data.count,
-      averagePrice: data.count > 0 ? data.revenue / data.count : 0,
-    }));
+    const revenueByCategory = Array.from(categoryRevenue.entries()).map(
+      ([name, data]) => ({
+        categoryName: name,
+        revenue: data.revenue,
+        ticketsSold: data.count,
+        averagePrice: data.count > 0 ? data.revenue / data.count : 0,
+      }),
+    );
 
-    const monthlyRevenue = new Map<string, { revenue: number; count: number }>();
+    const monthlyRevenue = new Map<
+      string,
+      { revenue: number; count: number }
+    >();
     for (const booking of paidBookings) {
       const json = booking.toJSON();
       const paidAt = json.paidAt;
@@ -111,4 +137,3 @@ export class GetEventRevenueHandler implements QueryHandler<GetEventRevenueQuery
     };
   }
 }
-

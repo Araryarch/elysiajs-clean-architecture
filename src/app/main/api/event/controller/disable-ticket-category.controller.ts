@@ -1,7 +1,13 @@
-import { NotFoundError, DomainError } from "../../../shared/errors/domain-error";
+import {
+  NotFoundError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
 import { EventStatus } from "../../../entities/event/event-status";
 import { EventRepository } from "../repository/event-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class DisableTicketCategoryCommand implements Command {
   constructor(
@@ -20,10 +26,14 @@ export class DisableTicketCategoryHandler implements CommandHandler<DisableTicke
     }
 
     if (event.status === EventStatus.COMPLETED) {
-      throw new DomainError("Cannot disable ticket category for completed event");
+      throw new DomainError(
+        "Cannot disable ticket category for completed event",
+      );
     }
 
-    const category = event.ticketCategories.find((c) => c.id === command.categoryId);
+    const category = event.ticketCategories.find(
+      (c) => c.id === command.categoryId,
+    );
     if (!category) {
       throw new NotFoundError("Ticket Category", command.categoryId);
     }
@@ -32,4 +42,3 @@ export class DisableTicketCategoryHandler implements CommandHandler<DisableTicke
     await this.eventRepository.save(event);
   }
 }
-

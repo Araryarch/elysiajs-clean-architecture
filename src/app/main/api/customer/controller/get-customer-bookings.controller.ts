@@ -1,20 +1,25 @@
 import { BookingRepository } from "../../booking/repository/booking-repository";
 import { EventRepository } from "../../event/repository/event-repository";
-import { BookingDTO } from "../../../shared/types/dtos";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { BookingDTO } from "../../../application/types/dtos";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export class GetCustomerBookingsQuery implements Query {
   constructor(public readonly customerEmail: string) {}
 }
 
-export class GetCustomerBookingsHandler implements QueryHandler<GetCustomerBookingsQuery, BookingDTO[]> {
+export class GetCustomerBookingsHandler implements QueryHandler<
+  GetCustomerBookingsQuery,
+  BookingDTO[]
+> {
   constructor(
     private bookingRepository: BookingRepository,
     private eventRepository: EventRepository,
   ) {}
 
   async execute(query: GetCustomerBookingsQuery): Promise<BookingDTO[]> {
-    const customerBookings = await this.bookingRepository.findByCustomerEmail(query.customerEmail);
+    const customerBookings = await this.bookingRepository.findByCustomerEmail(
+      query.customerEmail,
+    );
 
     const bookingDTOs: BookingDTO[] = [];
     for (const booking of customerBookings) {
@@ -27,7 +32,9 @@ export class GetCustomerBookingsHandler implements QueryHandler<GetCustomerBooki
         customerName: json.customerName,
         customerEmail: json.customerEmail,
         items: json.items.map((item) => {
-          const category = event?.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+          const category = event?.ticketCategories.find(
+            (c) => c.id === item.ticketCategoryId,
+          );
           return {
             ticketCategoryId: item.ticketCategoryId,
             ticketCategoryName: category?.name || "Unknown",
@@ -44,9 +51,9 @@ export class GetCustomerBookingsHandler implements QueryHandler<GetCustomerBooki
       });
     }
 
-    return bookingDTOs.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    return bookingDTOs.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   }
 }
-

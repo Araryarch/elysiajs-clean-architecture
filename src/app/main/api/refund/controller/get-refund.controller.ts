@@ -1,6 +1,6 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { IRefundRepository } from "../repository/refund-repository";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type RefundDTO = {
   id: string;
@@ -20,7 +20,10 @@ export class GetRefundQuery implements Query {
   constructor(public readonly refundId: string) {}
 }
 
-export class GetRefundHandler implements QueryHandler<GetRefundQuery, RefundDTO> {
+export class GetRefundHandler implements QueryHandler<
+  GetRefundQuery,
+  RefundDTO
+> {
   constructor(private refundRepository: IRefundRepository) {}
 
   async execute(query: GetRefundQuery): Promise<RefundDTO> {

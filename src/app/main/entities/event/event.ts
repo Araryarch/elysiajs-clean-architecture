@@ -1,11 +1,11 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { DomainEvent } from "../../shared/types/domain-event";
+import { DomainError } from "../../domain/errors/domain-error";
+import { DomainEvent } from "../../domain/events/domain-event";
 import {
   EventCancelled,
   EventCreated,
   EventPublished,
-} from "../../shared/types/events";
-import { Money } from "../../shared/utils/helpers/money";
+} from "../../domain/events/events";
+import { Money } from "../../domain/value-objects/money";
 import { EventStatus } from "./event-status";
 import {
   TicketCategory,
@@ -238,3 +238,4 @@ export class Event {
     });
   }
 }
+

@@ -4,10 +4,10 @@ import { PublishEventCommand, PublishEventHandler } from "../../api/event/contro
 import { CancelEventCommand, CancelEventHandler } from "../../api/event/controller/cancel-event.controller";
 import { GetEventQuery, GetEventHandler } from "../../api/event/controller/get-event.controller";
 import { EventStatus } from "../../entities/event/event-status";
-import { EventBus } from "../../shared/events/event-bus";
+import { EventBus } from "../../infrastructure/events/event-bus";
 import { createFakeRepositories } from "../helpers/fake-repositories";
 import { makePublishedEvent, makeEvent, makeCategory, future, past } from "../helpers/test-factory";
-import { DateRange } from "../../shared/utils/helpers/date-range";
+import { DateRange } from "../../domain/value-objects/date-range";
 
 describe("CreateEventHandler (integration)", () => {
   let repos: ReturnType<typeof createFakeRepositories>;
@@ -96,3 +96,4 @@ describe("GetEventHandler (integration)", () => {
     await expect(handler.execute(new GetEventQuery("non-existent"))).rejects.toThrow("not found");
   });
 });
+

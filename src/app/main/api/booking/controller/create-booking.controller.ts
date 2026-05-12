@@ -1,23 +1,35 @@
-import { createId } from "../../../shared/utils/helpers/id";
+import { createId } from "../../../application/id";
 import { Booking } from "../../../entities/booking/booking";
-import { NotFoundError, ConflictError, DomainError } from "../../../shared/errors/domain-error";
-import { Email } from "../../../shared/utils/validation/email";
-import { Money } from "../../../shared/utils/helpers/money";
+import {
+  NotFoundError,
+  ConflictError,
+  DomainError,
+} from "../../../domain/errors/domain-error";
+import { Email } from "../../../domain/value-objects/email";
 import { BookingStatus } from "../../../entities/booking/booking-status";
 import { EventRepository } from "../../event/repository/event-repository";
 import { BookingRepository } from "../repository/booking-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class CreateBookingCommand implements Command {
   constructor(
     public readonly eventId: string,
     public readonly customerName: string,
     public readonly customerEmail: string,
-    public readonly items: Array<{ ticketCategoryId: string; quantity: number }>,
+    public readonly items: Array<{
+      ticketCategoryId: string;
+      quantity: number;
+    }>,
   ) {}
 }
 
-export class CreateBookingHandler implements CommandHandler<CreateBookingCommand, string> {
+export class CreateBookingHandler implements CommandHandler<
+  CreateBookingCommand,
+  string
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -29,20 +41,27 @@ export class CreateBookingHandler implements CommandHandler<CreateBookingCommand
       throw new NotFoundError("Event", command.eventId);
     }
 
-    const existingBookings = await this.bookingRepository.findByEventAndCustomer(
-      command.eventId,
-      command.customerEmail,
-    );
+    const existingBookings =
+      await this.bookingRepository.findByEventAndCustomer(
+        command.eventId,
+        command.customerEmail,
+      );
     const hasActiveBooking = existingBookings.some(
-      (b) => b.status === BookingStatus.PENDING_PAYMENT || b.status === BookingStatus.PAID,
+      (b) =>
+        b.status === BookingStatus.PENDING_PAYMENT ||
+        b.status === BookingStatus.PAID,
     );
     if (hasActiveBooking) {
-      throw new ConflictError("Customer already has an active booking for this event");
+      throw new ConflictError(
+        "Customer already has an active booking for this event",
+      );
     }
 
     const now = new Date();
     for (const item of command.items) {
-      const category = event.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+      const category = event.ticketCategories.find(
+        (c) => c.id === item.ticketCategoryId,
+      );
       if (!category) {
         throw new NotFoundError("Ticket Category", item.ticketCategoryId);
       }
@@ -67,7 +86,9 @@ export class CreateBookingHandler implements CommandHandler<CreateBookingCommand
     const total = event.calculateTotal(command.items);
 
     const bookingItems = command.items.map((item) => {
-      const category = event.ticketCategories.find((c) => c.id === item.ticketCategoryId);
+      const category = event.ticketCategories.find(
+        (c) => c.id === item.ticketCategoryId,
+      );
       return {
         ticketCategoryId: item.ticketCategoryId,
         quantity: item.quantity,
@@ -90,4 +111,3 @@ export class CreateBookingHandler implements CommandHandler<CreateBookingCommand
     return booking.id;
   }
 }
-

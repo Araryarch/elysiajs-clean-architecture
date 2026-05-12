@@ -1,7 +1,10 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { EventRepository } from "../../event/repository/event-repository";
 import { BookingRepository } from "../repository/booking-repository";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class ExpireBookingCommand implements Command {
   constructor(public readonly bookingId: string) {}
@@ -35,4 +38,3 @@ export class ExpireBookingHandler implements CommandHandler<ExpireBookingCommand
     await this.bookingRepository.save(booking);
   }
 }
-

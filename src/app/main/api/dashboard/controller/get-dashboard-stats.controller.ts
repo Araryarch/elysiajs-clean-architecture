@@ -4,7 +4,7 @@ import { ITicketRepository } from "../../ticket/repository/ticket-repository";
 import { IRefundRepository } from "../../refund/repository/refund-repository";
 import { EventStatus } from "../../../entities/event/event-status";
 import { BookingStatus } from "../../../entities/booking/booking-status";
-import { Query, QueryHandler } from "../../../shared/interfaces/query";
+import { Query, QueryHandler } from "../../../application/interfaces/query";
 
 export type DashboardStatsDTO = {
   events: {
@@ -43,7 +43,10 @@ export type DashboardStatsDTO = {
 
 export class GetDashboardStatsQuery implements Query {}
 
-export class GetDashboardStatsHandler implements QueryHandler<GetDashboardStatsQuery, DashboardStatsDTO> {
+export class GetDashboardStatsHandler implements QueryHandler<
+  GetDashboardStatsQuery,
+  DashboardStatsDTO
+> {
   constructor(
     private eventRepository: EventRepository,
     private bookingRepository: BookingRepository,
@@ -60,28 +63,41 @@ export class GetDashboardStatsHandler implements QueryHandler<GetDashboardStatsQ
     const eventStats = {
       total: events.length,
       draft: events.filter((e) => e.status === EventStatus.DRAFT).length,
-      published: events.filter((e) => e.status === EventStatus.PUBLISHED).length,
-      cancelled: events.filter((e) => e.status === EventStatus.CANCELLED).length,
-      completed: events.filter((e) => e.status === EventStatus.COMPLETED).length,
+      published: events.filter((e) => e.status === EventStatus.PUBLISHED)
+        .length,
+      cancelled: events.filter((e) => e.status === EventStatus.CANCELLED)
+        .length,
+      completed: events.filter((e) => e.status === EventStatus.COMPLETED)
+        .length,
     };
 
     const bookingStats = {
       total: bookings.length,
-      pendingPayment: bookings.filter((b) => b.status === BookingStatus.PENDING_PAYMENT).length,
+      pendingPayment: bookings.filter(
+        (b) => b.status === BookingStatus.PENDING_PAYMENT,
+      ).length,
       paid: bookings.filter((b) => b.status === BookingStatus.PAID).length,
-      expired: bookings.filter((b) => b.status === BookingStatus.EXPIRED).length,
-      refunded: bookings.filter((b) => b.status === BookingStatus.REFUNDED).length,
+      expired: bookings.filter((b) => b.status === BookingStatus.EXPIRED)
+        .length,
+      refunded: bookings.filter((b) => b.status === BookingStatus.REFUNDED)
+        .length,
     };
 
     const ticketStats = {
       total: tickets.length,
       active: tickets.filter((t) => t.toJSON().status === "Active").length,
-      checkedIn: tickets.filter((t) => t.toJSON().status === "CheckedIn").length,
-      cancelled: tickets.filter((t) => t.toJSON().status === "Cancelled").length,
+      checkedIn: tickets.filter((t) => t.toJSON().status === "CheckedIn")
+        .length,
+      cancelled: tickets.filter((t) => t.toJSON().status === "Cancelled")
+        .length,
     };
 
     const totalRevenue = bookings
-      .filter((b) => b.status === BookingStatus.PAID || b.status === BookingStatus.REFUNDED)
+      .filter(
+        (b) =>
+          b.status === BookingStatus.PAID ||
+          b.status === BookingStatus.REFUNDED,
+      )
       .reduce((sum, b) => sum + b.toJSON().totalAmount, 0);
 
     const now = new Date();
@@ -90,7 +106,8 @@ export class GetDashboardStatsHandler implements QueryHandler<GetDashboardStatsQ
       .filter((b) => {
         const paidAt = b.toJSON().paidAt;
         return (
-          (b.status === BookingStatus.PAID || b.status === BookingStatus.REFUNDED) &&
+          (b.status === BookingStatus.PAID ||
+            b.status === BookingStatus.REFUNDED) &&
           paidAt &&
           paidAt >= firstDayOfMonth
         );
@@ -118,4 +135,3 @@ export class GetDashboardStatsHandler implements QueryHandler<GetDashboardStatsQ
     };
   }
 }
-

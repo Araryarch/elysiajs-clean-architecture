@@ -1,18 +1,17 @@
 import { eq } from "drizzle-orm";
 import { Event } from "../../../entities/event/event";
 import { EventRepository } from "./event-repository";
-import { TicketCategory } from "../../../entities/event/ticket-category";
-import { DateRange } from "../../../shared/utils/helpers/date-range";
-import { Money } from "../../../shared/utils/helpers/money";
 import { db } from "../../../database/drizzle/index/connection";
-import { events, ticketCategories } from "../../../database/drizzle/schema/schema";
+import {
+  events,
+  ticketCategories,
+} from "../../../database/drizzle/schema/schema";
 
 export class PostgresEventRepository implements EventRepository {
   async save(event: Event): Promise<void> {
     const json = event.toJSON();
 
     await db.transaction(async (tx) => {
-
       await tx
         .insert(events)
         .values({
@@ -39,7 +38,9 @@ export class PostgresEventRepository implements EventRepository {
           },
         });
 
-      await tx.delete(ticketCategories).where(eq(ticketCategories.eventId, json.id));
+      await tx
+        .delete(ticketCategories)
+        .where(eq(ticketCategories.eventId, json.id));
 
       for (const cat of json.ticketCategories) {
         await tx.insert(ticketCategories).values({
@@ -114,7 +115,7 @@ export class PostgresEventRepository implements EventRepository {
             salesEnd: cat.salesEnd,
             isActive: cat.isActive,
           })),
-        })
+        }),
       );
     }
 
@@ -123,11 +124,9 @@ export class PostgresEventRepository implements EventRepository {
 
   async delete(id: string): Promise<void> {
     await db.transaction(async (tx) => {
-
       await tx.delete(ticketCategories).where(eq(ticketCategories.eventId, id));
 
       await tx.delete(events).where(eq(events.id, id));
     });
   }
 }
-

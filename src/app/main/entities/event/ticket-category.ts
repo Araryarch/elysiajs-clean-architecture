@@ -1,11 +1,11 @@
-import { DomainError } from "../../shared/errors/domain-error";
-import { DomainEvent } from "../../shared/types/domain-event";
+import { DomainError } from "../../domain/errors/domain-error";
+import { DomainEvent } from "../../domain/events/domain-event";
 import {
   TicketCategoryCreated,
   TicketCategoryDisabled,
-} from "../../shared/types/events";
-import { DateRange } from "../../shared/utils/helpers/date-range";
-import { Money } from "../../shared/utils/helpers/money";
+} from "../../domain/events/events";
+import { DateRange } from "../../domain/value-objects/date-range";
+import { Money } from "../../domain/value-objects/money";
 
 export type TicketCategoryProps = {
   id: string;
@@ -228,3 +228,4 @@ export class TicketCategory {
     });
   }
 }
+

@@ -1,7 +1,10 @@
-import { NotFoundError } from "../../../shared/errors/domain-error";
+import { NotFoundError } from "../../../domain/errors/domain-error";
 import { IRefundRepository } from "../repository/refund-repository";
-import { EventBus } from "../../../shared/events/event-bus";
-import { Command, CommandHandler } from "../../../shared/interfaces/command";
+import { EventBus } from "../../../infrastructure/events/event-bus";
+import {
+  Command,
+  CommandHandler,
+} from "../../../application/interfaces/command";
 
 export class ApproveRefundCommand implements Command {
   constructor(public readonly refundId: string) {}
@@ -26,4 +29,3 @@ export class ApproveRefundHandler implements CommandHandler<ApproveRefundCommand
     refund.clearDomainEvents();
   }
 }
-
