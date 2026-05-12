@@ -1,5 +1,5 @@
-import { Email } from "@/app/main/shared/utils/validation/email";
-import { DomainError } from "@/app/main/shared/errors/domain-error";
+import { Email } from "../../shared/utils/validation/email";
+import { DomainError } from "../../shared/errors/domain-error";
 import bcrypt from "bcryptjs";
 
 export enum UserRole {
@@ -67,12 +67,10 @@ export class User {
     name: string;
     role: UserRole;
   }): Promise<User> {
-    // Validate password strength
     if (props.password.length < 8) {
       throw new DomainError("Password must be at least 8 characters long");
     }
 
-    // Hash password
     const passwordHash = await bcrypt.hash(props.password, 10);
 
     return new User({
@@ -127,7 +125,10 @@ export class User {
   }
 
   isOrganizer(): boolean {
-    return this.props.role === UserRole.ORGANIZER || this.props.role === UserRole.ADMIN;
+    return (
+      this.props.role === UserRole.ORGANIZER ||
+      this.props.role === UserRole.ADMIN
+    );
   }
 
   isActive(): boolean {
@@ -146,7 +147,6 @@ export class User {
     };
   }
 
-  // Don't include password hash in JSON
   toPublicJSON() {
     return {
       id: this.props.id,

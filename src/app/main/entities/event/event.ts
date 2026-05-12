@@ -1,9 +1,16 @@
-import { DomainError } from "@/app/main/shared/errors/domain-error";
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
-import { EventCancelled, EventCreated, EventPublished } from "@/app/main/shared/types/events";
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { EventStatus } from "@/app/main/entities/event/event-status";
-import { TicketCategory, type TicketCategoryProps } from "@/app/main/entities/event/ticket-category";
+import { DomainError } from "../../shared/errors/domain-error";
+import { DomainEvent } from "../../shared/types/domain-event";
+import {
+  EventCancelled,
+  EventCreated,
+  EventPublished,
+} from "../../shared/types/events";
+import { Money } from "../../shared/utils/helpers/money";
+import { EventStatus } from "./event-status";
+import {
+  TicketCategory,
+  type TicketCategoryProps,
+} from "./ticket-category";
 
 export type EventProps = {
   id: string;
@@ -29,8 +36,10 @@ export class Event {
   constructor(private props: EventProps) {
     if (!props.name.trim()) throw new DomainError("Event name is required");
     if (!props.venue.trim()) throw new DomainError("Event venue is required");
-    if (props.endAt <= props.startAt) throw new DomainError("Event end time must be after start time");
-    if (props.maxCapacity <= 0) throw new DomainError("Event capacity must be greater than zero");
+    if (props.endAt <= props.startAt)
+      throw new DomainError("Event end time must be after start time");
+    if (props.maxCapacity <= 0)
+      throw new DomainError("Event capacity must be greater than zero");
   }
 
   get id() {
@@ -66,12 +75,19 @@ export class Event {
       throw new DomainError("Only draft events can be published");
     }
 
-    const activeCategories = this.props.ticketCategories.filter((c) => c.isActive);
+    const activeCategories = this.props.ticketCategories.filter(
+      (c) => c.isActive,
+    );
     if (activeCategories.length === 0) {
-      throw new DomainError("Event must have at least one active ticket category");
+      throw new DomainError(
+        "Event must have at least one active ticket category",
+      );
     }
 
-    const totalQuota = this.props.ticketCategories.reduce((sum, c) => sum + c.quota, 0);
+    const totalQuota = this.props.ticketCategories.reduce(
+      (sum, c) => sum + c.quota,
+      0,
+    );
     if (totalQuota > this.props.maxCapacity) {
       throw new DomainError("Total ticket quota exceeds event capacity");
     }
@@ -93,7 +109,9 @@ export class Event {
   }
 
   addTicketCategory(category: TicketCategory) {
-    const totalQuota = this.props.ticketCategories.reduce((sum, c) => sum + c.quota, 0) + category.quota;
+    const totalQuota =
+      this.props.ticketCategories.reduce((sum, c) => sum + c.quota, 0) +
+      category.quota;
     if (totalQuota > this.props.maxCapacity) {
       throw new DomainError("Total ticket quota exceeds event capacity");
     }
@@ -139,23 +157,30 @@ export class Event {
   }
 
   updateSchedule(startAt: Date, endAt: Date) {
-    if (endAt <= startAt) throw new DomainError("Event end time must be after start time");
+    if (endAt <= startAt)
+      throw new DomainError("Event end time must be after start time");
     this.props.startAt = startAt;
     this.props.endAt = endAt;
   }
 
   updateMaxCapacity(maxCapacity: number) {
-    if (maxCapacity <= 0) throw new DomainError("Event capacity must be greater than zero");
-    
-    const totalQuota = this.props.ticketCategories.reduce((sum, c) => sum + c.quota, 0);
+    if (maxCapacity <= 0)
+      throw new DomainError("Event capacity must be greater than zero");
+
+    const totalQuota = this.props.ticketCategories.reduce(
+      (sum, c) => sum + c.quota,
+      0,
+    );
     if (totalQuota > maxCapacity) {
       throw new DomainError("Cannot reduce capacity below total ticket quota");
     }
-    
+
     this.props.maxCapacity = maxCapacity;
   }
 
-  calculateTotal(items: Array<{ ticketCategoryId: string; quantity: number }>): Money {
+  calculateTotal(
+    items: Array<{ ticketCategoryId: string; quantity: number }>,
+  ): Money {
     let total = new Money(0);
     for (const item of items) {
       const category = this.findTicketCategory(item.ticketCategoryId);
@@ -174,7 +199,8 @@ export class Event {
 
   private findTicketCategory(id: string) {
     const category = this.props.ticketCategories.find((c) => c.id === id);
-    if (!category) throw new DomainError(`Ticket category ${id} does not exist`, 404);
+    if (!category)
+      throw new DomainError(`Ticket category ${id} does not exist`, 404);
     return category;
   }
 
@@ -188,24 +214,27 @@ export class Event {
     return event;
   }
 
-  static fromPrimitives(props: Omit<EventProps, "ticketCategories" | "status"> & { 
-    ticketCategories: Array<{
-      id: string;
-      name: string;
-      price: number | Money;
-      quota: number;
-      bookedQuantity: number;
-      salesStart: Date | string;
-      salesEnd: Date | string;
-      isActive: boolean;
-    }>;
-    status: string;
-  }): Event {
+  static fromPrimitives(
+    props: Omit<EventProps, "ticketCategories" | "status"> & {
+      ticketCategories: Array<{
+        id: string;
+        name: string;
+        price: number | Money;
+        quota: number;
+        bookedQuantity: number;
+        salesStart: Date | string;
+        salesEnd: Date | string;
+        isActive: boolean;
+      }>;
+      status: string;
+    },
+  ): Event {
     return new Event({
       ...props,
       status: props.status as EventStatus,
-      ticketCategories: props.ticketCategories.map((c) => TicketCategory.fromPrimitives(c)),
+      ticketCategories: props.ticketCategories.map((c) =>
+        TicketCategory.fromPrimitives(c),
+      ),
     });
   }
 }
-

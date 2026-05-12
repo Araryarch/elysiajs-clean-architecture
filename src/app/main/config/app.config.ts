@@ -1,9 +1,8 @@
-/**
- * Central application configuration.
- * All env vars are read here — nowhere else in the codebase should access process.env directly.
- */
 export const appConfig = {
-  env: (process.env.NODE_ENV ?? "development") as "development" | "production" | "test",
+  env: (process.env.NODE_ENV ?? "development") as
+    | "development"
+    | "production"
+    | "test",
   port: Number(process.env.PORT ?? 3000),
 
   database: {
@@ -21,13 +20,13 @@ export const appConfig = {
   },
 
   payment: {
-    /** Timeout in ms for payment gateway calls */
     timeoutMs: Number(process.env.PAYMENT_TIMEOUT_MS ?? 10_000),
   },
 
   booking: {
-    /** Minutes a booking stays in PendingPayment before expiring */
-    paymentDeadlineMinutes: Number(process.env.BOOKING_PAYMENT_DEADLINE_MINUTES ?? 15),
+    paymentDeadlineMinutes: Number(
+      process.env.BOOKING_PAYMENT_DEADLINE_MINUTES ?? 15,
+    ),
   },
 
   mail: {

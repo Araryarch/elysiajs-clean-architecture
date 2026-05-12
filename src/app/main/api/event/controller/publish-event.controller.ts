@@ -1,0 +1,21 @@
+import { NotFoundError } from "../../../shared/errors/domain-error";
+import { EventRepository } from "../repository/event-repository";
+import { Command, CommandHandler } from "../../../shared/interfaces/command";
+
+export class PublishEventCommand implements Command {
+  constructor(public readonly eventId: string) {}
+}
+
+export class PublishEventHandler implements CommandHandler<PublishEventCommand> {
+  constructor(private eventRepository: EventRepository) {}
+
+  async execute(command: PublishEventCommand): Promise<void> {
+    const event = await this.eventRepository.findById(command.eventId);
+    if (!event) {
+      throw new NotFoundError("Event", command.eventId);
+    }
+
+    event.publish();
+    await this.eventRepository.save(event);
+  }
+}

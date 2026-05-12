@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Event } from "@/app/main/entities/event/event";
-import { EventStatus } from "@/app/main/entities/event/event-status";
-import { TicketCategory } from "@/app/main/entities/event/ticket-category";
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { DateRange } from "@/app/main/shared/utils/helpers/date-range";
+import { Event } from "../../entities/event/event";
+import { EventStatus } from "../../entities/event/event-status";
+import { TicketCategory } from "../../entities/event/ticket-category";
+import { Money } from "../../shared/utils/helpers/money";
+import { DateRange } from "../../shared/utils/helpers/date-range";
 
 const future = (days: number) => new Date(Date.now() + days * 86_400_000);
 

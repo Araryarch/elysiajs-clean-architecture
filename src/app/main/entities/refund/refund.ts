@@ -1,8 +1,8 @@
-import { DomainError } from "@/app/main/shared/errors/domain-error";
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
-import { RefundApproved, RefundPaidOut, RefundRejected, RefundRequested } from "@/app/main/shared/types/events";
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { RefundStatus } from "@/app/main/entities/refund/refund-status";
+import { DomainError } from "../../shared/errors/domain-error";
+import { DomainEvent } from "../../shared/types/domain-event";
+import { RefundApproved, RefundPaidOut, RefundRejected, RefundRequested } from "../../shared/types/events";
+import { Money } from "../../shared/utils/helpers/money";
+import { RefundStatus } from "./refund-status";
 
 export type RefundProps = {
   id: string;

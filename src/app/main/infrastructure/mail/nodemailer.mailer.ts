@@ -1,11 +1,7 @@
 import nodemailer from "nodemailer";
-import type { IMailer, MailParams } from "./mail.interface";
-import { appConfig } from "@/app/main/config/app.config";
+import type { IMailer, MailParams } from "../../shared/interfaces/mail.interface";
+import { appConfig } from "../../config/app.config";
 
-/**
- * Nodemailer-based mail implementation.
- * Configured via appConfig.mail (SMTP credentials from env vars).
- */
 export class NodemailerMailer implements IMailer {
   private transporter = nodemailer.createTransport({
     host: appConfig.mail.host,
@@ -26,3 +22,4 @@ export class NodemailerMailer implements IMailer {
     });
   }
 }
+

@@ -6,11 +6,29 @@ Backend API untuk **Event Ticketing & Booking System** menggunakan **Bun + Elysi
 
 ```
 src/
-├── domain/           # Entity, Value Object, Repository Interface, Domain Event, Error
-├── application/      # Command, Query, Handler, DTO, Service Interface
-├── infrastructure/   # PostgreSQL Repository, DB Connection, Seed, Mock Service
-├── presentation/     # HTTP Controller, Route, Response Helper
-└── shared/           # Utility (ID generator)
+└── app/main/
+    ├── api/               # Application + Presentation layer
+    │   ├── event/         # Event module
+    │   │   ├── controller/    # Commands, queries, handlers, controller
+    │   │   ├── repository/    # Event repository
+    │   │   ├── routes/        # Event routes
+    │   │   └── service/       # Event services
+    │   ├── booking/       # Booking module (same structure)
+    │   ├── ticket/        # Ticket module (same structure)
+    │   ├── refund/        # Refund module (same structure)
+    │   ├── auth/          # Authentication module (same structure)
+    │   ├── dashboard/     # Dashboard module (same structure)
+    │   ├── customer/      # Customer portal module (same structure)
+    │   └── promo-code/    # Promo code module (same structure)
+    ├── domain/            # Domain entities & value objects
+    ├── shared/            # Shared utilities, types, events, errors
+    ├── middlewares/       # Elysia middlewares
+    ├── infrastructure/    # Docs, mail, queue, cache, storage
+    ├── config/            # App configuration
+    ├── database/          # Drizzle schema, migrations, seeds
+    ├── tests/             # Unit & integration tests
+    ├── cmd/               # CLI entry points
+    └── create-app.ts      # Main DI composition root
 ```
 
 ## Quick Start
@@ -102,11 +120,11 @@ Test untuk business logic dan domain rules:
 
 ### 2. Integration Tests (`tests/api-endpoints.test.ts`)
 Test untuk semua API endpoints:
-- ✅ Events endpoints (7 tests)
-- ✅ Bookings endpoints (6 tests)
-- ✅ Tickets endpoints (2 tests)
-- ✅ Refunds endpoints (6 tests)
-- ✅ Error handling (2 tests)
+- Events endpoints (7 tests)
+- Bookings endpoints (6 tests)
+- Tickets endpoints (2 tests)
+- Refunds endpoints (6 tests)
+- Error handling (2 tests)
 
 **Total: 23 integration tests + domain tests**
 

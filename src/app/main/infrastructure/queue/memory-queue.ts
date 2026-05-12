@@ -1,11 +1,6 @@
-import { createId } from "@/app/main/shared/utils/helpers/id";
-import type { EnqueueOptions, IQueue } from "./queue.interface";
+import { createId } from "../../shared/utils/helpers/id";
+import type { EnqueueOptions, IQueue } from "../../shared/interfaces/queue.interface";
 
-/**
- * In-memory queue implementation.
- * Jobs are processed immediately in the same process.
- * For development only — use BullMQ or SQS in production.
- */
 export class MemoryQueue<TPayload = unknown> implements IQueue<TPayload> {
   private handler: ((payload: TPayload) => Promise<void>) | null = null;
 
@@ -29,3 +24,4 @@ export class MemoryQueue<TPayload = unknown> implements IQueue<TPayload> {
     this.handler = handler;
   }
 }
+

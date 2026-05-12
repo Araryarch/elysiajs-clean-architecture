@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { Booking } from "@/app/main/entities/booking/booking";
-import { BookingStatus } from "@/app/main/entities/booking/booking-status";
-import { Email } from "@/app/main/shared/utils/validation/email";
-import { Money } from "@/app/main/shared/utils/helpers/money";
+import { Booking } from "../../entities/booking/booking";
+import { BookingStatus } from "../../entities/booking/booking-status";
+import { Email } from "../../shared/utils/validation/email";
+import { Money } from "../../shared/utils/helpers/money";
 
 function makeBooking() {
   return Booking.create({
@@ -36,7 +36,7 @@ describe("Booking entity", () => {
 
   it("pays a booking with the correct amount", () => {
     const booking = makeBooking();
-    // Backdate the deadline so we can pay immediately
+
     (booking as any).props.paymentDeadline = new Date(Date.now() + 60_000);
     booking.pay(new Money(200_000));
     expect(booking.status).toBe(BookingStatus.PAID);
@@ -51,7 +51,7 @@ describe("Booking entity", () => {
 
   it("expires a booking past its deadline", () => {
     const booking = makeBooking();
-    // Backdate the deadline to the past
+
     (booking as any).props.paymentDeadline = new Date(Date.now() - 1);
     booking.expire(new Date());
     expect(booking.status).toBe(BookingStatus.EXPIRED);
@@ -72,3 +72,4 @@ describe("Booking entity", () => {
     expect(booking.status).toBe(BookingStatus.REFUNDED);
   });
 });
+

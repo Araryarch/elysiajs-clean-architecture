@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Money } from "@/app/main/shared/utils/helpers/money";
+import { Money } from "../../shared/utils/helpers/money";
 
 describe("Money", () => {
   it("creates a Money value object with default IDR currency", () => {

@@ -1,14 +1,12 @@
 import { describe, expect, it, beforeEach } from "bun:test";
-import { CreateBookingCommand, CreateBookingHandler } from "@/app/main/controllers/booking/create-booking.command";
-import { Event } from "@/app/main/entities/event/event";
-import { TicketCategory } from "@/app/main/entities/event/ticket-category";
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { DateRange } from "@/app/main/shared/utils/helpers/date-range";
-import type { EventRepository } from "@/app/main/repositories/event/event-repository";
-import type { BookingRepository } from "@/app/main/repositories/booking/booking-repository";
-import type { Booking } from "@/app/main/entities/booking/booking";
-
-// ── Minimal in-memory fakes ──────────────────────────────────────────────────
+import { CreateBookingCommand, CreateBookingHandler } from "../../api/booking/controller/create-booking.controller";
+import { Event } from "../../entities/event/event";
+import { TicketCategory } from "../../entities/event/ticket-category";
+import { Money } from "../../shared/utils/helpers/money";
+import { DateRange } from "../../shared/utils/helpers/date-range";
+import type { EventRepository } from "../../api/event/repository/event-repository";
+import type { BookingRepository } from "../../api/booking/repository/booking-repository";
+import type { Booking } from "../../entities/booking/booking";
 
 class FakeEventRepository implements EventRepository {
   private store = new Map<string, Event>();
@@ -37,8 +35,6 @@ class FakeBookingRepository implements BookingRepository {
   }
   async save(booking: Booking) { this.store.set(booking.id, booking); }
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 const future = (days: number) => new Date(Date.now() + days * 86_400_000);
 
@@ -69,8 +65,6 @@ function makePublishedEvent(id = "event_1"): Event {
   return event;
 }
 
-// ── Tests ────────────────────────────────────────────────────────────────────
-
 describe("CreateBookingHandler (integration)", () => {
   let eventRepo: FakeEventRepository;
   let bookingRepo: FakeBookingRepository;
@@ -94,7 +88,6 @@ describe("CreateBookingHandler (integration)", () => {
 
     expect(bookingId).toStartWith("booking_");
 
-    // Quota should be reduced
     const updatedEvent = await eventRepo.findById("event_1");
     const cat = updatedEvent!.ticketCategories.find((c) => c.id === "cat_1")!;
     expect(cat.bookedQuantity).toBe(2);
@@ -143,3 +136,4 @@ describe("CreateBookingHandler (integration)", () => {
     ).rejects.toThrow("available");
   });
 });
+

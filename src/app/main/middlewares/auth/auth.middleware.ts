@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { IUserRepository } from "@/app/main/repositories/auth/user-repository";
-import { UserRole } from "@/app/main/entities/auth/user";
+import { IUserRepository } from "../../api/auth/repository/user-repository";
+import { UserRole } from "../../entities/auth/user";
 
 export interface AuthUser {
   userId: string;
@@ -34,7 +34,6 @@ export const createAuthMiddleware = (jwtSecret: string, userRepository: IUserRep
         throw new Error("Unauthorized - Invalid token");
       }
 
-      // Verify user still exists and is active
       const user = await userRepository.findById(payload.userId as string);
       if (!user || !user.isActive()) {
         set.status = 401;
@@ -67,7 +66,7 @@ export const requireRole = (allowedRoles: UserRole[]) => {
   };
 };
 
-// Helper untuk check specific roles
 export const requireAdmin = () => requireRole([UserRole.ADMIN]);
 export const requireOrganizer = () => requireRole([UserRole.ORGANIZER, UserRole.ADMIN]);
 export const requireCustomer = () => requireRole([UserRole.CUSTOMER, UserRole.ORGANIZER, UserRole.ADMIN]);
+

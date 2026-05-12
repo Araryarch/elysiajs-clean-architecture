@@ -1,9 +1,5 @@
 import { Elysia } from "elysia";
 
-/**
- * Security headers middleware.
- * Adds basic HTTP security headers to every response.
- */
 export const securityMiddleware = new Elysia({ name: "security-middleware" }).onAfterHandle(
   ({ set }) => {
     const headers = set.headers as Record<string, string>;
@@ -14,3 +10,4 @@ export const securityMiddleware = new Elysia({ name: "security-middleware" }).on
     headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
   },
 );
+

@@ -1,15 +1,10 @@
-import type { ICache } from "./cache.interface";
+import type { ICache } from "../../shared/interfaces/cache.interface";
 
 type CacheEntry<T> = {
   value: T;
   expiresAt: number | null; // null = no expiry
 };
 
-/**
- * Simple in-memory cache implementation.
- * Suitable for development and single-instance deployments.
- * Use a Redis-backed implementation for multi-instance/production.
- */
 export class MemoryCache implements ICache {
   private store = new Map<string, CacheEntry<unknown>>();
 
@@ -40,3 +35,4 @@ export class MemoryCache implements ICache {
     this.store.clear();
   }
 }
+

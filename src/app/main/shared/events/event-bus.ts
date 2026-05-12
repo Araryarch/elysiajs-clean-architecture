@@ -1,14 +1,10 @@
-import type { DomainEvent } from "@/app/main/shared/types/domain-event";
+import type { DomainEvent } from "../types/domain-event";
 
 export interface DomainEventHandler<T extends DomainEvent = DomainEvent> {
   eventType: string;
   handle(event: T): Promise<void>;
 }
 
-/**
- * Simple in-process synchronous event bus.
- * Handlers are registered per event type and called in registration order.
- */
 export class EventBus {
   private handlers = new Map<string, DomainEventHandler[]>();
 
@@ -31,5 +27,5 @@ export class EventBus {
   }
 }
 
-/** Singleton event bus instance shared across the application. */
 export const eventBus = new EventBus();
+

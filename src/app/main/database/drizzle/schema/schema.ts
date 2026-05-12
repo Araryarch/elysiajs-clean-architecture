@@ -1,4 +1,12 @@
-import { pgTable, text, integer, timestamp, boolean, decimal, uuid } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  integer,
+  timestamp,
+  boolean,
+  decimal,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -25,7 +33,9 @@ export const events = pgTable("events", {
 
 export const ticketCategories = pgTable("ticket_categories", {
   id: text("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: text("event_id")
+    .notNull()
+    .references(() => events.id),
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   currency: text("currency").notNull().default("IDR"),
@@ -38,7 +48,9 @@ export const ticketCategories = pgTable("ticket_categories", {
 
 export const bookings = pgTable("bookings", {
   id: text("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: text("event_id")
+    .notNull()
+    .references(() => events.id),
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
@@ -51,8 +63,12 @@ export const bookings = pgTable("bookings", {
 
 export const bookingItems = pgTable("booking_items", {
   id: text("id").primaryKey(),
-  bookingId: text("booking_id").notNull().references(() => bookings.id),
-  ticketCategoryId: text("ticket_category_id").notNull().references(() => ticketCategories.id),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id),
+  ticketCategoryId: text("ticket_category_id")
+    .notNull()
+    .references(() => ticketCategories.id),
   quantity: integer("quantity").notNull(),
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
   currency: text("currency").notNull().default("IDR"),
@@ -60,9 +76,15 @@ export const bookingItems = pgTable("booking_items", {
 
 export const tickets = pgTable("tickets", {
   id: text("id").primaryKey(),
-  bookingId: text("booking_id").notNull().references(() => bookings.id),
-  eventId: text("event_id").notNull().references(() => events.id),
-  ticketCategoryId: text("ticket_category_id").notNull().references(() => ticketCategories.id),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id),
+  eventId: text("event_id")
+    .notNull()
+    .references(() => events.id),
+  ticketCategoryId: text("ticket_category_id")
+    .notNull()
+    .references(() => ticketCategories.id),
   ticketCode: text("ticket_code").notNull().unique(),
   customerName: text("customer_name").notNull(),
   status: text("status").notNull(),
@@ -72,7 +94,9 @@ export const tickets = pgTable("tickets", {
 
 export const refunds = pgTable("refunds", {
   id: text("id").primaryKey(),
-  bookingId: text("booking_id").notNull().references(() => bookings.id),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   currency: text("currency").notNull().default("IDR"),
   status: text("status").notNull(),
@@ -86,15 +110,23 @@ export const refunds = pgTable("refunds", {
 
 export const promoCodes = pgTable("promo_codes", {
   id: text("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: text("event_id")
+    .notNull()
+    .references(() => events.id),
   code: text("code").notNull(),
   type: text("type").notNull(), // Percentage or FixedAmount
-  discountValue: decimal("discount_value", { precision: 10, scale: 2 }).notNull(),
+  discountValue: decimal("discount_value", {
+    precision: 10,
+    scale: 2,
+  }).notNull(),
   maxUsage: integer("max_usage").notNull(),
   usedCount: integer("used_count").notNull().default(0),
   validStart: timestamp("valid_start").notNull(),
   validEnd: timestamp("valid_end").notNull(),
-  minPurchaseAmount: decimal("min_purchase_amount", { precision: 10, scale: 2 }),
+  minPurchaseAmount: decimal("min_purchase_amount", {
+    precision: 10,
+    scale: 2,
+  }),
   currency: text("currency").notNull().default("IDR"),
   status: text("status").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -102,10 +134,14 @@ export const promoCodes = pgTable("promo_codes", {
 
 export const waitlist = pgTable("waitlist", {
   id: text("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: text("event_id")
+    .notNull()
+    .references(() => events.id),
   customerName: text("customer_name").notNull(),
   customerEmail: text("customer_email").notNull(),
-  ticketCategoryId: text("ticket_category_id").references(() => ticketCategories.id),
+  ticketCategoryId: text("ticket_category_id").references(
+    () => ticketCategories.id,
+  ),
   quantity: integer("quantity").notNull().default(1),
   status: text("status").notNull(), // Waiting, Notified, Converted, Cancelled
   joinedAt: timestamp("joined_at").notNull().defaultNow(),

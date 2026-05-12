@@ -8,11 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noUncheckedIndexedAccess": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "noUncheckedIndexedAccess": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts", "api/**/*.ts"]
 }

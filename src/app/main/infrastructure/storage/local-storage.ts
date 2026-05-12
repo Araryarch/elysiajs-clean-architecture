@@ -1,11 +1,6 @@
 import { join } from "path";
-import type { IStorage } from "./storage.interface";
+import type { IStorage } from "../../shared/interfaces/storage.interface";
 
-/**
- * Local filesystem storage implementation.
- * Stores files under the given base directory.
- * For development only — use a cloud provider in production.
- */
 export class LocalStorage implements IStorage {
   constructor(private readonly baseDir: string = "./uploads") {}
 
@@ -28,10 +23,10 @@ export class LocalStorage implements IStorage {
 
   async delete(key: string): Promise<void> {
     const filePath = join(this.baseDir, key);
-    // Bun doesn't expose unlink directly — use the Node compat layer
+
     const { unlink } = await import("fs/promises");
     await unlink(filePath).catch(() => {
-      // Ignore if file doesn't exist
+
     });
   }
 
@@ -41,7 +36,8 @@ export class LocalStorage implements IStorage {
   }
 
   async getSignedUrl(key: string, _expiresInSeconds: number): Promise<string> {
-    // Local storage doesn't support signed URLs — return a plain path
+
     return `/uploads/${key}`;
   }
 }
+

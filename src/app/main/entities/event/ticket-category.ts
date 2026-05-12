@@ -1,8 +1,11 @@
-import { DomainError } from "@/app/main/shared/errors/domain-error";
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
-import { TicketCategoryCreated, TicketCategoryDisabled } from "@/app/main/shared/types/events";
-import { DateRange } from "@/app/main/shared/utils/helpers/date-range";
-import { Money } from "@/app/main/shared/utils/helpers/money";
+import { DomainError } from "../../shared/errors/domain-error";
+import { DomainEvent } from "../../shared/types/domain-event";
+import {
+  TicketCategoryCreated,
+  TicketCategoryDisabled,
+} from "../../shared/types/events";
+import { DateRange } from "../../shared/utils/helpers/date-range";
+import { Money } from "../../shared/utils/helpers/money";
 
 export type TicketCategoryProps = {
   id: string;
@@ -19,8 +22,10 @@ export class TicketCategory {
   private domainEvents: DomainEvent[] = [];
 
   constructor(private props: TicketCategoryProps) {
-    if (props.price.amount < 0) throw new DomainError("Ticket price cannot be negative");
-    if (props.quota <= 0) throw new DomainError("Ticket quota must be greater than zero");
+    if (props.price.amount < 0)
+      throw new DomainError("Ticket price cannot be negative");
+    if (props.quota <= 0)
+      throw new DomainError("Ticket quota must be greater than zero");
     if (props.bookedQuantity < 0 || props.bookedQuantity > props.quota) {
       throw new DomainError("Booked quantity is outside ticket quota");
     }
@@ -67,13 +72,20 @@ export class TicketCategory {
   }
 
   canBePurchased(now: Date = new Date()): boolean {
-    return this.props.isActive && this.props.salesPeriod.isActive(now) && this.availableQuantity > 0;
+    return (
+      this.props.isActive &&
+      this.props.salesPeriod.isActive(now) &&
+      this.availableQuantity > 0
+    );
   }
 
   disable() {
-    if (!this.props.isActive) throw new DomainError("Ticket category is already disabled");
+    if (!this.props.isActive)
+      throw new DomainError("Ticket category is already disabled");
     this.props.isActive = false;
-    this.domainEvents.push(new TicketCategoryDisabled(this.props.eventId, this.props.id));
+    this.domainEvents.push(
+      new TicketCategoryDisabled(this.props.eventId, this.props.id),
+    );
   }
 
   reserve(quantity: number) {
@@ -84,7 +96,10 @@ export class TicketCategory {
       throw new DomainError("Cannot reserve tickets from inactive category");
     }
     if (quantity > this.availableQuantity) {
-      throw new DomainError(`Only ${this.availableQuantity} ${this.name} tickets available`, 409);
+      throw new DomainError(
+        `Only ${this.availableQuantity} ${this.name} tickets available`,
+        409,
+      );
     }
     this.props.bookedQuantity += quantity;
   }
@@ -93,7 +108,10 @@ export class TicketCategory {
     if (!Number.isInteger(quantity) || quantity <= 0) {
       throw new DomainError("Ticket quantity must be a positive integer");
     }
-    this.props.bookedQuantity = Math.max(0, this.props.bookedQuantity - quantity);
+    this.props.bookedQuantity = Math.max(
+      0,
+      this.props.bookedQuantity - quantity,
+    );
   }
 
   updateName(name: string) {
@@ -107,7 +125,8 @@ export class TicketCategory {
   }
 
   updateQuota(quota: number) {
-    if (quota <= 0) throw new DomainError("Ticket quota must be greater than zero");
+    if (quota <= 0)
+      throw new DomainError("Ticket quota must be greater than zero");
     if (quota < this.props.bookedQuantity) {
       throw new DomainError("Cannot reduce quota below booked quantity");
     }
@@ -134,13 +153,17 @@ export class TicketCategory {
     };
   }
 
-  static create(props: Omit<TicketCategoryProps, "bookedQuantity" | "isActive">): TicketCategory {
+  static create(
+    props: Omit<TicketCategoryProps, "bookedQuantity" | "isActive">,
+  ): TicketCategory {
     const category = new TicketCategory({
       ...props,
       bookedQuantity: 0,
       isActive: true,
     });
-    category.domainEvents.push(new TicketCategoryCreated(props.eventId, props.id));
+    category.domainEvents.push(
+      new TicketCategoryCreated(props.eventId, props.id),
+    );
     return category;
   }
 
@@ -157,18 +180,41 @@ export class TicketCategory {
     salesPeriod?: { start: Date | string; end: Date | string } | DateRange;
     isActive: boolean;
   }): TicketCategory {
-    // Handle both Money object and primitive number for price
-    const price = data.price instanceof Money 
-      ? data.price 
-      : new Money(typeof data.price === 'number' ? data.price : parseFloat(data.price), data.currency || "IDR");
-    
-    // Handle both DateRange object and primitive dates for salesPeriod
-    const salesPeriod = data.salesPeriod instanceof DateRange
-      ? data.salesPeriod
-      : new DateRange(
-          new Date(data.salesStart || (data.salesPeriod as { start: Date | string; end: Date | string })?.start || new Date()),
-          new Date(data.salesEnd || (data.salesPeriod as { start: Date | string; end: Date | string })?.end || new Date())
-        );
+    const price =
+      data.price instanceof Money
+        ? data.price
+        : new Money(
+            typeof data.price === "number"
+              ? data.price
+              : parseFloat(data.price),
+            data.currency || "IDR",
+          );
+
+    const salesPeriod =
+      data.salesPeriod instanceof DateRange
+        ? data.salesPeriod
+        : new DateRange(
+            new Date(
+              data.salesStart ||
+                (
+                  data.salesPeriod as {
+                    start: Date | string;
+                    end: Date | string;
+                  }
+                )?.start ||
+                new Date(),
+            ),
+            new Date(
+              data.salesEnd ||
+                (
+                  data.salesPeriod as {
+                    start: Date | string;
+                    end: Date | string;
+                  }
+                )?.end ||
+                new Date(),
+            ),
+          );
 
     return new TicketCategory({
       id: data.id,
@@ -182,4 +228,3 @@ export class TicketCategory {
     });
   }
 }
-

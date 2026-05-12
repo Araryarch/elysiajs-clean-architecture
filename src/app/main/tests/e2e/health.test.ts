@@ -1,11 +1,5 @@
 import { describe, expect, it } from "bun:test";
 
-/**
- * E2E smoke test — hits the running server.
- * Requires the server to be running at TEST_BASE_URL (default: http://localhost:3000).
- *
- * Run with: bun test src/app/main/tests/e2e/
- */
 const BASE_URL = process.env.TEST_BASE_URL ?? "http://localhost:3000";
 
 describe("E2E: Health check", () => {
@@ -26,3 +20,4 @@ describe("E2E: Health check", () => {
     expect(body.name).toContain("Event Ticketing");
   });
 });
+

@@ -1,4 +1,4 @@
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
+import { DomainEvent } from "./domain-event";
 
 export class EventCreated implements DomainEvent {
   eventType = "EventCreated";

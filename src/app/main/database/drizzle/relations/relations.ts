@@ -8,7 +8,7 @@ import {
   refunds,
   promoCodes,
   waitlist,
-} from "@/app/main/database/drizzle/schema/schema";
+} from "../schema/schema";
 
 export const eventsRelations = relations(events, ({ many }) => ({
   ticketCategories: many(ticketCategories),
@@ -18,14 +18,17 @@ export const eventsRelations = relations(events, ({ many }) => ({
   waitlist: many(waitlist),
 }));
 
-export const ticketCategoriesRelations = relations(ticketCategories, ({ one, many }) => ({
-  event: one(events, {
-    fields: [ticketCategories.eventId],
-    references: [events.id],
+export const ticketCategoriesRelations = relations(
+  ticketCategories,
+  ({ one, many }) => ({
+    event: one(events, {
+      fields: [ticketCategories.eventId],
+      references: [events.id],
+    }),
+    bookingItems: many(bookingItems),
+    tickets: many(tickets),
   }),
-  bookingItems: many(bookingItems),
-  tickets: many(tickets),
-}));
+);
 
 export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   event: one(events, {

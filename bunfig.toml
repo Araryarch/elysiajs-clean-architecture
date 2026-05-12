@@ -1,0 +1,5 @@
+[bundle]
+# Resolve the @/ path alias used throughout the codebase.
+# This makes `bun build` honour the same alias as tsconfig paths.
+[bundle.alias]
+"@" = "./src"

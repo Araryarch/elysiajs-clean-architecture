@@ -1,8 +1,8 @@
-import { DomainError } from "@/app/main/shared/errors/domain-error";
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
-import { TicketCheckedIn } from "@/app/main/shared/types/events";
-import { TicketCode } from "@/app/main/shared/utils/helpers/ticket-code";
-import { TicketStatus } from "@/app/main/entities/ticket/ticket-status";
+import { DomainError } from "../../shared/errors/domain-error";
+import { DomainEvent } from "../../shared/types/domain-event";
+import { TicketCheckedIn } from "../../shared/types/events";
+import { TicketCode } from "../../shared/utils/helpers/ticket-code";
+import { TicketStatus } from "./ticket-status";
 
 export type TicketProps = {
   id: string;
@@ -59,7 +59,6 @@ export class Ticket {
       throw new DomainError("Ticket is not active");
     }
 
-    // Check if check-in is on event day (simplified: same day)
     const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
     const checkInDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     if (checkInDay < eventDay) {
@@ -132,4 +131,5 @@ export class Ticket {
     });
   }
 }
+
 

@@ -1,6 +1,6 @@
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { DateRange } from "@/app/main/shared/utils/helpers/date-range";
-import { DomainError } from "@/app/main/shared/errors/domain-error";
+import { Money } from "../../shared/utils/helpers/money";
+import { DateRange } from "../../shared/utils/helpers/date-range";
+import { DomainError } from "../../shared/errors/domain-error";
 
 export enum PromoCodeType {
   PERCENTAGE = "Percentage",
@@ -75,7 +75,7 @@ export class PromoCode {
   }
 
   static create(props: Omit<PromoCodeProps, "usedCount" | "status" | "createdAt">): PromoCode {
-    // Validate discount value
+
     if (props.type === PromoCodeType.PERCENTAGE && (props.discountValue < 0 || props.discountValue > 100)) {
       throw new DomainError("Percentage discount must be between 0 and 100");
     }
@@ -84,7 +84,6 @@ export class PromoCode {
       throw new DomainError("Fixed amount discount must be positive");
     }
 
-    // Validate max usage
     if (props.maxUsage < 1) {
       throw new DomainError("Max usage must be at least 1");
     }
@@ -127,7 +126,7 @@ export class PromoCode {
       const discountAmount = (originalAmount.amount * this.props.discountValue) / 100;
       return new Money(discountAmount, originalAmount.currency);
     } else {
-      // Fixed amount
+
       const discountAmount = Math.min(this.props.discountValue, originalAmount.amount);
       return new Money(discountAmount, originalAmount.currency);
     }
@@ -140,7 +139,6 @@ export class PromoCode {
 
     this.props.usedCount += 1;
 
-    // Auto-expire if max usage reached
     if (this.props.usedCount >= this.props.maxUsage) {
       this.props.status = PromoCodeStatus.EXPIRED;
     }
@@ -214,3 +212,4 @@ export class PromoCode {
     });
   }
 }
+

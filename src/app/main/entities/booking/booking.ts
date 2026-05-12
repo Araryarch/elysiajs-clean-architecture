@@ -1,9 +1,13 @@
-import { DomainError } from "@/app/main/shared/errors/domain-error";
-import { DomainEvent } from "@/app/main/shared/types/domain-event";
-import { BookingExpired, BookingPaid, TicketReserved } from "@/app/main/shared/types/events";
-import { Email } from "@/app/main/shared/utils/validation/email";
-import { Money } from "@/app/main/shared/utils/helpers/money";
-import { BookingStatus } from "@/app/main/entities/booking/booking-status";
+import { DomainError } from "../../shared/errors/domain-error";
+import { DomainEvent } from "../../shared/types/domain-event";
+import {
+  BookingExpired,
+  BookingPaid,
+  TicketReserved,
+} from "../../shared/types/events";
+import { Email } from "../../shared/utils/validation/email";
+import { Money } from "../../shared/utils/helpers/money";
+import { BookingStatus } from "./booking-status";
 
 export type BookingItem = {
   ticketCategoryId: string;
@@ -28,10 +32,18 @@ export class Booking {
   private domainEvents: DomainEvent[] = [];
 
   constructor(private props: BookingProps) {
-    if (!props.customerName.trim()) throw new DomainError("Customer name is required");
-    if (props.items.length === 0) throw new DomainError("Booking must contain at least one ticket item");
-    if (props.items.some((item) => !Number.isInteger(item.quantity) || item.quantity <= 0)) {
-      throw new DomainError("Every ticket item quantity must be a positive integer");
+    if (!props.customerName.trim())
+      throw new DomainError("Customer name is required");
+    if (props.items.length === 0)
+      throw new DomainError("Booking must contain at least one ticket item");
+    if (
+      props.items.some(
+        (item) => !Number.isInteger(item.quantity) || item.quantity <= 0,
+      )
+    ) {
+      throw new DomainError(
+        "Every ticket item quantity must be a positive integer",
+      );
     }
   }
 
@@ -123,7 +135,9 @@ export class Booking {
     };
   }
 
-  static create(props: Omit<BookingProps, "status" | "createdAt" | "paymentDeadline">): Booking {
+  static create(
+    props: Omit<BookingProps, "status" | "createdAt" | "paymentDeadline">,
+  ): Booking {
     const now = new Date();
     const paymentDeadline = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes
 
@@ -134,8 +148,13 @@ export class Booking {
       createdAt: now,
     });
 
-    const totalQuantity = props.items.reduce((sum, item) => sum + item.quantity, 0);
-    booking.domainEvents.push(new TicketReserved(props.id, props.eventId, totalQuantity));
+    const totalQuantity = props.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0,
+    );
+    booking.domainEvents.push(
+      new TicketReserved(props.id, props.eventId, totalQuantity),
+    );
 
     return booking;
   }
@@ -176,4 +195,3 @@ export class Booking {
     });
   }
 }
-

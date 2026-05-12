@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createApp } from "@/app/main/create-app";
+import { createApp } from "../src/app/main/create-app";
 
 describe("booking flow", () => {
   test("creates and confirms a booking from seeded event inventory", async () => {
