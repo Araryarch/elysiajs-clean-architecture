@@ -37,6 +37,7 @@ class FakeBookingRepository implements BookingRepository {
 }
 
 const future = (days: number) => new Date(Date.now() + days * 86_400_000);
+const past = (days: number) => new Date(Date.now() - days * 86_400_000);
 
 function makePublishedEvent(id = "event_1"): Event {
   const event = Event.create({
@@ -56,7 +57,7 @@ function makePublishedEvent(id = "event_1"): Event {
     name: "Regular",
     price: new Money(250_000),
     quota: 50,
-    salesPeriod: new DateRange(future(1), future(9)),
+    salesPeriod: new DateRange(past(1), future(9)),
   });
 
   event.addTicketCategory(category);
