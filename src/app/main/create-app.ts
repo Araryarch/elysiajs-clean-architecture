@@ -75,7 +75,6 @@ import { RegisterUserHandler } from "./api/auth/controller/register-user.control
 import { LoginUserHandler } from "./api/auth/controller/login-user.controller";
 
 export async function createApp() {
-
   const eventRepository = new PostgresEventRepository();
   const bookingRepository = new PostgresBookingRepository();
   const ticketRepository = new PostgresTicketRepository();
@@ -83,14 +82,23 @@ export async function createApp() {
   const promoCodeRepository = new PostgresPromoCodeRepository();
   const userRepository = new PostgresUserRepository();
 
-  const jwtSecret = process.env.JWT_SECRET || "default-secret-change-in-production";
+  const jwtSecret =
+    process.env.JWT_SECRET || "default-secret-change-in-production";
   const paymentGateway = createMockPaymentGateway();
   const refundPaymentService = createMockRefundPaymentService();
   const _notificationService = createMockNotificationService();
 
   const eventBus = new EventBus();
-  eventBus.register(new EventCancelledBookingHandler(bookingRepository, ticketRepository));
-  eventBus.register(new RefundApprovedTicketHandler(refundRepository, bookingRepository, ticketRepository));
+  eventBus.register(
+    new EventCancelledBookingHandler(bookingRepository, ticketRepository),
+  );
+  eventBus.register(
+    new RefundApprovedTicketHandler(
+      refundRepository,
+      bookingRepository,
+      ticketRepository,
+    ),
+  );
 
   const eventHandlers = {
     createEventHandler: new CreateEventHandler(eventRepository),
@@ -99,55 +107,126 @@ export async function createApp() {
     publishEventHandler: new PublishEventHandler(eventRepository),
     cancelEventHandler: new CancelEventHandler(eventRepository, eventBus),
     addTicketCategoryHandler: new AddTicketCategoryHandler(eventRepository),
-    updateTicketCategoryHandler: new UpdateTicketCategoryHandler(eventRepository),
-    disableTicketCategoryHandler: new DisableTicketCategoryHandler(eventRepository),
+    updateTicketCategoryHandler: new UpdateTicketCategoryHandler(
+      eventRepository,
+    ),
+    disableTicketCategoryHandler: new DisableTicketCategoryHandler(
+      eventRepository,
+    ),
     getEventHandler: new GetEventHandler(eventRepository),
     listEventsHandler: new ListEventsHandler(eventRepository),
-    getSalesReportHandler: new GetSalesReportHandler(eventRepository, bookingRepository),
-    getParticipantsHandler: new GetParticipantsHandler(eventRepository, bookingRepository, ticketRepository),
-    getEventAnalyticsHandler: new GetEventAnalyticsHandler(eventRepository, bookingRepository, ticketRepository),
-    getEventRevenueHandler: new GetEventRevenueHandler(eventRepository, bookingRepository),
+    getSalesReportHandler: new GetSalesReportHandler(
+      eventRepository,
+      bookingRepository,
+    ),
+    getParticipantsHandler: new GetParticipantsHandler(
+      eventRepository,
+      bookingRepository,
+      ticketRepository,
+    ),
+    getEventAnalyticsHandler: new GetEventAnalyticsHandler(
+      eventRepository,
+      bookingRepository,
+      ticketRepository,
+    ),
+    getEventRevenueHandler: new GetEventRevenueHandler(
+      eventRepository,
+      bookingRepository,
+    ),
   };
 
   const bookingHandlers = {
-    createBookingHandler: new CreateBookingHandler(eventRepository, bookingRepository),
-    cancelBookingHandler: new CancelBookingHandler(bookingRepository, eventRepository),
-    payBookingHandler: new PayBookingHandler(bookingRepository, ticketRepository, paymentGateway),
-    expireBookingHandler: new ExpireBookingHandler(bookingRepository, eventRepository),
-    getBookingHandler: new GetBookingHandler(bookingRepository, eventRepository),
-    listBookingsHandler: new ListBookingsHandler(bookingRepository, eventRepository),
-    getTicketsHandler: new GetTicketsByBookingHandler(bookingRepository, ticketRepository, eventRepository),
+    createBookingHandler: new CreateBookingHandler(
+      eventRepository,
+      bookingRepository,
+    ),
+    cancelBookingHandler: new CancelBookingHandler(
+      bookingRepository,
+      eventRepository,
+    ),
+    payBookingHandler: new PayBookingHandler(
+      bookingRepository,
+      ticketRepository,
+      paymentGateway,
+    ),
+    expireBookingHandler: new ExpireBookingHandler(
+      bookingRepository,
+      eventRepository,
+    ),
+    getBookingHandler: new GetBookingHandler(
+      bookingRepository,
+      eventRepository,
+    ),
+    listBookingsHandler: new ListBookingsHandler(
+      bookingRepository,
+      eventRepository,
+    ),
+    getTicketsHandler: new GetTicketsByBookingHandler(
+      bookingRepository,
+      ticketRepository,
+      eventRepository,
+    ),
   };
 
   const ticketHandlers = {
     checkInHandler: new CheckInTicketHandler(ticketRepository, eventRepository),
     getTicketHandler: new GetTicketHandler(ticketRepository, eventRepository),
-    searchTicketsHandler: new SearchTicketsHandler(ticketRepository, eventRepository),
+    searchTicketsHandler: new SearchTicketsHandler(
+      ticketRepository,
+      eventRepository,
+    ),
   };
 
   const refundHandlers = {
-    requestRefundHandler: new RequestRefundHandler(bookingRepository, ticketRepository, refundRepository),
+    requestRefundHandler: new RequestRefundHandler(
+      bookingRepository,
+      ticketRepository,
+      refundRepository,
+    ),
     approveRefundHandler: new ApproveRefundHandler(refundRepository, eventBus),
     rejectRefundHandler: new RejectRefundHandler(refundRepository),
-    payoutRefundHandler: new PayoutRefundHandler(refundRepository, refundPaymentService),
+    payoutRefundHandler: new PayoutRefundHandler(
+      refundRepository,
+      refundPaymentService,
+    ),
     getRefundHandler: new GetRefundHandler(refundRepository),
     listRefundsHandler: new ListRefundsHandler(refundRepository),
   };
 
   const dashboardHandlers = {
-    getDashboardStatsHandler: new GetDashboardStatsHandler(eventRepository, bookingRepository, ticketRepository, refundRepository),
+    getDashboardStatsHandler: new GetDashboardStatsHandler(
+      eventRepository,
+      bookingRepository,
+      ticketRepository,
+      refundRepository,
+    ),
   };
 
   const customerHandlers = {
-    getCustomerBookingsHandler: new GetCustomerBookingsHandler(bookingRepository, eventRepository),
-    getCustomerTicketsHandler: new GetCustomerTicketsHandler(ticketRepository, eventRepository, bookingRepository),
-    getCustomerRefundsHandler: new GetCustomerRefundsHandler(refundRepository, bookingRepository),
+    getCustomerBookingsHandler: new GetCustomerBookingsHandler(
+      bookingRepository,
+      eventRepository,
+    ),
+    getCustomerTicketsHandler: new GetCustomerTicketsHandler(
+      ticketRepository,
+      eventRepository,
+      bookingRepository,
+    ),
+    getCustomerRefundsHandler: new GetCustomerRefundsHandler(
+      refundRepository,
+      bookingRepository,
+    ),
   };
 
   const promoCodeHandlers = {
-    createPromoCodeHandler: new CreatePromoCodeHandler(promoCodeRepository, eventRepository),
+    createPromoCodeHandler: new CreatePromoCodeHandler(
+      promoCodeRepository,
+      eventRepository,
+    ),
     validatePromoCodeHandler: new ValidatePromoCodeHandler(promoCodeRepository),
-    deactivatePromoCodeHandler: new DeactivatePromoCodeHandler(promoCodeRepository),
+    deactivatePromoCodeHandler: new DeactivatePromoCodeHandler(
+      promoCodeRepository,
+    ),
     listPromoCodesHandler: new ListPromoCodesHandler(promoCodeRepository),
   };
 
@@ -163,37 +242,61 @@ export async function createApp() {
   const dashboardController = createDashboardController(dashboardHandlers);
   const customerController = createCustomerController(customerHandlers);
   const promoCodeController = createPromoCodeController(promoCodeHandlers);
-  const authController = createAuthController(authHandlers, { userRepository, jwtSecret });
+  const authController = createAuthController(authHandlers, {
+    userRepository,
+    jwtSecret,
+  });
 
   const app = new Elysia()
-    .use(swagger({
-      documentation: {
-        info: {
-          title: "Event Ticketing & Booking API",
-          version: "1.0.0",
-          description: "Clean Architecture implementation with DDD patterns",
+    .use(
+      swagger({
+        documentation: {
+          info: {
+            title: "Event Ticketing & Booking API",
+            version: "1.0.0",
+            description: "Clean Architecture implementation with DDD patterns",
+          },
+          tags: [
+            {
+              name: "Authentication",
+              description: "User authentication and authorization",
+            },
+            {
+              name: "Events",
+              description: "Event management and ticket categories",
+            },
+            { name: "Bookings", description: "Ticket booking and payment" },
+            { name: "Tickets", description: "Ticket check-in and validation" },
+            { name: "Refunds", description: "Refund request and approval" },
+            {
+              name: "Dashboard",
+              description: "Dashboard statistics and analytics",
+            },
+            { name: "Customers", description: "Customer portal endpoints" },
+            {
+              name: "Promo Codes",
+              description: "Promo code management and validation",
+            },
+          ],
         },
-        tags: [
-          { name: "Authentication", description: "User authentication and authorization" },
-          { name: "Events", description: "Event management and ticket categories" },
-          { name: "Bookings", description: "Ticket booking and payment" },
-          { name: "Tickets", description: "Ticket check-in and validation" },
-          { name: "Refunds", description: "Refund request and approval" },
-          { name: "Dashboard", description: "Dashboard statistics and analytics" },
-          { name: "Customers", description: "Customer portal endpoints" },
-          { name: "Promo Codes", description: "Promo code management and validation" },
-        ],
-      },
-    }))
+      }),
+    )
     .onError(({ code, error: err, set }) => {
       if (err instanceof DomainError) {
         const domainErr = err as DomainError;
         set.status = domainErr.statusCode;
-        return error(domainErr.message, domainErr.code || "DOMAIN_ERROR", undefined, { name: domainErr.name });
+        return error(
+          domainErr.message,
+          domainErr.code || "DOMAIN_ERROR",
+          undefined,
+          { name: domainErr.name },
+        );
       }
       if (code === "VALIDATION") {
         set.status = 422;
-        return error("Validation failed", "VALIDATION_ERROR", undefined, { details: err.message });
+        return error("Validation failed", "VALIDATION_ERROR", undefined, {
+          details: err.message,
+        });
       }
       if (code === "NOT_FOUND") {
         set.status = 404;
@@ -206,7 +309,10 @@ export async function createApp() {
       console.error("Unexpected error:", err);
       set.status = 500;
       return error("Internal server error", "INTERNAL_ERROR", undefined, {
-        message: process.env.NODE_ENV === "development" && err instanceof Error ? err.message : undefined,
+        message:
+          process.env.NODE_ENV === "development" && err instanceof Error
+            ? err.message
+            : undefined,
       });
     })
     .get("/", () => ({
@@ -218,68 +324,238 @@ export async function createApp() {
       documentation: { swagger: "/swagger", health: "/health" },
       endpoints: {
         auth: [
-          { method: "POST", path: "/api/v1/auth/register", description: "Register new user" },
-          { method: "POST", path: "/api/v1/auth/login", description: "Login user" },
-          { method: "GET", path: "/api/v1/auth/me", description: "Get current user" },
+          {
+            method: "POST",
+            path: "/api/v1/auth/register",
+            description: "Register new user",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/auth/login",
+            description: "Login user",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/auth/me",
+            description: "Get current user",
+          },
         ],
         events: [
-          { method: "GET", path: "/api/v1/events", description: "List all published events" },
-          { method: "GET", path: "/api/v1/events/:id", description: "Get event details" },
-          { method: "POST", path: "/api/v1/events", description: "Create new event" },
-          { method: "PUT", path: "/api/v1/events/:id", description: "Update draft event" },
-          { method: "DELETE", path: "/api/v1/events/:id", description: "Delete draft event" },
-          { method: "POST", path: "/api/v1/events/:id/publish", description: "Publish event" },
-          { method: "POST", path: "/api/v1/events/:id/cancel", description: "Cancel event" },
-          { method: "POST", path: "/api/v1/events/:id/ticket-categories", description: "Add ticket category" },
-          { method: "PUT", path: "/api/v1/events/:id/ticket-categories/:categoryId", description: "Update ticket category" },
-          { method: "POST", path: "/api/v1/events/:id/ticket-categories/:categoryId/disable", description: "Disable ticket category" },
-          { method: "GET", path: "/api/v1/events/:id/sales-report", description: "Get sales report" },
-          { method: "GET", path: "/api/v1/events/:id/participants", description: "Get participants list" },
-          { method: "GET", path: "/api/v1/events/:id/analytics", description: "Get event analytics" },
-          { method: "GET", path: "/api/v1/events/:id/revenue", description: "Get event revenue breakdown" },
+          {
+            method: "GET",
+            path: "/api/v1/events",
+            description: "List all published events",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:id",
+            description: "Get event details",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/events",
+            description: "Create new event",
+          },
+          {
+            method: "PUT",
+            path: "/api/v1/events/:id",
+            description: "Update draft event",
+          },
+          {
+            method: "DELETE",
+            path: "/api/v1/events/:id",
+            description: "Delete draft event",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/events/:id/publish",
+            description: "Publish event",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/events/:id/cancel",
+            description: "Cancel event",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/events/:id/ticket-categories",
+            description: "Add ticket category",
+          },
+          {
+            method: "PUT",
+            path: "/api/v1/events/:id/ticket-categories/:categoryId",
+            description: "Update ticket category",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/events/:id/ticket-categories/:categoryId/disable",
+            description: "Disable ticket category",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:id/sales-report",
+            description: "Get sales report",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:id/participants",
+            description: "Get participants list",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:id/analytics",
+            description: "Get event analytics",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:id/revenue",
+            description: "Get event revenue breakdown",
+          },
         ],
         bookings: [
-          { method: "GET", path: "/api/v1/bookings", description: "List all bookings (admin)" },
-          { method: "POST", path: "/api/v1/bookings", description: "Create new booking" },
-          { method: "GET", path: "/api/v1/bookings/:id", description: "Get booking details" },
-          { method: "DELETE", path: "/api/v1/bookings/:id", description: "Cancel pending booking" },
-          { method: "POST", path: "/api/v1/bookings/:id/pay", description: "Pay for booking" },
-          { method: "POST", path: "/api/v1/bookings/:id/expire", description: "Expire booking (admin)" },
-          { method: "GET", path: "/api/v1/bookings/:id/tickets", description: "Get booking tickets" },
+          {
+            method: "GET",
+            path: "/api/v1/bookings",
+            description: "List all bookings (admin)",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/bookings",
+            description: "Create new booking",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/bookings/:id",
+            description: "Get booking details",
+          },
+          {
+            method: "DELETE",
+            path: "/api/v1/bookings/:id",
+            description: "Cancel pending booking",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/bookings/:id/pay",
+            description: "Pay for booking",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/bookings/:id/expire",
+            description: "Expire booking (admin)",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/bookings/:id/tickets",
+            description: "Get booking tickets",
+          },
         ],
         tickets: [
-          { method: "GET", path: "/api/v1/tickets", description: "Search tickets" },
-          { method: "GET", path: "/api/v1/tickets/:id", description: "Get ticket details" },
-          { method: "POST", path: "/api/v1/tickets/check-in", description: "Check in ticket" },
+          {
+            method: "GET",
+            path: "/api/v1/tickets",
+            description: "Search tickets",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/tickets/:id",
+            description: "Get ticket details",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/tickets/check-in",
+            description: "Check in ticket",
+          },
         ],
         refunds: [
-          { method: "GET", path: "/api/v1/refunds", description: "List all refunds (admin)" },
-          { method: "POST", path: "/api/v1/refunds", description: "Request refund" },
-          { method: "GET", path: "/api/v1/refunds/:id", description: "Get refund details" },
-          { method: "POST", path: "/api/v1/refunds/:id/approve", description: "Approve refund" },
-          { method: "POST", path: "/api/v1/refunds/:id/reject", description: "Reject refund" },
-          { method: "POST", path: "/api/v1/refunds/:id/payout", description: "Payout refund" },
+          {
+            method: "GET",
+            path: "/api/v1/refunds",
+            description: "List all refunds (admin)",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/refunds",
+            description: "Request refund",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/refunds/:id",
+            description: "Get refund details",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/refunds/:id/approve",
+            description: "Approve refund",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/refunds/:id/reject",
+            description: "Reject refund",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/refunds/:id/payout",
+            description: "Payout refund",
+          },
         ],
         dashboard: [
-          { method: "GET", path: "/api/v1/dashboard/stats", description: "Get dashboard statistics (admin)" },
+          {
+            method: "GET",
+            path: "/api/v1/dashboard/stats",
+            description: "Get dashboard statistics (admin)",
+          },
         ],
         customers: [
-          { method: "GET", path: "/api/v1/customers/me/bookings?email={email}", description: "Get customer bookings" },
-          { method: "GET", path: "/api/v1/customers/me/tickets?email={email}", description: "Get customer tickets" },
-          { method: "GET", path: "/api/v1/customers/me/refunds?email={email}", description: "Get customer refunds" },
+          {
+            method: "GET",
+            path: "/api/v1/customers/me/bookings?email={email}",
+            description: "Get customer bookings",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/customers/me/tickets?email={email}",
+            description: "Get customer tickets",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/customers/me/refunds?email={email}",
+            description: "Get customer refunds",
+          },
         ],
         promoCodes: [
-          { method: "POST", path: "/api/v1/events/:eventId/promo-codes", description: "Create promo code" },
-          { method: "GET", path: "/api/v1/events/:eventId/promo-codes", description: "List promo codes" },
-          { method: "POST", path: "/api/v1/promo-codes/validate", description: "Validate promo code" },
-          { method: "POST", path: "/api/v1/promo-codes/:id/deactivate", description: "Deactivate promo code" },
+          {
+            method: "POST",
+            path: "/api/v1/events/:eventId/promo-codes",
+            description: "Create promo code",
+          },
+          {
+            method: "GET",
+            path: "/api/v1/events/:eventId/promo-codes",
+            description: "List promo codes",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/promo-codes/validate",
+            description: "Validate promo code",
+          },
+          {
+            method: "POST",
+            path: "/api/v1/promo-codes/:id/deactivate",
+            description: "Deactivate promo code",
+          },
         ],
       },
     }))
-    .get("/health", () => success(
-      { status: "ok", service: "event-ticketing-booking-api", timestamp: new Date().toISOString() },
-      "Service is healthy",
-    ))
+    .get("/health", () =>
+      success(
+        {
+          status: "ok",
+          service: "event-ticketing-booking-api",
+          timestamp: new Date().toISOString(),
+        },
+        "Service is healthy",
+      ),
+    )
     .use(createAuthRoutes(authController))
     .use(createEventRoutes(eventController))
     .use(createBookingRoutes(bookingController))
@@ -293,4 +569,3 @@ export async function createApp() {
 }
 
 export type App = Awaited<ReturnType<typeof createApp>>;
-

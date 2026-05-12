@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Ticket } from "../../../entities/ticket/ticket";
 import { ITicketRepository } from "./ticket-repository";
-import { TicketCode } from "../../../shared/utils/helpers/ticket-code";
 import { db } from "../../../database/drizzle/index/connection";
 import { tickets } from "../../../database/drizzle/schema/schema";
 

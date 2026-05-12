@@ -32,8 +32,8 @@ export const createRefundController = (handlers: RefundControllerHandlers) => ({
       .then(() => success(null, "Refund approved successfully"));
   },
 
-  reject(params: { id: string }, body: { reason: string }) {
-    return handlers.rejectRefundHandler.execute(new RejectRefundCommand(params.id, body.reason))
+  reject(params: { id: string }, body?: { reason?: string }) {
+    return handlers.rejectRefundHandler.execute(new RejectRefundCommand(params.id, body?.reason || "Rejected by admin"))
       .then(() => success(null, "Refund rejected successfully"));
   },
 

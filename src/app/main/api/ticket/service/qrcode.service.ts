@@ -4,7 +4,6 @@ import { IQRCodeService } from "../../../shared/interfaces/services";
 export class QRCodeService implements IQRCodeService {
   async generateQRCode(data: string): Promise<string> {
     try {
-
       const qrCodeDataURL = await QRCode.toDataURL(data, {
         errorCorrectionLevel: "H",
         type: "image/png",
@@ -39,4 +38,3 @@ export class QRCodeService implements IQRCodeService {
     }
   }
 }
-

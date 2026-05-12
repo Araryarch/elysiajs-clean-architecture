@@ -4,15 +4,28 @@ import type { RegisterUserHandler } from "./register-user.controller";
 import type { LoginUserHandler } from "./login-user.controller";
 import type { IUserRepository } from "../repository/user-repository";
 import { success } from "../../../shared/utils/response/response";
+import { UnauthorizedError } from "../../../shared/errors/domain-error";
 
 export type AuthControllerHandlers = {
   registerHandler: RegisterUserHandler;
   loginHandler: LoginUserHandler;
 };
 
+export type JWTPayload = {
+  userId: string;
+  email: string;
+  role: string;
+};
+
+// Elysia JWT plugin interface
+export interface ElysiaJWT {
+  sign(payload: Record<string, unknown>): Promise<string>;
+  verify(token?: string): Promise<false | Record<string, unknown>>;
+}
+
 export const createAuthController = (handlers: AuthControllerHandlers, deps: { userRepository: IUserRepository; jwtSecret: string }) => ({
   jwtSecret: deps.jwtSecret,
-  userRepository: deps.userRepository as any,
+  userRepository: deps.userRepository,
 
   register(body: { email: string; password: string; name: string; role?: string }) {
     const command = new RegisterUserCommand(body.email, body.password, body.name, body.role);
@@ -20,7 +33,7 @@ export const createAuthController = (handlers: AuthControllerHandlers, deps: { u
       .then((userId) => success({ id: userId }, "User registered successfully"));
   },
 
-  async login(body: { email: string; password: string }, jwt: any) {
+  async login(body: { email: string; password: string }, jwt: ElysiaJWT) {
     const command = new LoginUserCommand(body.email, body.password);
     const result = await handlers.loginHandler.execute(command);
 
@@ -36,21 +49,21 @@ export const createAuthController = (handlers: AuthControllerHandlers, deps: { u
     );
   },
 
-  async me(headers: Record<string, string | undefined>, jwt: any) {
+  async me(headers: Record<string, string | undefined>, jwt: ElysiaJWT) {
     const authorization = headers.authorization;
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      throw new Error("Unauthorized");
+      throw new UnauthorizedError("No token provided");
     }
 
     const token = authorization.substring(7);
     const payload = await jwt.verify(token);
     if (!payload) {
-      throw new Error("Invalid token");
+      throw new UnauthorizedError("Invalid token");
     }
 
     const user = await deps.userRepository.findById(payload.userId as string);
     if (!user) {
-      throw new Error("User not found");
+      throw new UnauthorizedError("User not found");
     }
 
     return success(user.toPublicJSON(), "User retrieved successfully");
