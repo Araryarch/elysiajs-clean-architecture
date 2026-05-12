@@ -8,4 +8,4 @@ tests
 .vscode
 .idea
 bruno
-drizzle
+/drizzle
